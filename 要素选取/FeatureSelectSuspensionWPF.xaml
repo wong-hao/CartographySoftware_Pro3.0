@@ -1,0 +1,129 @@
+﻿<Window x:Class="SMGI_Plugin_EmergencyMap.FeatureSelectSuspensionWPF"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d"
+        Title="要素选取" Height="671" Width="420">
+    <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto" Grid.Row="0" HorizontalAlignment="Left" Width="410" Height="653" VerticalAlignment="Top">
+        <Grid Width="376" Height="1232">
+            <Label Content="地图类型：" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top"/>
+            <ComboBox x:Name="CbMapType" HorizontalAlignment="Left" Margin="72,12,0,0" VerticalAlignment="Top" Width="120"/>
+
+            <Border BorderBrush="Black" BorderThickness="1" Margin="0,40,0,0" Height="164" VerticalAlignment="Top" HorizontalAlignment="Left" Width="346">
+                <Grid ShowGridLines="True" Height="164" VerticalAlignment="Center" HorizontalAlignment="Center" Width="346" >
+                    <Label Content="水系选取：" HorizontalAlignment="Left" Margin="10,1,0,0" Height="25" VerticalAlignment="Top"/>
+                    <Label Content="主区水系线保留等级：" Margin="10,26,0,0" Height="26" VerticalAlignment="Top" HorizontalAlignment="Left" Width="126"/>
+                    <ComboBox x:Name="CbMainHYDLGrade" HorizontalAlignment="Left" Margin="132,28,0,0" VerticalAlignment="Top" Width="120"/>
+                    <Label Content="及以上" Margin="252,26,0,0" Height="26" VerticalAlignment="Top" HorizontalAlignment="Left" Width="50"/>
+                    <Label Content="主区水系面保留面积：" Margin="10,52,0,0" Height="26" VerticalAlignment="Top" HorizontalAlignment="Left" Width="126"/>
+                    <TextBox x:Name="TbMainHYDAArea" HorizontalAlignment="Left" Margin="132,56,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="120"/>
+                    <Label Content="平方毫米" Margin="252,104,0,0" Height="26" VerticalAlignment="Top" HorizontalAlignment="Left" Width="58"/>
+                    <Label Content="邻区水系线保留等级：" Margin="10,78,0,0" Height="26" VerticalAlignment="Top" HorizontalAlignment="Left" Width="126"/>
+                    <ComboBox x:Name="CbAdjHYDLGrade" HorizontalAlignment="Left" Margin="132,80,0,0" VerticalAlignment="Top" Width="120"/>
+                    <Label Content="及以上" Margin="252,78,0,0" Height="26" VerticalAlignment="Top" HorizontalAlignment="Left" Width="50"/>
+                    <Label Content="邻区水系面保留面积：" Margin="10,104,0,0" Height="26" VerticalAlignment="Top" HorizontalAlignment="Left" Width="126"/>
+                    <TextBox Name="TbAdjHYDAArea" HorizontalAlignment="Left" Margin="132,108,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="120"/>
+                    <Label Content="平方毫米" Margin="252,52,0,0" Height="26" VerticalAlignment="Top" HorizontalAlignment="Left" Width="58"/>
+                    <Button x:Name="BtRiverOK" Content="确定" HorizontalAlignment="Center" Margin="0,135,0,0" Width="290" Height="19" VerticalAlignment="Top"/>
+                </Grid>
+            </Border>
+
+            <Border BorderBrush="Black" BorderThickness="1" HorizontalAlignment="Left" Width="346" Margin="0,209,0,910">
+                <Grid Margin="1,-1,-1,-1" ShowGridLines="True" RenderTransformOrigin="0.5,0.5" >
+                    <Label Content="道路选取：" HorizontalAlignment="Left" Margin="10,1,0,0" Height="25" VerticalAlignment="Top"/>
+                    <Label Content="主区道路线保留等级：" Margin="10,26,0,0" Height="26" VerticalAlignment="Top" HorizontalAlignment="Left" Width="126"/>
+                    <ComboBox x:Name="CbManLRDLGrade" HorizontalAlignment="Left" Margin="132,28,0,0" VerticalAlignment="Top" Width="120"/>
+                    <Label Content="及以上" Margin="252,26,0,0" Height="26" VerticalAlignment="Top" HorizontalAlignment="Left" Width="50"/>
+                    <Label Content="邻区道路线保留等级：" Margin="10,52,0,0" Height="26" VerticalAlignment="Top" HorizontalAlignment="Left" Width="126"/>
+                    <ComboBox x:Name="CbAdjRDLGrade" HorizontalAlignment="Left" Margin="132,54,0,0" VerticalAlignment="Top" Width="120"/>
+                    <Label Content="及以上" Margin="252,52,0,0" Height="26" VerticalAlignment="Top" HorizontalAlignment="Left" Width="50"/>
+                    <Button x:Name="BtRodOK" Content="确定" HorizontalAlignment="Center" Margin="0,83,0,0" VerticalAlignment="Top" Width="290"/>
+                </Grid>
+            </Border>
+
+            <Border BorderBrush="Black" BorderThickness="1" HorizontalAlignment="Left" Width="347" Margin="0,327,0,0" Height="323" VerticalAlignment="Top">
+                <Grid Margin="1,-21,-1,-1" ShowGridLines="True" RenderTransformOrigin="0.5,0.5" >
+                    <Label Content="地名点选取：" HorizontalAlignment="Left" Margin="10,20,0,0" Height="25" VerticalAlignment="Top"/>
+                    <Border BorderBrush="Black" BorderThickness="1" Margin="10,45,10,0" Height="128" VerticalAlignment="Top">
+                        <Grid Height="127" VerticalAlignment="Center">
+                            <RadioButton x:Name="RabMainAGNPPriority" Content="主区按优先级选取" HorizontalAlignment="Left" Margin="10,14,0,0" VerticalAlignment="Top" RenderTransformOrigin="-0.395,0.545"/>
+                            <ComboBox x:Name="CbMnLRDLGrade" HorizontalAlignment="Left" Margin="140,10,0,0" VerticalAlignment="Top" Width="120"/>
+                            <Label Content="及以上" Margin="260,8,0,0" Height="26" VerticalAlignment="Top" HorizontalAlignment="Left" Width="50"/>
+                            <RadioButton x:Name="RabMainAGNPClass" Content="主区按等级选取" HorizontalAlignment="Left" Margin="10,37,0,0" VerticalAlignment="Top" RenderTransformOrigin="-0.395,0.545"/>
+                            <ListBox x:Name="ClbMainAGNPClass" d:ItemsSource="{d:SampleData ItemCount=0}" Margin="10,62,0,0" Height="61" VerticalAlignment="Top" HorizontalAlignment="Left" Width="252"/>
+                        </Grid>
+                    </Border>
+                    <Border BorderBrush="Black" BorderThickness="1" Margin="10,178,10,0" Height="128" VerticalAlignment="Top">
+                        <Grid Height="128" VerticalAlignment="Bottom" Margin="0,0,0,-1">
+                            <RadioButton x:Name="RabAdjAGNPPriority" Content="邻区按优先级选取" HorizontalAlignment="Left" Margin="10,14,0,0" VerticalAlignment="Top" RenderTransformOrigin="-0.395,0.545"/>
+                            <ComboBox x:Name="CbnLRDLGrade" HorizontalAlignment="Left" Margin="140,10,0,0" VerticalAlignment="Top" Width="120"/>
+                            <Label Content="及以上" Margin="260,8,0,0" Height="26" VerticalAlignment="Top" HorizontalAlignment="Left" Width="50"/>
+                            <RadioButton x:Name="RabAdjAGNPClass" Content="邻区按等级选取" HorizontalAlignment="Left" Margin="10,37,0,0" VerticalAlignment="Top" RenderTransformOrigin="-0.395,0.545"/>
+                            <ListBox x:Name="ClbAdjAGNPClass" d:ItemsSource="{d:SampleData ItemCount=0}" Margin="10,62,0,0" Height="61" VerticalAlignment="Top" HorizontalAlignment="Left" Width="252"/>
+                        </Grid>
+                    </Border>
+                    <Button x:Name="BtAgnpOK" Content="确定" HorizontalAlignment="Center" Margin="0,311,0,0" Width="290" RenderTransformOrigin="0.503,0.767" Height="19" VerticalAlignment="Top"/>
+                </Grid>
+            </Border>
+
+            <Border BorderBrush="Black" BorderThickness="1" Margin="0,655,0,0" Height="164" VerticalAlignment="Top" HorizontalAlignment="Left" Width="346">
+                <Grid Margin="1,0,-1,0" ShowGridLines="True" RenderTransformOrigin="0.5,0.5" Height="156" VerticalAlignment="Top" >
+                    <Label Content="街区面选取：" HorizontalAlignment="Left" Margin="10,1,0,0" Height="25" VerticalAlignment="Top" Grid.ColumnSpan="2"/>
+                    <Label Content="主区街区面保留等级：" Margin="10,26,0,0" Height="26" VerticalAlignment="Top" HorizontalAlignment="Left" Width="126" Grid.ColumnSpan="2"/>
+                    <ComboBox x:Name="CbMainRESALevel" HorizontalAlignment="Left" Margin="131,28,0,0" VerticalAlignment="Top" Width="120"/>
+                    <Label Content="及以上" Margin="251,26,0,0" Height="26" VerticalAlignment="Top" HorizontalAlignment="Left" Width="50"/>
+                    <Label Content="主区街区面保留面积：" Margin="10,52,0,0" Height="26" VerticalAlignment="Top" HorizontalAlignment="Left" Width="126" Grid.ColumnSpan="2"/>
+                    <TextBox x:Name="TbMainRESAArea" HorizontalAlignment="Left" Margin="131,57,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="120"/>
+                    <Label Content="平方毫米" Margin="251,104,0,0" Height="26" VerticalAlignment="Top" HorizontalAlignment="Left" Width="58"/>
+                    <Label Content="邻区街区面保留等级：" Margin="10,78,0,0" Height="26" VerticalAlignment="Top" HorizontalAlignment="Left" Width="126" Grid.ColumnSpan="2"/>
+                    <ComboBox x:Name="CbAdjRESALevel" HorizontalAlignment="Left" Margin="131,80,0,0" VerticalAlignment="Top" Width="120"/>
+                    <Label Content="及以上" Margin="251,78,0,0" Height="26" VerticalAlignment="Top" HorizontalAlignment="Left" Width="50"/>
+                    <Label Content="邻区街区面保留面积：" Margin="10,104,0,0" Height="26" VerticalAlignment="Top" HorizontalAlignment="Left" Width="126" Grid.ColumnSpan="2"/>
+                    <TextBox x:Name="TbAdjRESAArea" HorizontalAlignment="Left" Margin="131,108,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="120"/>
+                    <Label Content="平方毫米" Margin="251,53,0,0" Height="26" VerticalAlignment="Top" HorizontalAlignment="Left" Width="58"/>
+                    <Button x:Name="BtRESAOk" Content="确定" HorizontalAlignment="Left" Margin="27,130,0,0" VerticalAlignment="Top" Width="290" Grid.ColumnSpan="2"/>
+                </Grid>
+            </Border>
+
+            <Border BorderBrush="Black" BorderThickness="1" Margin="0,824,0,293" HorizontalAlignment="Left" Width="348">
+                <Grid Margin="-1,-1,0,-1" ShowGridLines="True" RenderTransformOrigin="0.5,0.5" HorizontalAlignment="Left" Width="346" >
+                    <Label Content="境界线选取：" HorizontalAlignment="Left" Margin="10,2,0,0" Height="25" VerticalAlignment="Top"/>
+                    <Label Content="主区境界线保留等级：" Margin="10,27,0,0" Height="26" VerticalAlignment="Top" HorizontalAlignment="Left" Width="126"/>
+                    <ComboBox x:Name="CbMainLRDLGrade" HorizontalAlignment="Left" Margin="132,29,0,0" VerticalAlignment="Top" Width="120"/>
+                    <Label Content="及以上" Margin="252,27,0,0" Height="26" VerticalAlignment="Top" HorizontalAlignment="Left" Width="50"/>
+                    <Label Content="邻区道路线保留等级：" Margin="10,54,0,0" HorizontalAlignment="Left" Width="126" Height="26" VerticalAlignment="Top"/>
+                    <ComboBox x:Name="CbAdjLRDLGrade" HorizontalAlignment="Left" Margin="132,56,0,0" Width="120" Height="22" VerticalAlignment="Top"/>
+                    <Label Content="及以上" Margin="252,54,0,0" Height="26" VerticalAlignment="Top" HorizontalAlignment="Left" Width="50"/>
+                    <Button x:Name="BtRoadOK" Content="确定" HorizontalAlignment="Center" Margin="0,85,0,0" VerticalAlignment="Top" Width="290"/>
+                </Grid>
+            </Border>
+
+            <Border BorderBrush="Black" BorderThickness="1" Height="142" VerticalAlignment="Top" HorizontalAlignment="Left" Width="346" Margin="1,944,0,0">
+                <Grid Margin="1,0,-1,0" ShowGridLines="True" RenderTransformOrigin="0.5,0.5" Height="143" VerticalAlignment="Center" >
+                    <Label Content="表面注记选取：" HorizontalAlignment="Left" Margin="10,1,0,0" Height="25" VerticalAlignment="Top"/>
+                    <Label Content="主区表面注记保留等级：" Margin="10,26,0,0" Height="26" VerticalAlignment="Top" HorizontalAlignment="Left" Width="138"/>
+                    <ComboBox x:Name="CbMainBOUAAnnoLevel" HorizontalAlignment="Left" Margin="145,28,0,0" VerticalAlignment="Top" Width="120"/>
+                    <Label Content="省外注记保留等级：" Margin="10,52,0,0" Height="26" VerticalAlignment="Top" HorizontalAlignment="Left" Width="126"/>
+                    <ComboBox x:Name="CbOutProvBOUAAnnoLevel" HorizontalAlignment="Left" Margin="145,54,0,0" VerticalAlignment="Top" Width="120"/>
+                    <Label Content="省外注记保留等级：" Margin="10,78,0,0" Height="26" VerticalAlignment="Top" HorizontalAlignment="Left" Width="126"/>
+                    <ComboBox x:Name="CbInProvBOUAAnnoLevel" HorizontalAlignment="Left" Margin="145,80,0,0" VerticalAlignment="Top" Width="120"/>
+                    <Button x:Name="BtBoulAnnoOk" Content="确定" HorizontalAlignment="Center" Margin="0,109,0,0" VerticalAlignment="Top" Width="290"/>
+                </Grid>
+            </Border>
+
+            <Border BorderBrush="Black" BorderThickness="1" HorizontalAlignment="Left" Width="346" Margin="0,1091,0,26">
+                <Grid ShowGridLines="True" RenderTransformOrigin="0.5,0.5" Margin="-1,-1,1,-1" >
+                    <Label Content="POI选取：" HorizontalAlignment="Left" Margin="10,1,0,0" Height="25" VerticalAlignment="Top"/>
+                    <Label Content="主区POI保留等级：" Margin="10,26,0,0" Height="26" VerticalAlignment="Top" HorizontalAlignment="Left" Width="126"/>
+                    <ComboBox x:Name="CbMainPOIPriority" HorizontalAlignment="Left" Margin="132,28,0,0" VerticalAlignment="Top" Width="120"/>
+                    <Label Content="及以上" Margin="252,26,0,0" Height="26" VerticalAlignment="Top" HorizontalAlignment="Left" Width="50"/>
+                    <Label Content="邻区POI保留等级：" Margin="10,52,0,0" Height="26" VerticalAlignment="Top" HorizontalAlignment="Left" Width="126"/>
+                    <ComboBox x:Name="CbAdjPOIPriority" HorizontalAlignment="Left" Margin="132,54,0,0" VerticalAlignment="Top" Width="120"/>
+                    <Label Content="及以上" Margin="252,52,0,0" Height="26" VerticalAlignment="Top" HorizontalAlignment="Left" Width="50"/>
+                    <Button x:Name="BtPoiOk" Content="确定" HorizontalAlignment="Center" Margin="0,83,0,0" Width="290" RenderTransformOrigin="0.494,0.698" Height="19" VerticalAlignment="Top"/>
+                </Grid>
+            </Border>
+        </Grid>
+    </ScrollViewer>
+</Window>
