@@ -7,6 +7,7 @@ using ArcGIS.Desktop.Core;
 using ArcGIS.Desktop.Framework;
 using ArcGIS.Desktop.Mapping;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Runtime.Serialization.Formatters.Binary;
 using Microsoft.Win32;
 using System.IO;
@@ -16,12 +17,15 @@ using ArcGIS.Desktop.Framework.Threading.Tasks;
 using System.Runtime.InteropServices;
 using System.Xml.Linq;
 using System.Windows.Input;
-using ArcGIS.Desktop.Framework.Dialogs;
 using log4net;
 using log4net.Config;
 using System.Reflection;
+using System.Windows;
 using ArcGIS.Desktop.Internal.Mapping;
 using log4net.Appender;
+using ArcGIS.Desktop.Internal.Framework.Controls;
+using System.Windows.Interop;
+using MessageBox = ArcGIS.Desktop.Framework.Dialogs.MessageBox;
 
 namespace SMGI_Common
 {
@@ -403,10 +407,10 @@ namespace SMGI_Common
             return wo;
         }
 
-        public String GetAppDataPath()
+        public static string GetAppDataPath()
         {
-            var dp = System.Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
-            var di = new System.IO.DirectoryInfo(dp);
+            var dp = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
+            var di = new DirectoryInfo(dp);
             var ds = di.GetDirectories("SMGI");
             if (ds == null || ds.Length == 0)
             {
@@ -419,71 +423,108 @@ namespace SMGI_Common
             }
         }
 
-        private ILog sysLog;
-        private ILog datalog;
+        ILog log;
 
-        string configFilePath = String.Empty;
-
-        String storageLocation = String.Empty;
-
-        public void loadSysLog()
+        public void loadLog(string fileLocation, bool storageType)
         {
-            storageLocation = GetAppDataPath() + "\\log\\";
-
-            if (!File.Exists(storageLocation))
+            try
             {
-                Directory.CreateDirectory(storageLocation);
+                string storageLocation = string.Empty;
+                string configFilePath = GetAppDataPath() + "\\log4net.config";
+                Type? classType = null;
+
+                #region 在未启用配置文件时动态设置日志文件存储路径
+
+                if (storageType)
+                {
+                    storageLocation = GetAppDataPath() + "\\log\\";
+
+                }
+                else
+                {
+                    // 若未指定数据日志存储路径,则默认存储在当前工程文件夹下
+                    if (string.IsNullOrEmpty(fileLocation))
+                    {
+                        // 获取当前项目
+                        Project project = Project.Current;
+
+                        // 获取项目的数据文件夹路径
+                        string dataFolderPath = project.HomeFolderPath;
+
+                        storageLocation = dataFolderPath + "\\log\\";
+                    }
+                    else
+                    {
+                        storageLocation = fileLocation + "\\log\\";
+                    }
+                }
+
+                if (!File.Exists(storageLocation))
+                {
+                    Directory.CreateDirectory(storageLocation);
+                }
+
+                GlobalContext.Properties["StorageLocation"] = storageLocation;
+
+                #endregion
+
+                #region 启用配置文件
+
+                classType = MethodBase.GetCurrentMethod().DeclaringType;
+                log = LogManager.GetLogger(classType);
+
+                configFilePath = GetAppDataPath() + "\\log4net.config";
+
+                if (!File.Exists(configFilePath))
+                {
+                    MessageBox.Show("日志配置文件" + configFilePath + "日志问题", "错误提示", MessageBoxButton.OK,
+                        MessageBoxImage.Error);
+                }
+
+                XmlConfigurator.ConfigureAndWatch(new FileInfo(configFilePath));
+
+                #endregion
             }
-
-            GlobalContext.Properties["SysStorageLocation"] = storageLocation;
-
-            sysLog = LogManager.GetLogger(typeof(GApplication));
-
-            configFilePath = GetAppDataPath() + "\\syslog4net.config";
-
-            if (!File.Exists(configFilePath))
+            catch (Exception ex)
             {
-                MessageBox.Show("日志配置文件" + configFilePath + "不存在");
+                MessageBox.Show(ex.ToString(), "日志问题", MessageBoxButton.OK, MessageBoxImage.Error);
+                throw;
             }
-
-            XmlConfigurator.Configure(new FileInfo(configFilePath));
         }
 
-        public void writeSyslog(String message)
+        public void writeLog(string message, string messageType, [System.Runtime.CompilerServices.CallerFilePath] string filePath = "", [System.Runtime.CompilerServices.CallerLineNumber] int lineNumber = 0)
         {
-            sysLog.Info(message);
-        }
-
-        public void loadDataLog(Type classType, String fileLocation)
-        {
-            storageLocation = Path.GetDirectoryName(Path.GetDirectoryName(Path.GetDirectoryName(fileLocation))) + "\\log\\";
-
-            if (!File.Exists(storageLocation))
+            try
             {
-                Directory.CreateDirectory(storageLocation);
+                // string filename = Path.GetFileName(filePath);
+                // message = message + " [" + filename + " : " + lineNumber + " ]";
+
+                switch (messageType)
+                {
+                    case "INFO":
+                        log.Info(message);
+                        break;
+                    case "WARN":
+                        log.Warn(message);
+                        break;
+                    case "ERROR":
+                        log.Error(message);
+                        break;
+                    case "FATAL":
+                        log.Fatal(message);
+                        break;
+                    default:
+                        MessageBox.Show("日志消息类型不受支持!", "日志问题", MessageBoxButton.OK, MessageBoxImage.Error);
+                        break;
+                }
             }
-
-            GlobalContext.Properties["DataStorageLocation"] = storageLocation;
-
-            datalog = LogManager.GetLogger(classType);
-
-            configFilePath = GetAppDataPath() + "\\datalog4net.config";
-
-            if (!File.Exists(configFilePath))
+            catch (Exception ex)
             {
-                MessageBox.Show("日志配置文件" + configFilePath + "不存在");
+                MessageBox.Show(ex.ToString(), "日志问题", MessageBoxButton.OK, MessageBoxImage.Error);
+                throw;
             }
-
-            XmlConfigurator.Configure(new FileInfo(configFilePath));
         }
-
-        public void writeDataLog(String message)
-        {
-            datalog.Info(message);
-        }
-
     }
-
 
     public class WaitOperation : IDisposable
     {

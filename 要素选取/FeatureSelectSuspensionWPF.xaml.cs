@@ -25,8 +25,8 @@ namespace SMGI_Plugin_EmergencyMap
         {
             InitializeComponent();
             GApplication app = new GApplication();
-            app.loadDataLog(MethodBase.GetCurrentMethod().DeclaringType, Environment.CurrentDirectory);
-            app.writeDataLog("要素选取要素选取要素选取要素选取要素选取要素选取要素选取要素选取要素选取要素选取要素选取要素选取要素选取要素选取要素选取要素选取要素选取要素选取要素选取要素选取要素选取要素选取要素选取要素选取要素选取要素选取要素选取要素选取要素选取要素选取要素选取要素选取要素选取要素选取要素选取要素选取要素选取要素选取要素选取要素选取要素选取要素选取要素选取要素选取要素选取要素选取要素选取要素选取要素选取要素选取要素选取要素选取要素选取要素选取要素选取要素选取要素选取要素选取要素选取要素选取要素选取要素选取要素选取要素选取要素选取要素选取要素选取要素选取要素选取要素选取要素选取要素选取要素选取要素选取要素选取要素选取要素选取要素选取要素选取要素选取要素选取要素选取要素选取要素选取要素选取要素选取要素选取要素选取要素选取要素选取要素选取要素选取要素选取要素选取要素选取要素选取要素选取要素选取要素选取要素选取要素选取要素选取要素选取要素选取要素选取要素选取要素选取要素选取");
+            app.loadLog("C:\\Users\\22907\\Desktop\\Template", false);
+            app.writeLog("asd", "INFO");
         }
     }
 }

@@ -60,8 +60,21 @@ namespace SMGI_Plugin_EmergencyMap
         private void HYDLMaskingSetWPF_Loaded(object sender, RoutedEventArgs e)
         {
             GApplication app = new GApplication();
-            app.loadSysLog();
-            app.writeSyslog("系统启动");
+            app.loadLog("", true);
+
+            try
+            {
+                // 尝试将一个不合法的字符串转换为数字
+                string invalidNumber = "abc";
+                int number = int.Parse(invalidNumber);
+                Console.WriteLine("转换结果：" + number);
+            }
+            catch (Exception ex)
+            {
+                app.writeLog(" [ex.Message:" + ex.Message + "] [ex.Source: " + ex.Source + "] [ex.StackTrace: " + ex.StackTrace + "].", "FATAL");
+                MessageBox.Show("捕获到异常：" + ex.Message);
+
+            }
 
             /*
         var fileName = EnvironmentSettings.GetCaptionPath() + @"\专家库\消隐\水系消隐.xml";

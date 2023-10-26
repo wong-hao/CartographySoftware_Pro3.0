@@ -26,5 +26,5 @@ namespace SMGI_Plugin_EmergencyMap
             var frmMask = new FeatureSelectSuspensionWPF();
             frmMask.ShowDialog();
         }
-	}
+    }
 }
