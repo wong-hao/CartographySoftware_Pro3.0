@@ -7,7 +7,6 @@ using ArcGIS.Desktop.Core;
 using ArcGIS.Desktop.Framework;
 using ArcGIS.Desktop.Mapping;
 using System.ComponentModel;
-using System.Diagnostics;
 using System.Runtime.Serialization.Formatters.Binary;
 using Microsoft.Win32;
 using System.IO;
@@ -17,6 +16,7 @@ using ArcGIS.Desktop.Framework.Threading.Tasks;
 using System.Runtime.InteropServices;
 using System.Xml.Linq;
 using System.Windows.Input;
+using ArcGIS.Desktop.Framework.Dialogs;
 using log4net;
 using log4net.Config;
 using System.Reflection;
@@ -26,6 +26,7 @@ using log4net.Appender;
 using ArcGIS.Desktop.Internal.Framework.Controls;
 using System.Windows.Interop;
 using MessageBox = ArcGIS.Desktop.Framework.Dialogs.MessageBox;
+using static ArcGIS.Desktop.Internal.Core.CancellableFileChecker;
 
 namespace SMGI_Common
 {
@@ -423,57 +424,73 @@ namespace SMGI_Common
             }
         }
 
-        ILog log;
+        # region 日志相关（NuGet包管理器安装log4net库2.0.15版本）
 
-        public void loadLog(string fileLocation, bool storageType)
+        private static ILog sysLog { get; set; } // 系统日志
+        private static ILog dataLog { get; set; } // 数据日志
+
+        // 日志消息类型
+        public const string INFO = "INFO";
+        public const string WARN = "WARN";
+        public const string FATAL = "FATAL";
+        public const string ERROR = "ERROR";
+
+
+        public static void loadLog(string fileLocation, bool storageType)
         {
             try
             {
+                // 判断是系统日志还是数据日志
                 string storageLocation = string.Empty;
-                string configFilePath = GetAppDataPath() + "\\log4net.config";
-                Type? classType = null;
 
-                #region 在未启用配置文件时动态设置日志文件存储路径
+                // 时间戳
+                string fixedIdentifier = string.Empty;
+
+                // log4net配置文件路径
+                string configFilePath = GetAppDataPath() + "\\log4net.config";
+
+                #region 动态设置日志文件存储路径
 
                 if (storageType)
                 {
                     storageLocation = GetAppDataPath() + "\\log\\";
 
+                    if (!File.Exists(storageLocation))
+                    {
+                        Directory.CreateDirectory(storageLocation);
+                    }
+
+                    GlobalContext.Properties["SysStorageLocation"] = storageLocation;
+
                 }
                 else
                 {
-                    // 若未指定数据日志存储路径,则默认存储在当前工程文件夹下
-                    if (string.IsNullOrEmpty(fileLocation))
-                    {
-                        // 获取当前项目
-                        Project project = Project.Current;
+                    storageLocation = fileLocation + "\\log\\";
 
-                        // 获取项目的数据文件夹路径
-                        string dataFolderPath = project.HomeFolderPath;
-
-                        storageLocation = dataFolderPath + "\\log\\";
-                    }
-                    else
+                    if (!File.Exists(storageLocation))
                     {
-                        storageLocation = fileLocation + "\\log\\";
+                        Directory.CreateDirectory(storageLocation);
                     }
+
+                    GlobalContext.Properties["DataStorageLocation"] = storageLocation;
+
                 }
 
-                if (!File.Exists(storageLocation))
-                {
-                    Directory.CreateDirectory(storageLocation);
-                }
-
-                GlobalContext.Properties["StorageLocation"] = storageLocation;
+                fixedIdentifier = DateTime.Now.ToString("yyyy_MM_dd_hh_mm_ss");
+                GlobalContext.Properties["FixedIdentifier"] = fixedIdentifier;
 
                 #endregion
 
                 #region 启用配置文件
 
-                classType = MethodBase.GetCurrentMethod().DeclaringType;
-                log = LogManager.GetLogger(classType);
-
-                configFilePath = GetAppDataPath() + "\\log4net.config";
+                if (storageType)
+                {
+                    sysLog = LogManager.GetLogger("SysRollingFile");
+                }
+                else
+                {
+                    dataLog = LogManager.GetLogger("DataRollingFile");
+                }
 
                 if (!File.Exists(configFilePath))
                 {
@@ -492,26 +509,62 @@ namespace SMGI_Common
             }
         }
 
-        public void writeLog(string message, string messageType, [System.Runtime.CompilerServices.CallerFilePath] string filePath = "", [System.Runtime.CompilerServices.CallerLineNumber] int lineNumber = 0)
+        public static void InitializeLog()
+        {
+            // 加载系统日志
+            loadLog("", true);
+            // 加载数据日志
+            loadLog(Project.Current.HomeFolderPath, false);
+        }
+
+        public static void writeLog(string message, string messageType, bool storageType, [System.Runtime.CompilerServices.CallerFilePath] string filePath = "", [System.Runtime.CompilerServices.CallerLineNumber] int lineNumber = 0)
         {
             try
             {
-                // string filename = Path.GetFileName(filePath);
-                // message = message + " [" + filename + " : " + lineNumber + " ]";
+                string filename = Path.GetFileName(filePath);
+                message = message + " [" + filename + " : 行号" + lineNumber + "]";
 
                 switch (messageType)
                 {
-                    case "INFO":
-                        log.Info(message);
+                    case INFO:
+                        if (storageType)
+                        {
+                            sysLog.Info(message);
+                        }
+                        else
+                        {
+                            dataLog.Info(message);
+                        }
                         break;
-                    case "WARN":
-                        log.Warn(message);
+                    case WARN:
+                        if (storageType)
+                        {
+                            sysLog.Warn(message);
+                        }
+                        else
+                        {
+                            dataLog.Warn(message);
+                        }
                         break;
-                    case "ERROR":
-                        log.Error(message);
+                    case ERROR:
+                        if (storageType)
+                        {
+                            sysLog.Error(message);
+                        }
+                        else
+                        {
+                            dataLog.Error(message);
+                        }
                         break;
-                    case "FATAL":
-                        log.Fatal(message);
+                    case FATAL:
+                        if (storageType)
+                        {
+                            sysLog.Fatal(message);
+                        }
+                        else
+                        {
+                            dataLog.Fatal(message);
+                        }
                         break;
                     default:
                         MessageBox.Show("日志消息类型不受支持!", "日志问题", MessageBoxButton.OK, MessageBoxImage.Error);
@@ -525,6 +578,8 @@ namespace SMGI_Common
             }
         }
     }
+
+    #endregion
 
     public class WaitOperation : IDisposable
     {
