@@ -435,7 +435,6 @@ namespace SMGI_Common
         public const string FATAL = "FATAL";
         public const string ERROR = "ERROR";
 
-
         public static void loadLog(string fileLocation, bool storageType)
         {
             try
@@ -509,12 +508,22 @@ namespace SMGI_Common
             }
         }
 
+        // 限制在所有插件中仅初始化一次
+        private static bool _logInitialized = false;
+
         public static void InitializeLog()
         {
+            if (_logInitialized)
+            {
+                return;
+            }
+
             // 加载系统日志
             loadLog("", true);
             // 加载数据日志
             loadLog(Project.Current.HomeFolderPath, false);
+
+            _logInitialized = true;
         }
 
         public static void writeLog(string message, string messageType, bool storageType, [System.Runtime.CompilerServices.CallerFilePath] string filePath = "", [System.Runtime.CompilerServices.CallerLineNumber] int lineNumber = 0)
