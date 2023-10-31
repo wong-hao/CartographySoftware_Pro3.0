@@ -17,16 +17,11 @@ using System.Runtime.InteropServices;
 using System.Xml.Linq;
 using System.Windows.Input;
 using ArcGIS.Desktop.Framework.Dialogs;
-using log4net;
-using log4net.Config;
-using System.Reflection;
-using System.Windows;
 using ArcGIS.Desktop.Internal.Mapping;
-using log4net.Appender;
-using ArcGIS.Desktop.Internal.Framework.Controls;
-using System.Windows.Interop;
+using log4net.Config;
+using log4net;
+using System.Windows;
 using MessageBox = ArcGIS.Desktop.Framework.Dialogs.MessageBox;
-using static ArcGIS.Desktop.Internal.Core.CancellableFileChecker;
 
 namespace SMGI_Common
 {
@@ -37,7 +32,6 @@ namespace SMGI_Common
     {
         #region 单例模式
         private static readonly Lazy<GApplication> lazy = new Lazy<GApplication>(() => new GApplication());
-
         public static GApplication Application { get { return lazy.Value; } }
 
         public GApplication()
@@ -45,12 +39,7 @@ namespace SMGI_Common
 
         }
         #endregion
-
-
-     //   public static bool Register = CheckRegistration();
-
-
-
+        //  public static bool Register = CheckRegistration();
 
         #region 注册验证
         static string[] cc = { "" };
@@ -105,7 +94,6 @@ namespace SMGI_Common
                                     formatter.Serialize(ms, Environment.MachineName);
                                     sysMachineName = Convert.ToBase64String(ms.ToArray());
                                 }
-
 
                                 string mN = sysMachineName;
                                 //string mN = SoftRegister.CalculateSeialNum(origNum);
@@ -213,7 +201,6 @@ namespace SMGI_Common
                                     sysMachineName = Convert.ToBase64String(ms.ToArray());
                                 }
 
-
                                 string mN = sysMachineName;
                                 //string mN = SoftRegister.CalculateSeialNum(origNum);
                                 string k = regValue[0];
@@ -280,26 +267,38 @@ namespace SMGI_Common
         public string MsgForm = string.Empty;
         public delegate bool LayerChecker(Layer info);
 
-        public static string Caption
+        private MapView mapView;
+        public MapView MapView
+        {
+            get => mapView;
+        }
+
+        private Map map;
+        public Map Map
+        {
+            get => mapView.Map;
+        }
+
+        public string Caption
         {
             get
             {
-                XDocument doc = XDocument.Load(GApplication.ResourcePath + @"\Resources\Template\Template.xml");
+                XDocument doc = XDocument.Load(GApplication.Application.ResourcePath + @"\Resources\Template\Template.xml");
                 return doc.Element("Template").Element("ClassName").Value;
             }
         }
 
-        public static string ProjectPath
+        public string TargetProjectPath
         {
             get
             {
-                XDocument doc = XDocument.Load(GApplication.ResourcePath + @"\Resources\Template\Template.xml");
+                XDocument doc = XDocument.Load(GApplication.Application.ResourcePath + @"\Resources\Template\Template.xml");
                 string captionName = doc.Element("Template").Element("ClassName").Value;
-                return GApplication.ResourcePath + @"\Resources\Template\" + captionName;
+                return GApplication.Application.ResourcePath + @"\Resources\Template\" + captionName;
             }
         }
 
-        public static string ExePath
+        public string ExePath
         {
             get
             {
@@ -310,18 +309,15 @@ namespace SMGI_Common
             }
         }
 
-        public static string ResourcePath
+        public string ResourcePath
         {
             get
             {
                 string codeBase = System.Reflection.Assembly.GetExecutingAssembly().Location;
-                string assemblyCacheFolder = System.IO.Path.GetDirectoryName(new Uri(codeBase).LocalPath);
+                string assemblyCacheFolder = Path.GetDirectoryName(new Uri(codeBase).LocalPath);
                 return assemblyCacheFolder;
             }
         }
-
-
-
 
         /// <summary>
         /// 图层数据字典匹配：英文对中文
@@ -359,13 +355,11 @@ namespace SMGI_Common
             }
         }
 
-
         Thread thread;
         internal event Action<GApplication> abort;
         internal event Action<string> waitText;
         internal event Action<int> maxValue;
         internal event Action<int> step;
-
 
         public WaitOperation SetBusy()
         {
@@ -402,9 +396,6 @@ namespace SMGI_Common
                     abort(this);
 
             };
-            //while (!inited)
-            //{
-            //}
             return wo;
         }
 
@@ -424,7 +415,7 @@ namespace SMGI_Common
             }
         }
 
-        # region 日志相关（NuGet包管理器安装log4net库2.0.15版本）
+        #region 日志相关（NuGet包管理器安装log4net库2.0.15版本）
 
         private static ILog sysLog { get; set; } // 系统日志
         private static ILog dataLog { get; set; } // 数据日志
@@ -590,12 +581,11 @@ namespace SMGI_Common
 
     #endregion
 
-    public class WaitOperation : IDisposable
+public class WaitOperation : IDisposable
     {
         public Action<string> SetText;
         public Action<int> SetMaxValue;
         public Action<int> Step;
-
         internal Action<int> dispose;
         public void Dispose()
         {
