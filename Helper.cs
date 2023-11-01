@@ -69,7 +69,7 @@ namespace SMGI_Common
         }
 
         /// <summary>
-        /// 读取mdb转成的数据库gdb表
+        /// 读取gdb数据库
         /// </summary>
         /// <param name="gdbFilePath"></param>
         /// <param name="tableName"></param>

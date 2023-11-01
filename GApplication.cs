@@ -466,7 +466,7 @@ namespace SMGI_Common
 
                 }
 
-                fixedIdentifier = DateTime.Now.ToString("yyyy_MM_dd_hh_mm_ss");
+                fixedIdentifier = DateTimeOffset.Now.ToString("yyyy_MM_dd_HH_mm_ss");
                 GlobalContext.Properties["FixedIdentifier"] = fixedIdentifier;
 
                 #endregion
@@ -499,12 +499,9 @@ namespace SMGI_Common
             }
         }
 
-        // 限制在所有插件中仅初始化一次
-        private static bool _logInitialized = false;
-
         public static void InitializeLog()
         {
-            if (_logInitialized)
+            if (sysLog != null && dataLog != null)
             {
                 return;
             }
@@ -513,8 +510,6 @@ namespace SMGI_Common
             loadLog("", true);
             // 加载数据日志
             loadLog(Project.Current.HomeFolderPath, false);
-
-            _logInitialized = true;
         }
 
         public static void writeLog(string message, string messageType, bool storageType, [System.Runtime.CompilerServices.CallerFilePath] string filePath = "", [System.Runtime.CompilerServices.CallerLineNumber] int lineNumber = 0)
