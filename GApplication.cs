@@ -576,7 +576,7 @@ namespace SMGI_Common
 
     #endregion
 
-public class WaitOperation : IDisposable
+    public class WaitOperation : IDisposable
     {
         public Action<string> SetText;
         public Action<int> SetMaxValue;
