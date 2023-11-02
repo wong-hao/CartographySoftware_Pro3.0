@@ -1,0 +1,7 @@
+10:34:08 [INFO] : Node ID: 1, Connected Edges: 1, 3 [HydlMaskProcessButton.cs : 行号106]
+10:34:08 [INFO] : Node ID: 2, Connected Edges: 1, 2 [HydlMaskProcessButton.cs : 行号106]
+10:34:08 [INFO] : Node ID: 3, Connected Edges: 2, 3 [HydlMaskProcessButton.cs : 行号106]
+10:34:08 [INFO] : Edge ID: 1, Start Node: 1, End Node: 2 [HydlMaskProcessButton.cs : 行号111]
+10:34:08 [INFO] : Edge ID: 2, Start Node: 2, End Node: 3 [HydlMaskProcessButton.cs : 行号111]
+10:34:08 [INFO] : Edge ID: 3, Start Node: 3, End Node: 1 [HydlMaskProcessButton.cs : 行号111]
+10:34:08 [INFO] : Triangle ID: 1, Edges: Edge ID: 1, Start Node: 1, End Node: 2, Edge ID: 2, Start Node: 2, End Node: 3, Edge ID: 3, Start Node: 3, End Node: 1 [HydlMaskProcessButton.cs : 行号117]
