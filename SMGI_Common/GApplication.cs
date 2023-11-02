@@ -421,6 +421,7 @@ namespace SMGI_Common
         private static ILog dataLog { get; set; } // 数据日志
 
         // 日志消息类型
+        public const string DEBUG = "DEBUG";
         public const string INFO = "INFO";
         public const string WARN = "WARN";
         public const string FATAL = "FATAL";
@@ -521,6 +522,16 @@ namespace SMGI_Common
 
                 switch (messageType)
                 {
+                    case DEBUG:
+                        if (storageType)
+                        {
+                            sysLog.Debug(message);
+                        }
+                        else
+                        {
+                            dataLog.Debug(message);
+                        }
+                        break;
                     case INFO:
                         if (storageType)
                         {
