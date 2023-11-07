@@ -24,6 +24,11 @@ namespace SMGI_Common
 
         public TinNode(int id)
         {
+            if (id <= 0)
+            {
+                throw new ArgumentException("Node ID must be a positive integer.");
+            }
+
             NodeID = id;
             ConnectedEdges = new List<TinEdge>();
         }
@@ -42,6 +47,12 @@ namespace SMGI_Common
                 throw new ArgumentException("Start node and end node cannot be the same.");
             }
 
+            if (startNode.ConnectedEdges.Any(edge => edge.EndNode.NodeID == endNode.NodeID) ||
+                endNode.ConnectedEdges.Any(edge => edge.EndNode.NodeID == startNode.NodeID))
+            {
+                throw new ArgumentException("Edges cannot intersect with existing edges.");
+            }
+
             EdgeID = id;
             StartNode = startNode;
             EndNode = endNode;
@@ -49,6 +60,7 @@ namespace SMGI_Common
             endNode.ConnectedEdges.Add(this);
         }
     }
+
 
     public class TinTriangle
     {
@@ -81,6 +93,68 @@ namespace SMGI_Common
             Triangles = new List<TinTriangle>();
         }
 
+        public List<int> GetTrianglesSharingEdge(int triangleID, List<TinTriangle> triangles)
+        {
+            List<int> sharedTriangleIDs = new List<int>();
+
+            // 找到目标三角形
+            TinTriangle targetTriangle = triangles.FirstOrDefault(triangle => triangle.TriangleID == triangleID);
+            if (targetTriangle != null)
+            {
+                // 遍历所有其他三角形，检查它们与目标三角形是否共享至多一条边
+                foreach (var triangle in triangles)
+                {
+                    // 跳过目标三角形本身
+                    if (triangle.TriangleID == triangleID)
+                    {
+                        continue;
+                    }
+
+                    // 检查目标三角形的每条边是否在当前三角形中存在
+                    int sharedEdgeCount = targetTriangle.Edges.Count(edge => triangle.Edges.Any(tEdge => tEdge.EdgeID == edge.EdgeID));
+
+                    // 如果共享边的数量等于1，表示两个三角形共享边
+                    if (sharedEdgeCount == 1)
+                    {
+                        sharedTriangleIDs.Add(triangle.TriangleID);
+                    }
+                }
+            }
+
+            return sharedTriangleIDs;
+        }
+
+        public int GetSharedEdgeID(int triangle1ID, int triangle2ID, List<TinTriangle> triangles)
+        {
+            int sharedEdgeID = -1; // 初始化为-1，表示没有共享边
+
+            // 找到包含给定ID的两个三角形
+            TinTriangle triangle1 = triangles.FirstOrDefault(triangle => triangle.TriangleID == triangle1ID);
+            TinTriangle triangle2 = triangles.FirstOrDefault(triangle => triangle.TriangleID == triangle2ID);
+
+            if (triangle1 != null && triangle2 != null)
+            {
+                // 遍历两个三角形的边，找到共享边的ID
+                foreach (var edge1 in triangle1.Edges)
+                {
+                    foreach (var edge2 in triangle2.Edges)
+                    {
+                        if (edge1.EdgeID == edge2.EdgeID)
+                        {
+                            sharedEdgeID = edge1.EdgeID;
+                            break;
+                        }
+                    }
+                    if (sharedEdgeID != -1)
+                    {
+                        break;
+                    }
+                }
+            }
+
+            return sharedEdgeID;
+        }
+
         public static int[] GetNodeIDsFromEdgeID(int edgeID, List<TinEdge> edges)
         {
             HashSet<int> nodeIDs = new HashSet<int>();
@@ -93,6 +167,18 @@ namespace SMGI_Common
             }
 
             return nodeIDs.ToArray();
+        }
+
+        public int[] GetSharedNodeIDs(int triangle1ID, int triangle2ID, List<TinTriangle> triangles, List<TinEdge> edges)
+        {
+            int sharedEdgeID = GetSharedEdgeID(triangle1ID, triangle2ID, triangles);
+
+            if (sharedEdgeID != -1)
+            {
+                return GetNodeIDsFromEdgeID(sharedEdgeID, edges);
+            }
+
+            return new int[0]; // Return an empty array if there are no shared nodes
         }
 
         public static Tuple<int[], int[]> GetNodeAndEdgeIDsFromTriangleID(int triangleID, List<TinTriangle> triangles)
