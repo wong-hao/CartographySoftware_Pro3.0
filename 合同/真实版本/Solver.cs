@@ -13,18 +13,18 @@ using Constraint = Google.OrTools.LinearSolver.Constraint;
 
 namespace SMGI_Common
 {
-    public class ORTools
+    public class ORTools_Solver
     {
 
         public static void Solve()
         {
             // 创建线性规划求解器
-            Solver solver = new Solver("LinearProgrammingExample", Solver.OptimizationProblemType.GLOP_LINEAR_PROGRAMMING);
+            Google.OrTools.LinearSolver.Solver solver = new Google.OrTools.LinearSolver.Solver("LinearProgrammingExample", Google.OrTools.LinearSolver.Solver.OptimizationProblemType.GLOP_LINEAR_PROGRAMMING);
 
             // 定义变量
             Variable C3 = solver.MakeNumVar(0, double.PositiveInfinity, "C3");
             Variable D3 = solver.MakeNumVar(0, double.PositiveInfinity, "D3");
-            Variable E3= solver.MakeNumVar(0, double.PositiveInfinity, "E3");
+            Variable E3 = solver.MakeNumVar(0, double.PositiveInfinity, "E3");
             Variable F3 = solver.MakeNumVar(0, double.PositiveInfinity, "F3");
             Variable G3 = solver.MakeNumVar(0, double.PositiveInfinity, "G3");
             Variable H3 = solver.MakeNumVar(0, double.PositiveInfinity, "H3");
@@ -1090,7 +1090,29 @@ namespace SMGI_Common
             */
 
             // 求解问题
-            solver.Solve();
+            Google.OrTools.LinearSolver.Solver.ResultStatus resultStatus = solver.Solve();
+
+            switch (resultStatus)
+            {
+                case Google.OrTools.LinearSolver.Solver.ResultStatus.OPTIMAL:
+                    MessageBox.Show("找到最优解");
+                    break;
+                case Google.OrTools.LinearSolver.Solver.ResultStatus.FEASIBLE:
+                    MessageBox.Show("找到可行解");
+                    break;
+                case Google.OrTools.LinearSolver.Solver.ResultStatus.INFEASIBLE:
+                    MessageBox.Show("无解");
+                    break;
+                case Google.OrTools.LinearSolver.Solver.ResultStatus.UNBOUNDED:
+                    MessageBox.Show("无界");
+                    break;
+                case Google.OrTools.LinearSolver.Solver.ResultStatus.ABNORMAL:
+                    MessageBox.Show("错误");
+                    break;
+                case Google.OrTools.LinearSolver.Solver.ResultStatus.NOT_SOLVED:
+                    MessageBox.Show("未求解");
+                    break;
+            }
 
             // 输出结果
             MessageBox.Show("C3 = " + C3.SolutionValue());

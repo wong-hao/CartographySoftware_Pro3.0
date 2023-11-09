@@ -87,19 +87,57 @@ namespace SMGI_Common
             TriangleID = id;
         }
 
-        public static void TinTriangle2Edges(string triangleLyrName, string edgeLyrName, bool deduplicate)
+        // Must be called within QueuedTask.Run()
+        public bool FeatureClassExists(Geodatabase geodatabase, string featureClassName)
         {
+            try
+            {
+                FeatureClassDefinition featureClassDefinition = geodatabase.GetDefinition<FeatureClassDefinition>(featureClassName);
+                featureClassDefinition.Dispose();
+                return true;
+            }
+            catch
+            {
+                // GetDefinition throws an exception if the definition doesn't exist
+                return false;
+            }
+        }
+
+        public static void TinTriangleTransition(string triangleLyrName, string outputLyrName, String type, bool all)
+        {
+            var Trianglelyr = MapView.Active.Map.GetLayersAsFlattenedList().OfType<FeatureLayer>().Where(l => (l as FeatureLayer).Name == triangleLyrName).FirstOrDefault() as FeatureLayer;
+            if (Trianglelyr == null)
+            {
+                MessageBox.Show("未找到" + triangleLyrName + "图层!", "提示");
+                return;
+            }
+            SpatialReference triangleSpatialReference = Trianglelyr.GetSpatialReference();
+
             Geodatabase gdb =
                 new Geodatabase(new FileGeodatabaseConnectionPath(new Uri(Project.Current.DefaultGeodatabasePath)));
 
             // 创建SchemaBuilder
             SchemaBuilder schemaBuilder = new SchemaBuilder(gdb);
 
-            FeatureClass TinEdgeFeatureClass = null;
+            FeatureClass outputFeatureClass = null;
+
+            GeometryType geometryType = GeometryType.Unknown;
 
             using (gdb)
             {
-                var shapeDescription = new ShapeDescription(GeometryType.Polyline, SpatialReferences.WebMercator)
+                if (type == "Node")
+                {
+                    geometryType = GeometryType.Point;
+                }else if (type == "Edge")
+                {
+                    geometryType = GeometryType.Polyline;
+                }
+                else
+                {
+                    return;
+                }
+
+                var shapeDescription = new ShapeDescription(geometryType, triangleSpatialReference)
                 {
                     HasM = false,
                     HasZ = true
@@ -107,7 +145,7 @@ namespace SMGI_Common
 
                 //var shapeFieldDescription = new ArcGIS.Core.Data.DDL.FieldDescription("aaa", FieldType.String); 
 
-                var fcName = edgeLyrName;
+                var fcName = outputLyrName;
                 try
                 {
                     // 收集字段列表
@@ -127,19 +165,14 @@ namespace SMGI_Common
 
                     if (success)
                     {
-                        MessageBox.Show("新建成功!");
+                        MessageBox.Show("新建成功，目标图层" + fcName + "并不存在!");
                     }
                     else
                     {
-                        MessageBox.Show("新建失败!");
+                        // MessageBox.Show("新建失败，目标图层" + fcName + "已经存在!!");
                     }
 
-                    TinEdgeFeatureClass = gdb.OpenDataset<FeatureClass>(fcName);
-
-                    if (TinEdgeFeatureClass != null)
-                    {
-                        MessageBox.Show("图层" + fcName + "存在");
-                    }
+                    outputFeatureClass = gdb.OpenDataset<FeatureClass>(fcName);
                 }
                 catch (Exception ex)
                 {
@@ -148,275 +181,178 @@ namespace SMGI_Common
             }
 
             // 获取要素类的Table对象
-            Table table = TinEdgeFeatureClass as Table;
+            Table table = outputFeatureClass as Table;
 
             // 检查要素类是否为空
             if (table != null && table.GetCount() == 0)
             {
                 // 要素类为空
-                MessageBox.Show("要素类为空。");
+                MessageBox.Show("目标图层" + outputLyrName + "为空。");
             }
             else
             {
                 // 要素类不为空
-                MessageBox.Show("要素类不为空，其中含有" + table.GetCount() + "个要素");
+                MessageBox.Show("目标图层" + outputLyrName + "不为空，其中含有" + table.GetCount() + "个要素");
                 return;
             }
+
+            string message = String.Empty;
+            bool creationResult = false;
 
             //declare the callback here. We are not executing it yet
             EditOperation editOperation = new EditOperation();
             editOperation.Callback(context =>
             {
-                FeatureClassDefinition facilitySiteDefinition = TinEdgeFeatureClass.GetDefinition();
+                FeatureClassDefinition facilitySiteDefinition = outputFeatureClass.GetDefinition();
 
-                using (RowBuffer rowBuffer = TinEdgeFeatureClass.CreateRowBuffer())
+                using (RowBuffer rowBuffer = outputFeatureClass.CreateRowBuffer())
                 {
-                    var Trianglelyr = MapView.Active.Map.GetLayersAsFlattenedList().OfType<FeatureLayer>().Where(l => (l as FeatureLayer).Name == triangleLyrName).FirstOrDefault() as FeatureLayer;
-                    if (Trianglelyr == null)
+
+                    // 获取Trianglelyr图层的要素类
+                    var featureClass = Trianglelyr.GetTable() as FeatureClass;
+
+                    // 在方法开始前创建一个 HashSet 用于唯一标识符
+                    HashSet<string> addedFeaturesHashSet = new HashSet<string>();
+
+                    // 遍历三角形要素
+                    using (var cursor = featureClass.Search(null, true))
                     {
-                        MessageBox.Show("未找到" + triangleLyrName + "图层!", "提示");
-                    }
-
-                    if (Trianglelyr != null)
-                    {
-                        // 获取Trianglelyr图层的要素类
-                        var featureClass = Trianglelyr.GetTable() as FeatureClass;
-
-                        // 用于跟踪已添加的边
-                        HashSet<string> addedEdges = new HashSet<string>();
-
-                        // 遍历三角形要素
-                        using (var cursor = featureClass.Search(null, true))
+                        while (cursor.MoveNext())
                         {
-                            while (cursor.MoveNext())
+                            var triangle = cursor.Current as Feature;
+
+                            // 获取三角形的顶点集合
+                            //var points = (feature.GetShape() as Polygon).Points;
+                            var polygon = triangle.GetShape() as Polygon;
+                            long objectId = triangle.GetObjectID();
+                            string objectIdString = objectId.ToString();
+
+                            var points = polygon.Points;
+                            string point1Key = $"{points[2].X},{points[2].Y}";
+                            string point2Key = $"{points[1].X},{points[1].Y}";
+                            string point3Key = $"{points[0].X},{points[0].Y}";
+
+                            // 获取三角形的三条边
+                            Polyline edgeLine1 = PolylineBuilder.CreatePolyline(new List<MapPoint> { points[1], points[2] }); // 第一条边
+                            Polyline edgeLine2 = PolylineBuilder.CreatePolyline(new List<MapPoint> { points[0], points[1] }); // 第二条边
+                            Polyline edgeLine3 = PolylineBuilder.CreatePolyline(new List<MapPoint> { points[2], points[0] }); // 第三条边
+                            string edge1Key = $"{edgeLine1.Length3D}"; // 边1的唯一标识符
+                            string edge2Key = $"{edgeLine2.Length3D}"; // 边2的唯一标识符
+                            string edge3Key = $"{edgeLine3.Length3D}"; // 边3的唯一标识符
+
+                            Debug.WriteLine("对于三角形" + objectIdString + "," + "三条边的唯一标志符号分别是: " + "edge1Key: " + edge1Key +
+                                            "," + "edge2Key: " + edge2Key + "," + "edge3Key: " + edge3Key);
+                            if (type == "Node")
                             {
-                                var triangle = cursor.Current as Feature;
-
-                                // 获取三角形的顶点集合
-                                //var points = (feature.GetShape() as Polygon).Points;
-                                var polygon = triangle.GetShape() as Polygon;
-                                var points = polygon.Points;
-
-                                // 获取三角形的三条边的唯一标志
-                                string edge1Key = $"{points[0].X},{points[0].Y},{points[1].X},{points[1].Y}"; // 边1的唯一标识符
-                                string edge2Key = $"{points[1].X},{points[1].Y},{points[2].X},{points[2].Y}"; // 边2的唯一标识符
-                                string edge3Key = $"{points[2].X},{points[2].Y},{points[0].X},{points[0].Y}"; // 边3的唯一标识符
-
-                                long objectId = triangle.GetObjectID();
-                                string objectIdString = objectId.ToString();
-                                Debug.WriteLine("对于三角形" + objectIdString + "," + "三条边的唯一标志符号分别是: " + "edge1Key: " + edge1Key +
-                                                "," + "edge2Key: " + edge2Key + "," + "edge3Key: " + edge3Key);
-
-                                // 检查边是否已经添加，如果是则跳过
-                                if (deduplicate && (addedEdges.Contains(edge1Key) || addedEdges.Contains(edge2Key) || addedEdges.Contains(edge3Key)))
+                                if (all || !addedFeaturesHashSet.Contains(point1Key))
                                 {
-                                    //continue;
+                                    // 添加point1到TinEdgeFeatureClass
+                                    rowBuffer[facilitySiteDefinition.GetShapeField()] = points[2];
+                                    using (Feature feature1 = outputFeatureClass.CreateRow(rowBuffer))
+                                    {
+                                        //To Indicate that the attribute table has to be updated
+                                        context.Invalidate(feature1);
+                                    }
+                                    addedFeaturesHashSet.Add(point1Key);
                                 }
 
-                                // 添加边到HashSet，表示已经添加
-                                addedEdges.Add(edge1Key);
-                                addedEdges.Add(edge2Key);
-                                addedEdges.Add(edge3Key);
-
-                                // 获取三角形的三条边
-                                Polyline edgeLine1 = PolylineBuilder.CreatePolyline(new List<MapPoint> { points[0], points[1] }); // 第一条边
-                                Polyline edgeLine2 = PolylineBuilder.CreatePolyline(new List<MapPoint> { points[1], points[2] }); // 第二条边
-                                Polyline edgeLine3 = PolylineBuilder.CreatePolyline(new List<MapPoint> { points[2], points[0] }); // 第三条边
-
-                                // 添加edgeLine1到TinEdgeFeatureClass
-                                rowBuffer[facilitySiteDefinition.GetShapeField()] = edgeLine1;
-                                using (Feature feature1 = TinEdgeFeatureClass.CreateRow(rowBuffer))
+                                if (all || !addedFeaturesHashSet.Contains(point2Key))
                                 {
-                                    //To Indicate that the attribute table has to be updated
-                                    context.Invalidate(feature1);
+                                    // 添加point2到TinEdgeFeatureClass
+                                    rowBuffer[facilitySiteDefinition.GetShapeField()] = points[1];
+                                    using (Feature feature2 = outputFeatureClass.CreateRow(rowBuffer))
+                                    {
+                                        //To Indicate that the attribute table has to be updated
+                                        context.Invalidate(feature2);
+                                    }
+                                    addedFeaturesHashSet.Add(point2Key);
                                 }
 
-                                // 添加edgeLine2到TinEdgeFeatureClass
-                                rowBuffer[facilitySiteDefinition.GetShapeField()] = edgeLine2;
-                                using (Feature feature2 = TinEdgeFeatureClass.CreateRow(rowBuffer))
+                                if (all || !addedFeaturesHashSet.Contains(point3Key))
                                 {
-                                    //To Indicate that the attribute table has to be updated
-                                    context.Invalidate(feature2);
+                                    // 添加point3到TinEdgeFeatureClass
+                                    rowBuffer[facilitySiteDefinition.GetShapeField()] = points[0];
+                                    using (Feature feature3 = outputFeatureClass.CreateRow(rowBuffer))
+                                    {
+                                        //To Indicate that the attribute table has to be updated
+                                        context.Invalidate(feature3);
+                                    }
+                                    addedFeaturesHashSet.Add(point3Key);
+                                }
+                            }
+                            else if(type == "Edge")
+                            {
+                                if (all || !addedFeaturesHashSet.Contains(edge1Key))
+                                {
+                                    // 添加edgeLine1到TinEdgeFeatureClass
+                                    rowBuffer[facilitySiteDefinition.GetShapeField()] = edgeLine1;
+                                    using (Feature feature1 = outputFeatureClass.CreateRow(rowBuffer))
+                                    {
+                                        //To Indicate that the attribute table has to be updated
+                                        context.Invalidate(feature1);
+                                    }
+                                    addedFeaturesHashSet.Add(edge1Key);
                                 }
 
-                                // 添加edgeLine3到TinEdgeFeatureClass
-                                rowBuffer[facilitySiteDefinition.GetShapeField()] = edgeLine3;
-                                using (Feature feature3 = TinEdgeFeatureClass.CreateRow(rowBuffer))
+                                if (all || !addedFeaturesHashSet.Contains(edge2Key))
                                 {
-                                    //To Indicate that the attribute table has to be updated
-                                    context.Invalidate(feature3);
+                                    // 添加edgeLine2到TinEdgeFeatureClass
+                                    rowBuffer[facilitySiteDefinition.GetShapeField()] = edgeLine2;
+                                    using (Feature feature2 = outputFeatureClass.CreateRow(rowBuffer))
+                                    {
+                                        //To Indicate that the attribute table has to be updated
+                                        context.Invalidate(feature2);
+                                    }
+                                    addedFeaturesHashSet.Add(edge2Key);
                                 }
+
+                                if (all || !addedFeaturesHashSet.Contains(edge3Key))
+                                {
+                                    // 添加edgeLine3到TinEdgeFeatureClass
+                                    rowBuffer[facilitySiteDefinition.GetShapeField()] = edgeLine3;
+                                    using (Feature feature3 = outputFeatureClass.CreateRow(rowBuffer))
+                                    {
+                                        //To Indicate that the attribute table has to be updated
+                                        context.Invalidate(feature3);
+                                    }
+                                    addedFeaturesHashSet.Add(edge3Key);
+                                }
+                            }
+                            else
+                            {
+                                return;
                             }
                         }
                     }
                 }
 
-            }, TinEdgeFeatureClass);
+            }, outputFeatureClass);
 
             try
             {
-                var creationResult = editOperation.Execute();
-                MessageBox.Show("图层" + edgeLyrName + "插入要素成功！");
-            }
-            catch (GeodatabaseException exObj)
-            {
-                var creationResult = exObj.Message;
-            }
-        }
-
-        public static void TinTriangle2Nodes(string triangleLyrName, string nodeLyrName, bool deduplicate)
-        {
-            Geodatabase gdb =
-                new Geodatabase(new FileGeodatabaseConnectionPath(new Uri(Project.Current.DefaultGeodatabasePath)));
-
-            // 创建SchemaBuilder
-            SchemaBuilder schemaBuilder = new SchemaBuilder(gdb);
-
-            FeatureClass TinNodeFeatureClass = null;
-
-            using (gdb)
-            {
-                var shapeDescription = new ShapeDescription(GeometryType.Point, SpatialReferences.WebMercator)
+                if (!editOperation.IsEmpty)
                 {
-                    HasM = false,
-                    HasZ = true
-                };
-
-                //var shapeFieldDescription = new ArcGIS.Core.Data.DDL.FieldDescription("aaa", FieldType.String); 
-
-                var fcName = nodeLyrName;
-                try
-                {
-                    // 收集字段列表
-                    var fieldDescriptions = new List<ArcGIS.Core.Data.DDL.FieldDescription>()
+                    MessageBox.Show("图层" + outputLyrName + "插入要素");
+                    creationResult = editOperation.Execute();
+                    if (creationResult)
                     {
-                        //shapeFieldDescription,
-                    };
-
-                    // 创建FeatureClassDescription
-                    var fcDescription = new FeatureClassDescription(fcName, fieldDescriptions, shapeDescription);
-
-                    // 将创建任务添加到DDL任务列表中
-                    schemaBuilder.Create(fcDescription);
-
-                    // 执行DDL
-                    bool success = schemaBuilder.Build();
-
-                    if (success)
-                    {
-                        MessageBox.Show("新建成功!");
+                        // Save the changes
+                        Project.Current.SaveEditsAsync();
                     }
                     else
                     {
-                        MessageBox.Show("新建失败!");
-                    }
-
-                    TinNodeFeatureClass = gdb.OpenDataset<FeatureClass>(fcName);
-
-                    if (TinNodeFeatureClass != null)
-                    {
-                        MessageBox.Show("图层" + fcName + "存在");
+                        message = editOperation.ErrorMessage;
                     }
                 }
-                catch (Exception ex)
-                {
-                    MessageBox.Show($@"Exception: {ex}");
-                }
-            }
-
-            // 获取要素类的Table对象
-            Table table = TinNodeFeatureClass as Table;
-
-            // 检查要素类是否为空
-            if (table != null && table.GetCount() == 0)
-            {
-                // 要素类为空
-                MessageBox.Show("要素类为空。");
-            }
-            else
-            {
-                // 要素类不为空
-                MessageBox.Show("要素类不为空，其中含有" + table.GetCount() + "个要素");
-                return;
-            }
-
-            //declare the callback here. We are not executing it yet
-            EditOperation editOperation = new EditOperation();
-            editOperation.Callback(context =>
-            {
-                FeatureClassDefinition facilitySiteDefinition = TinNodeFeatureClass.GetDefinition();
-
-                using (RowBuffer rowBuffer = TinNodeFeatureClass.CreateRowBuffer())
-                {
-                    var Trianglelyr = MapView.Active.Map.GetLayersAsFlattenedList().OfType<FeatureLayer>().Where(l => (l as FeatureLayer).Name == triangleLyrName).FirstOrDefault() as FeatureLayer;
-                    if (Trianglelyr == null)
-                    {
-                        MessageBox.Show("未找到" + triangleLyrName + "图层!", "提示");
-                    }
-
-                    if (Trianglelyr != null)
-                    {
-                        // 获取Trianglelyr图层的要素类
-                        var featureClass = Trianglelyr.GetTable() as FeatureClass;
-
-                        // 遍历三角形要素
-                        using (var cursor = featureClass.Search(null, true))
-                        {
-                            while (cursor.MoveNext())
-                            {
-                                var triangle = cursor.Current as Feature;
-
-                                // 获取三角形的顶点集合
-                                //var points = (feature.GetShape() as Polygon).Points;
-                                var polygon = triangle.GetShape() as Polygon;
-                                var points = polygon.Points;
-
-
-                                long objectId = triangle.GetObjectID();
-                                string objectIdString = objectId.ToString();
-
-
-                                // 添加point1到TinEdgeFeatureClass
-                                rowBuffer[facilitySiteDefinition.GetShapeField()] = points[0];
-                                using (Feature feature1 = TinNodeFeatureClass.CreateRow(rowBuffer))
-                                {
-                                    //To Indicate that the attribute table has to be updated
-                                    context.Invalidate(feature1);
-                                }
-
-                                // 添加point2到TinEdgeFeatureClass
-                                rowBuffer[facilitySiteDefinition.GetShapeField()] = points[1];
-                                using (Feature feature2 = TinNodeFeatureClass.CreateRow(rowBuffer))
-                                {
-                                    //To Indicate that the attribute table has to be updated
-                                    context.Invalidate(feature2);
-                                }
-
-                                // 添加point3到TinEdgeFeatureClass
-                                rowBuffer[facilitySiteDefinition.GetShapeField()] = points[2];
-                                using (Feature feature3 = TinNodeFeatureClass.CreateRow(rowBuffer))
-                                {
-                                    //To Indicate that the attribute table has to be updated
-                                    context.Invalidate(feature3);
-                                }
-                            }
-                        }
-                    }
-                }
-
-            }, TinNodeFeatureClass);
-
-            try
-            {
-                var creationResult = editOperation.Execute();
-                MessageBox.Show("图层" + nodeLyrName + "插入要素成功！");
             }
             catch (GeodatabaseException exObj)
             {
-                var creationResult = exObj.Message;
+                message = exObj.Message;
             }
-        }
 
+            if (!string.IsNullOrEmpty(message))
+                MessageBox.Show("插入图层" + outputLyrName + "发生错误: " + message);
+        }
     }
 
     public class TinDataset
