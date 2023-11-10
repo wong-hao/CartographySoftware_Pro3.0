@@ -16,6 +16,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using ArcGIS.Core.Internal.Geometry;
 using ArcGIS.Desktop.Mapping;
+using MessageBox = ArcGIS.Desktop.Framework.Dialogs.MessageBox;
 
 namespace SMGI_Common
 {
@@ -24,6 +25,78 @@ namespace SMGI_Common
 
 
     }
+
+    /*
+         public class TinNode
+       {
+       public int NodeID { get; set; }
+       public List<TinEdge> ConnectedEdges { get; set; }
+       
+       public TinNode(int id)
+       {
+       if (id <= 0)
+       {
+       throw new ArgumentException("Node ID must be a positive integer.");
+       }
+       
+       NodeID = id;
+       ConnectedEdges = new List<TinEdge>();
+       }
+       }
+       
+       public class TinEdge
+       {
+       public int EdgeID { get; set; }
+       public int StartNodeID { get; set; }
+       public int EndNodeID { get; set; }
+       
+       public TinEdge(int id, int startNodeID, int endNodeID)
+       {
+       if (startNodeID == endNodeID)
+       {
+       throw new ArgumentException("Start node and end node cannot be the same.");
+       }
+       
+       EdgeID = id;
+       StartNodeID = startNodeID;
+       EndNodeID = endNodeID;
+       }
+       }
+       
+       public class TinTriangle
+       {
+       public int TriangleID { get; set; }
+       public int[] EdgeIDs { get; set; }
+       
+       public TinTriangle(int id, int edge1ID, int edge2ID, int edge3ID)
+       {
+       // 检测边是否不相同
+       if (edge1ID == edge2ID || edge1ID == edge3ID || edge2ID == edge3ID)
+       {
+       throw new ArgumentException("Edges cannot be completely the same in a triangle.");
+       }
+       
+       EdgeIDs = new int[] { edge1ID, edge2ID, edge3ID };
+       TriangleID = id;
+       }
+       }
+       
+       
+       public class TinDataset
+       {
+       public List<TinNode> Nodes { get; set; }
+       public List<TinEdge> Edges { get; set; }
+       public List<TinTriangle> Triangles { get; set; }
+       
+       public TinDataset()
+       {
+       Nodes = new List<TinNode>();
+       Edges = new List<TinEdge>();
+       Triangles = new List<TinTriangle>();
+       }
+       
+       }
+     */
 
     public class TinNode
     {
@@ -87,20 +160,44 @@ namespace SMGI_Common
             TriangleID = id;
         }
 
-        // Must be called within QueuedTask.Run()
-        public bool FeatureClassExists(Geodatabase geodatabase, string featureClassName)
+        static string GetPolylineIdentifier(Polyline polyline)
         {
-            try
+            // 对 Polyline 的点按照坐标值进行排序
+            var sortedPoints = polyline.Points.OrderBy(p => p.X).ThenBy(p => p.Y).ThenBy(p => p.Z);
+
+            // 获取 Polyline 的起点和终点
+            MapPoint startPoint = sortedPoints.First();
+            MapPoint endPoint = sortedPoints.Last();
+
+            // 获取排序后的点集合的哈希值作为唯一标识符
+            return $"{startPoint.X},{startPoint.Y},{startPoint.Z},{endPoint.X},{endPoint.Y},{endPoint.Z}";
+        }
+
+        public static int GetTriangleNum(string triangleLyrName)
+        {
+            int triangleNum = 0;
+
+            var Trianglelyr =
+                MapView.Active.Map.GetLayersAsFlattenedList().OfType<FeatureLayer>()
+                    .Where(l => (l as FeatureLayer).Name == triangleLyrName).FirstOrDefault() as FeatureLayer;
+            if (Trianglelyr == null)
             {
-                FeatureClassDefinition featureClassDefinition = geodatabase.GetDefinition<FeatureClassDefinition>(featureClassName);
-                featureClassDefinition.Dispose();
-                return true;
+                MessageBox.Show("未找到" + triangleLyrName + "图层!", "提示");
+                return 0;
             }
-            catch
+
+            // 获取Trianglelyr图层的要素类
+            var featureClass = Trianglelyr.GetTable() as FeatureClass;
+
+            using (var cursor = featureClass.Search(null, true))
             {
-                // GetDefinition throws an exception if the definition doesn't exist
-                return false;
+                while (cursor.MoveNext())
+                {
+                    triangleNum ++;
+                }
             }
+
+            return triangleNum;
         }
 
         public static void TinTriangleTransition(string triangleLyrName, string outputLyrName, String type, bool all)
@@ -203,19 +300,19 @@ namespace SMGI_Common
             EditOperation editOperation = new EditOperation();
             editOperation.Callback(context =>
             {
-                FeatureClassDefinition facilitySiteDefinition = outputFeatureClass.GetDefinition();
+                FeatureClassDefinition outputFeatureClassDefinition = outputFeatureClass.GetDefinition();
 
                 using (RowBuffer rowBuffer = outputFeatureClass.CreateRowBuffer())
                 {
 
                     // 获取Trianglelyr图层的要素类
-                    var featureClass = Trianglelyr.GetTable() as FeatureClass;
+                    var triangleFeatureClass = Trianglelyr.GetTable() as FeatureClass;
 
                     // 在方法开始前创建一个 HashSet 用于唯一标识符
                     HashSet<string> addedFeaturesHashSet = new HashSet<string>();
 
                     // 遍历三角形要素
-                    using (var cursor = featureClass.Search(null, true))
+                    using (var cursor = triangleFeatureClass.Search(null, true))
                     {
                         while (cursor.MoveNext())
                         {
@@ -228,17 +325,20 @@ namespace SMGI_Common
                             string objectIdString = objectId.ToString();
 
                             var points = polygon.Points;
-                            string point1Key = $"{points[2].X},{points[2].Y}";
-                            string point2Key = $"{points[1].X},{points[1].Y}";
-                            string point3Key = $"{points[0].X},{points[0].Y}";
+                            MapPoint point1Shape = points[2];
+                            MapPoint point2Shape = points[1];
+                            MapPoint point3Shape = points[0];
+                            string point1Key = $"{point1Shape.X},{point1Shape.Y},{point1Shape.Z}";
+                            string point2Key = $"{point2Shape.X},{point2Shape.Y},{point2Shape.Z}";
+                            string point3Key = $"{point3Shape.X},{point3Shape.Y},{point3Shape.Z}";
 
                             // 获取三角形的三条边
-                            Polyline edgeLine1 = PolylineBuilder.CreatePolyline(new List<MapPoint> { points[1], points[2] }); // 第一条边
-                            Polyline edgeLine2 = PolylineBuilder.CreatePolyline(new List<MapPoint> { points[0], points[1] }); // 第二条边
-                            Polyline edgeLine3 = PolylineBuilder.CreatePolyline(new List<MapPoint> { points[2], points[0] }); // 第三条边
-                            string edge1Key = $"{edgeLine1.Length3D}"; // 边1的唯一标识符
-                            string edge2Key = $"{edgeLine2.Length3D}"; // 边2的唯一标识符
-                            string edge3Key = $"{edgeLine3.Length3D}"; // 边3的唯一标识符
+                            Polyline edgeLine1 = PolylineBuilder.CreatePolyline(new List<MapPoint> { point2Shape, point1Shape }); // 第一条边
+                            Polyline edgeLine2 = PolylineBuilder.CreatePolyline(new List<MapPoint> { point3Shape, point2Shape }); // 第二条边
+                            Polyline edgeLine3 = PolylineBuilder.CreatePolyline(new List<MapPoint> { point1Shape, point3Shape }); // 第三条边
+                            string edge1Key = $"{GetPolylineIdentifier(edgeLine1)}"; // 边1的唯一标识符
+                            string edge2Key = $"{GetPolylineIdentifier(edgeLine2)}"; // 边2的唯一标识符
+                            string edge3Key = $"{GetPolylineIdentifier(edgeLine3)}"; // 边3的唯一标识符
 
                             Debug.WriteLine("对于三角形" + objectIdString + "," + "三条边的唯一标志符号分别是: " + "edge1Key: " + edge1Key +
                                             "," + "edge2Key: " + edge2Key + "," + "edge3Key: " + edge3Key);
@@ -246,8 +346,8 @@ namespace SMGI_Common
                             {
                                 if (all || !addedFeaturesHashSet.Contains(point1Key))
                                 {
-                                    // 添加point1到TinEdgeFeatureClass
-                                    rowBuffer[facilitySiteDefinition.GetShapeField()] = points[2];
+                                    // 添加point1到outputFeatureClass
+                                    rowBuffer[outputFeatureClassDefinition.GetShapeField()] = point1Shape;
                                     using (Feature feature1 = outputFeatureClass.CreateRow(rowBuffer))
                                     {
                                         //To Indicate that the attribute table has to be updated
@@ -258,8 +358,8 @@ namespace SMGI_Common
 
                                 if (all || !addedFeaturesHashSet.Contains(point2Key))
                                 {
-                                    // 添加point2到TinEdgeFeatureClass
-                                    rowBuffer[facilitySiteDefinition.GetShapeField()] = points[1];
+                                    // 添加point2到outputFeatureClass
+                                    rowBuffer[outputFeatureClassDefinition.GetShapeField()] = point2Shape;
                                     using (Feature feature2 = outputFeatureClass.CreateRow(rowBuffer))
                                     {
                                         //To Indicate that the attribute table has to be updated
@@ -270,8 +370,8 @@ namespace SMGI_Common
 
                                 if (all || !addedFeaturesHashSet.Contains(point3Key))
                                 {
-                                    // 添加point3到TinEdgeFeatureClass
-                                    rowBuffer[facilitySiteDefinition.GetShapeField()] = points[0];
+                                    // 添加point3到outputFeatureClass
+                                    rowBuffer[outputFeatureClassDefinition.GetShapeField()] = point3Shape;
                                     using (Feature feature3 = outputFeatureClass.CreateRow(rowBuffer))
                                     {
                                         //To Indicate that the attribute table has to be updated
@@ -284,8 +384,8 @@ namespace SMGI_Common
                             {
                                 if (all || !addedFeaturesHashSet.Contains(edge1Key))
                                 {
-                                    // 添加edgeLine1到TinEdgeFeatureClass
-                                    rowBuffer[facilitySiteDefinition.GetShapeField()] = edgeLine1;
+                                    // 添加edgeLine1到outputFeatureClass
+                                    rowBuffer[outputFeatureClassDefinition.GetShapeField()] = edgeLine1;
                                     using (Feature feature1 = outputFeatureClass.CreateRow(rowBuffer))
                                     {
                                         //To Indicate that the attribute table has to be updated
@@ -296,8 +396,8 @@ namespace SMGI_Common
 
                                 if (all || !addedFeaturesHashSet.Contains(edge2Key))
                                 {
-                                    // 添加edgeLine2到TinEdgeFeatureClass
-                                    rowBuffer[facilitySiteDefinition.GetShapeField()] = edgeLine2;
+                                    // 添加edgeLine2到outputFeatureClass
+                                    rowBuffer[outputFeatureClassDefinition.GetShapeField()] = edgeLine2;
                                     using (Feature feature2 = outputFeatureClass.CreateRow(rowBuffer))
                                     {
                                         //To Indicate that the attribute table has to be updated
@@ -308,8 +408,8 @@ namespace SMGI_Common
 
                                 if (all || !addedFeaturesHashSet.Contains(edge3Key))
                                 {
-                                    // 添加edgeLine3到TinEdgeFeatureClass
-                                    rowBuffer[facilitySiteDefinition.GetShapeField()] = edgeLine3;
+                                    // 添加edgeLine3到outputFeatureClass
+                                    rowBuffer[outputFeatureClassDefinition.GetShapeField()] = edgeLine3;
                                     using (Feature feature3 = outputFeatureClass.CreateRow(rowBuffer))
                                     {
                                         //To Indicate that the attribute table has to be updated

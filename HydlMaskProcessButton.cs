@@ -1,6 +1,7 @@
 ﻿using ArcGIS.Core.CIM;
 using ArcGIS.Core.Data;
 using ArcGIS.Core.Geometry;
+using ArcGIS.Core.Internal.Geometry;
 using ArcGIS.Desktop.Framework.Contracts;
 using ArcGIS.Desktop.Framework.Dialogs;
 using ArcGIS.Desktop.Framework.Threading.Tasks;
@@ -10,9 +11,14 @@ using SMGI_Common;
 using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Diagnostics;
 using System.Linq;
 using System.Reflection.Emit;
 using System.Windows.Forms.VisualStyles;
+using ArcGIS.Core.Data.DDL;
+using ArcGIS.Core.Data.Exceptions;
+using ArcGIS.Desktop.Core;
+using ArcGIS.Desktop.Editing;
 
 namespace SMGI_Plugin_EmergencyMap
 {
@@ -37,6 +43,7 @@ namespace SMGI_Plugin_EmergencyMap
             //目前还未找到方法判断不是临时数据
             await QueuedTask.Run(() =>
             {
+                Z3_Solver.Solve();
 
                 DataTable ruleDt = new DataTable();
                 try
@@ -181,54 +188,83 @@ namespace SMGI_Plugin_EmergencyMap
                     MessageBox.Show("未找到匹配的三角形。");
                 }
 
-                var Trianglelyr = MapView.Active.Map.GetLayersAsFlattenedList().OfType<FeatureLayer>().Where(l => (l as FeatureLayer).Name == "CCC_TinTriangle").FirstOrDefault() as FeatureLayer;
-                if (Trianglelyr == null)
+                int triangleNum = TinTriangle.GetTriangleNum("CCC_TinTriangle");
+                TinTriangle.TinTriangleTransition("CCC_TinTriangle", "CCC_TinNodesAll", "Node", true);
+                TinTriangle.TinTriangleTransition("CCC_TinTriangle", "CCC_TinEdgesAll", "Edge", true);
+                TinTriangle.TinTriangleTransition("CCC_TinTriangle", "CCC_TinNodesNotAll", "Node", false);
+                TinTriangle.TinTriangleTransition("CCC_TinTriangle", "CCC_TinEdgesNotAll", "Edge", false);
+
+                /*
+                // 创建节点
+                List<TinNode> nodes = new List<TinNode>();
+
+                for (int i = 1; i <= 3 * triangleNum; i++)
                 {
-                    MessageBox.Show("未找到CCC_TinTriangle图层!", "提示");
+                    TinNode node = new TinNode(i);
+                    nodes.Add(node);
                 }
 
-                if (Trianglelyr != null)
+                // 创建边
+                List<TinEdge> edges = new List<TinEdge>();
+
+                for (int i = 1; i <= 3 * triangleNum; i++)
                 {
-                    // 获取Trianglelyr图层的要素类
-                    var featureClass = Trianglelyr.GetTable() as FeatureClass;
-
-                    // 遍历三角形要素
-                    using (var cursor = featureClass.Search(null, true))
+                    if (i % 3 == 1)
                     {
-                        while (cursor.MoveNext())
-                        {
-                            var feature = cursor.Current as Feature;
+                        TinEdge edge = new TinEdge(i, i, i + 1);
+                        edges.Add(edge);
 
-                            // 获取三角形的几何形状（多边形）
-                            var polygon = feature.GetShape() as Polygon;
-
-                            // 获取多边形的边
-                            var rings = polygon.Parts;
-                            foreach (var ring in rings)
-                            {
-                                // 遍历多边形的每一条边
-                                for (int i = 0; i < ring.Count - 1; i++)
-                                {
-                                    var startPoint = ring[i];
-                                    var endPoint = ring[i + 1];
-
-                                    // 在这里处理每一条边，可以将起点和终点坐标保存下来，或者进行其他操作
-                                    // startPoint 和 endPoint 是 IPoint 接口的实例，可以获取坐标信息
-                                }
-                            }
-
-                            // 获取多边形的顶点
-                            var points = polygon.Points;
-                            foreach (var point in points)
-                            {
-                                // 在这里处理每一个顶点，可以获取其坐标信息
-                                // point 是 IPoint 接口的实例，可以获取坐标信息
-                                Console.WriteLine($"Point: X={point.X}, Y={point.Y}");
-
-                            }
-                        }
+                    }
+                    else if (i % 3 == 2)
+                    {
+                        TinEdge edge = new TinEdge(i, i, i + 1);
+                        edges.Add(edge);
+                    }
+                    else if (i % 3 == 0)
+                    {
+                        TinEdge edge = new TinEdge(i, i - 2, i);
+                        edges.Add(edge);
+                    }
+                    else
+                    {
+                        break;
                     }
                 }
+
+                // 创建三角形
+                List<TinTriangle> triangles = new List<TinTriangle>();
+
+                for (int i = 1; i <= triangleNum; i++)
+                {
+                    TinTriangle triangle = new TinTriangle(i, 3 * i - 2, 3 * i - 1 , 3 * i);
+                    triangles.Add(triangle);
+                }
+
+                // 添加节点、边和三角形到数据结构中
+                tinData.Nodes = nodes;
+                tinData.Edges = edges;
+                tinData.Triangles = triangles;
+
+                // 输出节点、边和三角形的关联信息
+                foreach (var node in tinData.Nodes)
+                {
+                    string connectedEdgesInfo = string.Join(", ", node.ConnectedEdges.Select(e => e.ToString()));
+                    GApplication.writeLog(string.Format("Node ID: {0}, Connected Edges: {1}", node.NodeID, connectedEdgesInfo), GApplication.DEBUG, false);
+                }
+
+                foreach (var edge in tinData.Edges)
+                {
+                    GApplication.writeLog(string.Format("Edge ID: {0}, Start Node ID: {1}, End Node ID: {2}", edge.EdgeID, edge.StartNodeID, edge.EndNodeID), GApplication.INFO, false);
+                }
+
+                foreach (var tri in tinData.Triangles)
+                {
+                    string edgesInfo = string.Join(", ", tri.EdgeIDs.Select(e => string.Format("Edge ID: {0}", e)));
+                    GApplication.writeLog(string.Format("Triangle ID: {0}, Edges: {1}", tri.TriangleID, edgesInfo), GApplication.FATAL, false);
+                    MessageBox.Show("输出哦");
+                }
+
+                */
 
 
                 var HYDLlyr = MapView.Active.Map.GetLayersAsFlattenedList().OfType<FeatureLayer>().Where(l => (l as FeatureLayer).Name == maskingLyr).FirstOrDefault() as FeatureLayer;
