@@ -27,10 +27,10 @@ namespace SMGI_Common
     }
 
     /*
-         public class TinNode
+    public class TinNode
        {
        public int NodeID { get; set; }
-       public List<TinEdge> ConnectedEdges { get; set; }
+       public List<int> ConnectedEdgeIDs { get; set; }
        
        public TinNode(int id)
        {
@@ -40,21 +40,30 @@ namespace SMGI_Common
        }
        
        NodeID = id;
-       ConnectedEdges = new List<TinEdge>();
+       ConnectedEdgeIDs = new List<int>();
        }
-       }
+       }    
        
-       public class TinEdge
+public class TinEdge
        {
        public int EdgeID { get; set; }
        public int StartNodeID { get; set; }
        public int EndNodeID { get; set; }
        
-       public TinEdge(int id, int startNodeID, int endNodeID)
+       public TinEdge(int id, int startNodeID, int endNodeID, TinDataset dataset)
        {
        if (startNodeID == endNodeID)
        {
        throw new ArgumentException("Start node and end node cannot be the same.");
+       }
+       
+       TinNode startNode = dataset.Nodes.FirstOrDefault(node => node.NodeID == startNodeID);
+       TinNode endNode = dataset.Nodes.FirstOrDefault(node => node.NodeID == endNodeID);
+       
+       if (startNode != null && endNode != null)
+       {
+       startNode.ConnectedEdgeIDs.Add(id);
+       endNode.ConnectedEdgeIDs.Add(id);
        }
        
        EdgeID = id;
@@ -62,14 +71,14 @@ namespace SMGI_Common
        EndNodeID = endNodeID;
        }
        }
-       
-       public class TinTriangle
+
+           public class TinTriangle
        {
        public int TriangleID { get; set; }
        public int[] EdgeIDs { get; set; }
        
-       public TinTriangle(int id, int edge1ID, int edge2ID, int edge3ID)
-       {
+        public TinTriangle(int id, int edge1ID, int edge2ID, int edge3ID, TinDataset dataset)
+    {
        // 检测边是否不相同
        if (edge1ID == edge2ID || edge1ID == edge3ID || edge2ID == edge3ID)
        {
@@ -82,17 +91,17 @@ namespace SMGI_Common
        }
        
        
-       public class TinDataset
+    public class TinDataset
        {
        public List<TinNode> Nodes { get; set; }
        public List<TinEdge> Edges { get; set; }
        public List<TinTriangle> Triangles { get; set; }
        
-       public TinDataset()
+       public TinDataset(List<TinNode> nodes, List<TinEdge> edges, List<TinTriangle> triangles)
        {
-       Nodes = new List<TinNode>();
-       Edges = new List<TinEdge>();
-       Triangles = new List<TinTriangle>();
+       Nodes = nodes;
+       Edges = edges;
+       Triangles = triangles;
        }
        
        }
