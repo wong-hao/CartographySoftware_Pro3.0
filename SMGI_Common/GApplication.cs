@@ -18,9 +18,9 @@ using System.Xml.Linq;
 using System.Windows.Input;
 using ArcGIS.Desktop.Framework.Dialogs;
 using ArcGIS.Desktop.Internal.Mapping;
-using log4net.Config;
-using log4net;
 using System.Windows;
+using log4net;
+using log4net.Config;
 using MessageBox = ArcGIS.Desktop.Framework.Dialogs.MessageBox;
 
 namespace SMGI_Common
@@ -261,8 +261,7 @@ namespace SMGI_Common
 
         public Dictionary<string, bool> CmdsUID = new Dictionary<string, bool>();
 
-        //编辑
-        public double ReferenceScale = 10000;
+
         //处理窗体信息
         public string MsgForm = string.Empty;
         public delegate bool LayerChecker(Layer info);
@@ -277,6 +276,13 @@ namespace SMGI_Common
         public Map Map
         {
             get => mapView.Map;
+        }
+
+        //编辑
+        public double referenceScale = 10000;
+        public double ReferenceScale
+        {
+            get => map.ReferenceScale;
         }
 
         public string Caption
@@ -318,7 +324,15 @@ namespace SMGI_Common
                 return assemblyCacheFolder;
             }
         }
-
+        
+        public string ProjectPath
+        {
+            get
+            {
+                string path = Project.Current.GetItems<MapProjectItem>().First().Path;  
+                return path;
+            }
+        }
         /// <summary>
         /// 图层数据字典匹配：英文对中文
         /// </summary>

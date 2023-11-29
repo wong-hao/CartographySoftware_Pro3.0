@@ -1,5 +1,4 @@
-﻿using ArcGIS.Core.CIM;
-using ArcGIS.Core.Data;
+﻿using ArcGIS.Core.Data;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -69,6 +68,36 @@ namespace SMGI_Common
         }
 
         /// <summary>
+        /// 获取所有表名
+        /// </summary>
+        /// <param name="mdbFilePath"></param>
+        /// <returns></returns>
+        public static List<string> GetAllTableNames(string mdbFilePath)
+        {
+            List<string> tableNames = new List<string>();
+            try
+            {
+                using (var connection = new OleDbConnection("Provider=Microsoft.ACE.OLEDB.12.0;" + "data source=" + mdbFilePath))
+                {
+                    connection.Open();
+                    var dt = connection.GetOleDbSchemaTable(OleDbSchemaGuid.Tables, new object[] { null, null, null, "TABLE" });
+
+                    for (int i = 0; i < dt.Rows.Count; i++)
+                    {
+                        tableNames.Add(dt.Rows[i].ItemArray[2].ToString());
+                    }
+                    connection.Close();
+                }
+                return tableNames;
+            }
+            catch (Exception ex)
+            {
+                // MessageBox.Show(ex.Message);
+                return tableNames;
+            }
+        }
+
+        /// <summary>
         /// 读取gdb数据库
         /// </summary>
         /// <param name="gdbFilePath"></param>
@@ -119,7 +148,5 @@ namespace SMGI_Common
             }
             return dataTable;
         }
-
-
     }
 }
