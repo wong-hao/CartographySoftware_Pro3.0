@@ -169,92 +169,92 @@ namespace SMGI_Plugin_EmergencyMap
                 TinTriangle.TinTriangleTransition("CCC_TinTriangle", "CCC_TinNodesNotAll", "Node", false);
                 TinTriangle.TinTriangleTransition("CCC_TinTriangle", "CCC_TinEdgesNotAll", "Edge", false);
 
-                                /*
-                List<TinNode> nodes = new List<TinNode>();
-                // 添加节点到 nodes 列表中
+                /*
+List<TinNode> nodes = new List<TinNode>();
+// 添加节点到 nodes 列表中
 
-                List<TinEdge> edges = new List<TinEdge>();
-                // 添加边到 edges 列表中
+List<TinEdge> edges = new List<TinEdge>();
+// 添加边到 edges 列表中
 
-                List<TinTriangle> triangles = new List<TinTriangle>();
-                // 添加三角形到 triangles 列表中
+List<TinTriangle> triangles = new List<TinTriangle>();
+// 添加三角形到 triangles 列表中
 
-                TinDataset tinData = new TinDataset(nodes, edges, triangles);
-
-
-                int triangleNum = TinTriangle.GetTriangleNum("CCC_TinTriangle");
-                TinTriangle.TinTriangleTransition("CCC_TinTriangle", "CCC_TinNodesAll", "Node", true);
-                TinTriangle.TinTriangleTransition("CCC_TinTriangle", "CCC_TinEdgesAll", "Edge", true);
-                TinTriangle.TinTriangleTransition("CCC_TinTriangle", "CCC_TinNodesNotAll", "Node", false);
-                TinTriangle.TinTriangleTransition("CCC_TinTriangle", "CCC_TinEdgesNotAll", "Edge", false);
+TinDataset tinData = new TinDataset(nodes, edges, triangles);
 
 
-                // 创建节点
+int triangleNum = TinTriangle.GetTriangleNum("CCC_TinTriangle");
+TinTriangle.TinTriangleTransition("CCC_TinTriangle", "CCC_TinNodesAll", "Node", true);
+TinTriangle.TinTriangleTransition("CCC_TinTriangle", "CCC_TinEdgesAll", "Edge", true);
+TinTriangle.TinTriangleTransition("CCC_TinTriangle", "CCC_TinNodesNotAll", "Node", false);
+TinTriangle.TinTriangleTransition("CCC_TinTriangle", "CCC_TinEdgesNotAll", "Edge", false);
 
-                for (int i = 1; i <= 3 * triangleNum; i++)
-                {
-                TinNode node = new TinNode(i);
-                nodes.Add(node);
-                }
 
-                // 创建边
+// 创建节点
 
-                for (int i = 1; i <= 3 * triangleNum; i++)
-                {
-                if (i % 3 == 1)
-                {
-                TinEdge edge = new TinEdge(i, i, i + 1, tinData);
-                edges.Add(edge);
+for (int i = 1; i <= 3 * triangleNum; i++)
+{
+TinNode node = new TinNode(i);
+nodes.Add(node);
+}
 
-                }
-                else if (i % 3 == 2)
-                {
-                TinEdge edge = new TinEdge(i, i, i + 1, tinData);
-                edges.Add(edge);
-                }
-                else if (i % 3 == 0)
-                {
-                TinEdge edge = new TinEdge(i, i - 2, i, tinData);
-                edges.Add(edge);
-                }
-                else
-                {
-                break;
-                }
-                }
+// 创建边
 
-                // 创建三角形
+for (int i = 1; i <= 3 * triangleNum; i++)
+{
+if (i % 3 == 1)
+{
+TinEdge edge = new TinEdge(i, i, i + 1, tinData);
+edges.Add(edge);
 
-                for (int i = 1; i <= triangleNum; i++)
-                {
-                TinTriangle triangle = new TinTriangle(i, 3 * i - 2, 3 * i - 1, 3 * i);
-                triangles.Add(triangle);
-                }
+}
+else if (i % 3 == 2)
+{
+TinEdge edge = new TinEdge(i, i, i + 1, tinData);
+edges.Add(edge);
+}
+else if (i % 3 == 0)
+{
+TinEdge edge = new TinEdge(i, i - 2, i, tinData);
+edges.Add(edge);
+}
+else
+{
+break;
+}
+}
 
-                // 添加节点、边和三角形到数据结构中
-                tinData.Nodes = nodes;
-                tinData.Edges = edges;
-                tinData.Triangles = triangles;
+// 创建三角形
 
-                // 输出节点、边和三角形的关联信息
-                foreach (var node in tinData.Nodes)
-                {
-                string connectedEdgesInfo = string.Join(", ", node.ConnectedEdgeIDs.Select(edgeID => edgeID.ToString()));
-                GApplication.writeLog(string.Format("Node ID: {0}, Connected Edge IDs: {1}", node.NodeID, connectedEdgesInfo), GApplication.DEBUG, false);
-                }
+for (int i = 1; i <= triangleNum; i++)
+{
+TinTriangle triangle = new TinTriangle(i, 3 * i - 2, 3 * i - 1, 3 * i, tinData);
+triangles.Add(triangle);
+}
 
-                foreach (var edge in tinData.Edges)
-                {
-                GApplication.writeLog(string.Format("Edge ID: {0}, Start Node ID: {1}, End Node ID: {2}", edge.EdgeID, edge.StartNodeID, edge.EndNodeID), GApplication.INFO, false);
-                }
+// 添加节点、边和三角形到数据结构中
+tinData.Nodes = nodes;
+tinData.Edges = edges;
+tinData.Triangles = triangles;
 
-                foreach (var tri in tinData.Triangles)
-                {
-                string edgesInfo = string.Join(", ", tri.EdgeIDs.Select(e => string.Format("Edge ID: {0}", e)));
-                GApplication.writeLog(string.Format("Triangle ID: {0}, Edges: {1}", tri.TriangleID, edgesInfo), GApplication.FATAL, false);
-                }
+// 输出节点、边和三角形的关联信息
+foreach (var node in tinData.Nodes)
+{
+string connectedEdgesInfo = string.Join(", ", node.ConnectedEdgeIDs.Select(edgeID => edgeID.ToString()));
+GApplication.writeLog(string.Format("Node ID: {0}, Connected Edge IDs: {1}", node.NodeID, connectedEdgesInfo), GApplication.DEBUG, false);
+}
 
-                */
+foreach (var edge in tinData.Edges)
+{
+GApplication.writeLog(string.Format("Edge ID: {0}, Start Node ID: {1}, End Node ID: {2}", edge.EdgeID, edge.StartNodeID, edge.EndNodeID), GApplication.INFO, false);
+}
+
+foreach (var tri in tinData.Triangles)
+{
+string edgesInfo = string.Join(", ", tri.EdgeIDs.Select(e => string.Format("Edge ID: {0}", e)));
+GApplication.writeLog(string.Format("Triangle ID: {0}, Edges: {1}", tri.TriangleID, edgesInfo), GApplication.FATAL, false);
+}
+
+*/
 
                 #endregion
             });

@@ -26,87 +26,6 @@ namespace SMGI_Common
 
     }
 
-    /*
-    public class TinNode
-       {
-       public int NodeID { get; set; }
-       public List<int> ConnectedEdgeIDs { get; set; }
-       
-       public TinNode(int id)
-       {
-       if (id <= 0)
-       {
-       throw new ArgumentException("Node ID must be a positive integer.");
-       }
-       
-       NodeID = id;
-       ConnectedEdgeIDs = new List<int>();
-       }
-       }    
-       
-public class TinEdge
-       {
-       public int EdgeID { get; set; }
-       public int StartNodeID { get; set; }
-       public int EndNodeID { get; set; }
-       
-       public TinEdge(int id, int startNodeID, int endNodeID, TinDataset dataset)
-       {
-       if (startNodeID == endNodeID)
-       {
-       throw new ArgumentException("Start node and end node cannot be the same.");
-       }
-       
-       TinNode startNode = dataset.Nodes.FirstOrDefault(node => node.NodeID == startNodeID);
-       TinNode endNode = dataset.Nodes.FirstOrDefault(node => node.NodeID == endNodeID);
-       
-       if (startNode != null && endNode != null)
-       {
-       startNode.ConnectedEdgeIDs.Add(id);
-       endNode.ConnectedEdgeIDs.Add(id);
-       }
-       
-       EdgeID = id;
-       StartNodeID = startNodeID;
-       EndNodeID = endNodeID;
-       }
-       }
-
-           public class TinTriangle
-       {
-       public int TriangleID { get; set; }
-       public int[] EdgeIDs { get; set; }
-       
-        public TinTriangle(int id, int edge1ID, int edge2ID, int edge3ID, TinDataset dataset)
-    {
-       // 检测边是否不相同
-       if (edge1ID == edge2ID || edge1ID == edge3ID || edge2ID == edge3ID)
-       {
-       throw new ArgumentException("Edges cannot be completely the same in a triangle.");
-       }
-       
-       EdgeIDs = new int[] { edge1ID, edge2ID, edge3ID };
-       TriangleID = id;
-       }
-       }
-       
-       
-    public class TinDataset
-       {
-       public List<TinNode> Nodes { get; set; }
-       public List<TinEdge> Edges { get; set; }
-       public List<TinTriangle> Triangles { get; set; }
-       
-       public TinDataset(List<TinNode> nodes, List<TinEdge> edges, List<TinTriangle> triangles)
-       {
-       Nodes = nodes;
-       Edges = edges;
-       Triangles = triangles;
-       }
-       
-       }
-     */
-
     public class TinNode
     {
         public int NodeID { get; set; }
@@ -596,8 +515,381 @@ public class TinEdge
 
             return targetTriangle;
         }
-
     }
+
+    /*
+public class TinNode
+   {
+   public int NodeID { get; set; }
+   public List<int> ConnectedEdgeIDs { get; set; }
+
+   public TinNode(int id)
+   {
+   if (id <= 0)
+   {
+   throw new ArgumentException("Node ID must be a positive integer.");
+   }
+
+   NodeID = id;
+   ConnectedEdgeIDs = new List<int>();
+   }
+   }
+
+   public class TinEdge
+   {
+   public int EdgeID { get; set; }
+   public int StartNodeID { get; set; }
+   public int EndNodeID { get; set; }
+
+   public TinEdge(int id, int startNodeID, int endNodeID, TinDataset dataset)
+   {
+   if (startNodeID == endNodeID)
+   {
+   throw new ArgumentException("Start node and end node cannot be the same.");
+   }
+
+   TinNode startNode = dataset.Nodes.FirstOrDefault(node => node.NodeID == startNodeID);
+   TinNode endNode = dataset.Nodes.FirstOrDefault(node => node.NodeID == endNodeID);
+
+   if (startNode != null && endNode != null)
+   {
+   startNode.ConnectedEdgeIDs.Add(id);
+   endNode.ConnectedEdgeIDs.Add(id);
+   }
+
+   EdgeID = id;
+   StartNodeID = startNodeID;
+   EndNodeID = endNodeID;
+   }
+   }
+
+   public class TinTriangle
+   {
+   public int TriangleID { get; set; }
+   public int[] EdgeIDs { get; set; }
+
+   public TinTriangle(int id, int edge1ID, int edge2ID, int edge3ID, TinDataset dataset)
+   {
+   // 检测边是否不相同
+   if (edge1ID == edge2ID || edge1ID == edge3ID || edge2ID == edge3ID)
+   {
+   throw new ArgumentException("Edges cannot be completely the same in a triangle.");
+   }
+
+   EdgeIDs = new int[] { edge1ID, edge2ID, edge3ID };
+   TriangleID = id;
+   }
+
+   private static string GetPolylineIdentifier(Polyline polyline)
+   {
+   // 对 Polyline 的点按照坐标值进行排序
+   var sortedPoints = polyline.Points.OrderBy(p => p.X).ThenBy(p => p.Y).ThenBy(p => p.Z);
+
+   // 获取 Polyline 的起点和终点
+   MapPoint startPoint = sortedPoints.First();
+   MapPoint endPoint = sortedPoints.Last();
+
+   // 获取排序后的点集合的哈希值作为唯一标识符
+   return $"{startPoint.X},{startPoint.Y},{startPoint.Z},{endPoint.X},{endPoint.Y},{endPoint.Z}";
+   }
+
+   public static int GetTriangleNum(string triangleLyrName)
+   {
+   int triangleNum = 0;
+
+   var Trianglelyr =
+   MapView.Active.Map.GetLayersAsFlattenedList().OfType<FeatureLayer>()
+   .Where(l => (l as FeatureLayer).Name == triangleLyrName).FirstOrDefault() as FeatureLayer;
+   if (Trianglelyr == null)
+   {
+   MessageBox.Show("未找到" + triangleLyrName + "图层!", "提示");
+   return 0;
+   }
+
+   // 获取Trianglelyr图层的要素类
+   var featureClass = Trianglelyr.GetTable() as FeatureClass;
+
+   using (var cursor = featureClass.Search(null, true))
+   {
+   while (cursor.MoveNext())
+   {
+   triangleNum++;
+   }
+   }
+
+   return triangleNum;
+   }
+
+   public static void TinTriangleTransition(string triangleLyrName, string outputLyrName, String type, bool all)
+   {
+   var Trianglelyr = MapView.Active.Map.GetLayersAsFlattenedList().OfType<FeatureLayer>().Where(l => (l as FeatureLayer).Name == triangleLyrName).FirstOrDefault() as FeatureLayer;
+   if (Trianglelyr == null)
+   {
+   MessageBox.Show("未找到" + triangleLyrName + "图层!", "提示");
+   return;
+   }
+   SpatialReference triangleSpatialReference = Trianglelyr.GetSpatialReference();
+
+   Geodatabase gdb =
+   new Geodatabase(new FileGeodatabaseConnectionPath(new Uri(Project.Current.DefaultGeodatabasePath)));
+
+   // 创建SchemaBuilder
+   SchemaBuilder schemaBuilder = new SchemaBuilder(gdb);
+
+   FeatureClass outputFeatureClass = null;
+
+   GeometryType geometryType = GeometryType.Unknown;
+
+   using (gdb)
+   {
+   if (type == "Node")
+   {
+   geometryType = GeometryType.Point;
+   }
+   else if (type == "Edge")
+   {
+   geometryType = GeometryType.Polyline;
+   }
+   else
+   {
+   return;
+   }
+
+   var shapeDescription = new ShapeDescription(geometryType, triangleSpatialReference)
+   {
+   HasM = false,
+   HasZ = true
+   };
+
+   //var shapeFieldDescription = new ArcGIS.Core.Data.DDL.FieldDescription("aaa", FieldType.String); 
+
+   var fcName = outputLyrName;
+   try
+   {
+   // 收集字段列表
+   var fieldDescriptions = new List<ArcGIS.Core.Data.DDL.FieldDescription>()
+   {
+   //shapeFieldDescription,
+   };
+
+   // 创建FeatureClassDescription
+   var fcDescription = new FeatureClassDescription(fcName, fieldDescriptions, shapeDescription);
+
+   // 将创建任务添加到DDL任务列表中
+   schemaBuilder.Create(fcDescription);
+
+   // 执行DDL
+   bool success = schemaBuilder.Build();
+
+   if (success)
+   {
+   MessageBox.Show("新建成功，目标图层" + fcName + "并不存在!");
+   }
+   else
+   {
+   // MessageBox.Show("新建失败，目标图层" + fcName + "已经存在!!");
+   }
+
+   outputFeatureClass = gdb.OpenDataset<FeatureClass>(fcName);
+   }
+   catch (Exception ex)
+   {
+   MessageBox.Show($@"Exception: {ex}");
+   }
+   }
+
+   // 获取要素类的Table对象
+   Table table = outputFeatureClass as Table;
+
+   // 检查要素类是否为空
+   if (table != null && table.GetCount() == 0)
+   {
+   // 要素类为空
+   MessageBox.Show("目标图层" + outputLyrName + "为空。");
+   }
+   else
+   {
+   // 要素类不为空
+   MessageBox.Show("目标图层" + outputLyrName + "不为空，其中含有" + table.GetCount() + "个要素");
+   return;
+   }
+
+   string message = String.Empty;
+   bool creationResult = false;
+
+   //declare the callback here. We are not executing it yet
+   EditOperation editOperation = new EditOperation();
+   editOperation.Callback(context =>
+   {
+   FeatureClassDefinition outputFeatureClassDefinition = outputFeatureClass.GetDefinition();
+
+   using (RowBuffer rowBuffer = outputFeatureClass.CreateRowBuffer())
+   {
+
+   // 获取Trianglelyr图层的要素类
+   var triangleFeatureClass = Trianglelyr.GetTable() as FeatureClass;
+
+   // 在方法开始前创建一个 HashSet 用于唯一标识符
+   HashSet<string> addedFeaturesHashSet = new HashSet<string>();
+
+   // 遍历三角形要素
+   using (var cursor = triangleFeatureClass.Search(null, true))
+   {
+   while (cursor.MoveNext())
+   {
+   var triangle = cursor.Current as Feature;
+
+   // 获取三角形的顶点集合
+   //var points = (feature.GetShape() as Polygon).Points;
+   var polygon = triangle.GetShape() as Polygon;
+   long objectId = triangle.GetObjectID();
+   string objectIdString = objectId.ToString();
+
+   var points = polygon.Points;
+   MapPoint point1Shape = points[2];
+   MapPoint point2Shape = points[1];
+   MapPoint point3Shape = points[0];
+   string point1Key = $"{point1Shape.X},{point1Shape.Y},{point1Shape.Z}";
+   string point2Key = $"{point2Shape.X},{point2Shape.Y},{point2Shape.Z}";
+   string point3Key = $"{point3Shape.X},{point3Shape.Y},{point3Shape.Z}";
+
+   // 获取三角形的三条边
+   Polyline edgeLine1 = PolylineBuilder.CreatePolyline(new List<MapPoint> { point2Shape, point1Shape }); // 第一条边
+   Polyline edgeLine2 = PolylineBuilder.CreatePolyline(new List<MapPoint> { point3Shape, point2Shape }); // 第二条边
+   Polyline edgeLine3 = PolylineBuilder.CreatePolyline(new List<MapPoint> { point1Shape, point3Shape }); // 第三条边
+   string edge1Key = $"{GetPolylineIdentifier(edgeLine1)}"; // 边1的唯一标识符
+   string edge2Key = $"{GetPolylineIdentifier(edgeLine2)}"; // 边2的唯一标识符
+   string edge3Key = $"{GetPolylineIdentifier(edgeLine3)}"; // 边3的唯一标识符
+
+   Debug.WriteLine("对于三角形" + objectIdString + "," + "三条边的唯一标志符号分别是: " + "edge1Key: " + edge1Key +
+   "," + "edge2Key: " + edge2Key + "," + "edge3Key: " + edge3Key);
+   if (type == "Node")
+   {
+   if (all || !addedFeaturesHashSet.Contains(point1Key))
+   {
+   // 添加point1到outputFeatureClass
+   rowBuffer[outputFeatureClassDefinition.GetShapeField()] = point1Shape;
+   using (Feature feature1 = outputFeatureClass.CreateRow(rowBuffer))
+   {
+   //To Indicate that the attribute table has to be updated
+   context.Invalidate(feature1);
+   }
+   addedFeaturesHashSet.Add(point1Key);
+   }
+
+   if (all || !addedFeaturesHashSet.Contains(point2Key))
+   {
+   // 添加point2到outputFeatureClass
+   rowBuffer[outputFeatureClassDefinition.GetShapeField()] = point2Shape;
+   using (Feature feature2 = outputFeatureClass.CreateRow(rowBuffer))
+   {
+   //To Indicate that the attribute table has to be updated
+   context.Invalidate(feature2);
+   }
+   addedFeaturesHashSet.Add(point2Key);
+   }
+
+   if (all || !addedFeaturesHashSet.Contains(point3Key))
+   {
+   // 添加point3到outputFeatureClass
+   rowBuffer[outputFeatureClassDefinition.GetShapeField()] = point3Shape;
+   using (Feature feature3 = outputFeatureClass.CreateRow(rowBuffer))
+   {
+   //To Indicate that the attribute table has to be updated
+   context.Invalidate(feature3);
+   }
+   addedFeaturesHashSet.Add(point3Key);
+   }
+   }
+   else if (type == "Edge")
+   {
+   if (all || !addedFeaturesHashSet.Contains(edge1Key))
+   {
+   // 添加edgeLine1到outputFeatureClass
+   rowBuffer[outputFeatureClassDefinition.GetShapeField()] = edgeLine1;
+   using (Feature feature1 = outputFeatureClass.CreateRow(rowBuffer))
+   {
+   //To Indicate that the attribute table has to be updated
+   context.Invalidate(feature1);
+   }
+   addedFeaturesHashSet.Add(edge1Key);
+   }
+
+   if (all || !addedFeaturesHashSet.Contains(edge2Key))
+   {
+   // 添加edgeLine2到outputFeatureClass
+   rowBuffer[outputFeatureClassDefinition.GetShapeField()] = edgeLine2;
+   using (Feature feature2 = outputFeatureClass.CreateRow(rowBuffer))
+   {
+   //To Indicate that the attribute table has to be updated
+   context.Invalidate(feature2);
+   }
+   addedFeaturesHashSet.Add(edge2Key);
+   }
+
+   if (all || !addedFeaturesHashSet.Contains(edge3Key))
+   {
+   // 添加edgeLine3到outputFeatureClass
+   rowBuffer[outputFeatureClassDefinition.GetShapeField()] = edgeLine3;
+   using (Feature feature3 = outputFeatureClass.CreateRow(rowBuffer))
+   {
+   //To Indicate that the attribute table has to be updated
+   context.Invalidate(feature3);
+   }
+   addedFeaturesHashSet.Add(edge3Key);
+   }
+   }
+   else
+   {
+   return;
+   }
+   }
+   }
+   }
+
+   }, outputFeatureClass);
+
+   try
+   {
+   if (!editOperation.IsEmpty)
+   {
+   MessageBox.Show("图层" + outputLyrName + "插入要素");
+   creationResult = editOperation.Execute();
+   if (creationResult)
+   {
+   // Save the changes
+   Project.Current.SaveEditsAsync();
+   }
+   else
+   {
+   message = editOperation.ErrorMessage;
+   }
+   }
+   }
+   catch (GeodatabaseException exObj)
+   {
+   message = exObj.Message;
+   }
+
+   if (!string.IsNullOrEmpty(message))
+   MessageBox.Show("插入图层" + outputLyrName + "发生错误: " + message);
+   }
+   }
+
+   public class TinDataset
+   {
+   public List<TinNode> Nodes { get; set; }
+   public List<TinEdge> Edges { get; set; }
+   public List<TinTriangle> Triangles { get; set; }
+
+   public TinDataset(List<TinNode> nodes, List<TinEdge> edges, List<TinTriangle> triangles)
+   {
+   Nodes = nodes;
+   Edges = edges;
+   Triangles = triangles;
+   }
+   }
+ */
 
 
 }
