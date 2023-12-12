@@ -182,14 +182,6 @@ namespace SMGI_Plugin_EmergencyMap
 
                 TinDataset tinData = new TinDataset(nodes, edges, triangles);
 
-
-                int triangleNum = TinTriangle.GetTriangleNum("CCC_TinTriangle");
-                TinTriangle.TinTriangleTransition("CCC_TinTriangle", "CCC_TinNodesAll", "Node", true);
-                TinTriangle.TinTriangleTransition("CCC_TinTriangle", "CCC_TinEdgesAll", "Edge", true);
-                TinTriangle.TinTriangleTransition("CCC_TinTriangle", "CCC_TinNodesNotAll", "Node", false);
-                TinTriangle.TinTriangleTransition("CCC_TinTriangle", "CCC_TinEdgesNotAll", "Edge", false);
-
-
                 // 创建节点
 
                 for (int i = 1; i <= 3 * triangleNum; i++)
