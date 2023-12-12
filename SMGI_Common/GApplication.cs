@@ -324,12 +324,12 @@ namespace SMGI_Common
                 return assemblyCacheFolder;
             }
         }
-        
+
         public string ProjectPath
         {
             get
             {
-                string path = Project.Current.GetItems<MapProjectItem>().First().Path;  
+                string path = Project.Current.GetItems<MapProjectItem>().First().Path;
                 return path;
             }
         }
@@ -456,29 +456,25 @@ namespace SMGI_Common
 
                 #region 动态设置日志文件存储路径
 
+                if (string.IsNullOrEmpty(fileLocation))
+                {
+                    return;
+                }
+                
+                storageLocation = fileLocation + "\\log\\";
+
+                if (!File.Exists(storageLocation))
+                {
+                    Directory.CreateDirectory(storageLocation);
+                }
+
                 if (storageType)
                 {
-                    storageLocation = GetAppDataPath() + "\\log\\";
-
-                    if (!File.Exists(storageLocation))
-                    {
-                        Directory.CreateDirectory(storageLocation);
-                    }
-
                     GlobalContext.Properties["SysStorageLocation"] = storageLocation;
-
                 }
                 else
                 {
-                    storageLocation = fileLocation + "\\log\\";
-
-                    if (!File.Exists(storageLocation))
-                    {
-                        Directory.CreateDirectory(storageLocation);
-                    }
-
                     GlobalContext.Properties["DataStorageLocation"] = storageLocation;
-
                 }
 
                 fixedIdentifier = DateTimeOffset.Now.ToString("yyyy_MM_dd_HH_mm_ss");
@@ -490,11 +486,11 @@ namespace SMGI_Common
 
                 if (storageType)
                 {
-                    sysLog = LogManager.GetLogger("SysRollingFile");
+                    sysLog = LogManager.GetLogger("SysLogger");
                 }
                 else
                 {
-                    dataLog = LogManager.GetLogger("DataRollingFile");
+                    dataLog = LogManager.GetLogger("DataLogger");
                 }
 
                 if (!File.Exists(configFilePath))
@@ -522,7 +518,7 @@ namespace SMGI_Common
             }
 
             // 加载系统日志
-            loadLog("", true);
+            loadLog(GetAppDataPath(), true);
             // 加载数据日志
             loadLog(Project.Current.HomeFolderPath, false);
         }

@@ -924,7 +924,7 @@ public class TinDataset
         var Edgelyr = MapView.Active.Map.GetLayersAsFlattenedList().OfType<FeatureLayer>().Where(l => (l as FeatureLayer).Name == edgeLyrName).FirstOrDefault() as FeatureLayer;
         if (Edgelyr == null)
         {
-            MessageBox.Show("未找到" + Edgelyr + "图层!", "提示");
+            MessageBox.Show("未找到" + edgeLyrName + "图层!", "提示");
             return new Tuple<int, int>(0, 0);
         }
 
