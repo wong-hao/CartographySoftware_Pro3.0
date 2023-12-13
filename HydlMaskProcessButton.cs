@@ -170,7 +170,7 @@ namespace SMGI_Plugin_EmergencyMap
                 TinTriangle.TinTriangleTransition("CCC_TinTriangle", "CCC_TinEdgesAll", "Edge", true);
                 TinTriangle.TinTriangleTransition("CCC_TinTriangle", "CCC_TinNodesNotAll", "Node", false);
                 TinTriangle.TinTriangleTransition("CCC_TinTriangle", "CCC_TinEdgesNotAll", "Edge", false);
-                
+
                 List<TinNode> nodes = new List<TinNode>();
                 // 添加节点到 nodes 列表中
 
@@ -181,6 +181,7 @@ namespace SMGI_Plugin_EmergencyMap
                 // 添加三角形到 triangles 列表中
 
                 TinDataset tinData = new TinDataset(nodes, edges, triangles);
+
 
                 // 创建节点
 
@@ -248,9 +249,13 @@ namespace SMGI_Plugin_EmergencyMap
                 }
 
 
-                Tuple<int, int> sharededgeIDsTuple = tinData.GetSharedEdgeIDs(1, 2, tinData, "CCC_TinEdgesAll");
+                Tuple<int, int> sharededgeIDsTuple = TinDataset.GetSharedEdgeIDs(1, 2, tinData, "CCC_TinEdgesAll");
                 GApplication.writeLog("Triangle 1与2 共享Edge" + sharededgeIDsTuple.Item1 + "与" + sharededgeIDsTuple.Item2, GApplication.FATAL, false);
 
+                int trinangleId = TinDataset.GetTriangleIDByEdgeID(1, tinData);
+                GApplication.writeLog("边 1存在于三角形" + trinangleId, GApplication.FATAL, false);
+
+                TinNode.GetPointByID("CCC_TinNodesAll", 1);
 */
 
                 #endregion

@@ -533,6 +533,40 @@ public class TinNode
         NodeID = id;
         ConnectedEdgeIDs = new List<int>();
     }
+
+    public static MapPoint GetPointByID(string nodeLyrName, int nodeID)
+    {
+        // 获取包含节点信息的图层
+        var nodeLayer = MapView.Active.Map.GetLayersAsFlattenedList().OfType<FeatureLayer>()
+            .FirstOrDefault(layer => layer.Name == nodeLyrName);
+
+        if (nodeLayer == null)
+        {
+            MessageBox.Show("未找到名为 " + nodeLyrName + " 的图层！", "提示");
+            return null;
+        }
+
+        // 使用 NodeID 查询节点要素
+        QueryFilter queryFilter = new QueryFilter
+        {
+            WhereClause = $"OBJECTID = {nodeID}" // 根据 OID 进行查询
+        };
+
+        using (RowCursor rowCursor = nodeLayer.Search(queryFilter))
+        {
+            while (rowCursor.MoveNext())
+            {
+                var nodeFeature = (Feature)rowCursor.Current;
+
+                // 提取节点要素中的点位置信息
+                MapPoint nodePoint = nodeFeature.GetShape() as MapPoint;
+                return nodePoint;
+            }
+        }
+
+        // 如果未找到对应 NodeID 的节点，返回 null 或者其他适当的值
+        return null;
+    }
 }
 
 public class TinEdge
@@ -561,6 +595,53 @@ public class TinEdge
         StartNodeID = startNodeID;
         EndNodeID = endNodeID;
     }
+
+    public static Polyline GetPolylineByID(string edgeLyrName, int edgeID)
+    {
+        // 获取包含边信息的图层
+        var edgeLayer = MapView.Active.Map.GetLayersAsFlattenedList().OfType<FeatureLayer>()
+            .FirstOrDefault(layer => layer.Name == edgeLyrName);
+
+        if (edgeLayer == null)
+        {
+            MessageBox.Show("未找到名为 " + edgeLyrName + " 的图层！", "提示");
+            return null;
+        }
+
+        // 使用 EdgeID 查询边要素
+        QueryFilter queryFilter = new QueryFilter
+        {
+            WhereClause = $"OBJECTID = {edgeID}" // 根据 OID 进行查询
+        };
+
+        using (RowCursor rowCursor = edgeLayer.Search(queryFilter))
+        {
+            while (rowCursor.MoveNext())
+            {
+                var edgeFeature = (Feature)rowCursor.Current;
+
+                // 提取边要素中的 Polyline 信息
+                Polyline edgePolyline = edgeFeature.GetShape() as Polyline;
+                return edgePolyline;
+            }
+        }
+
+        // 如果未找到对应 EdgeID 的边，返回 null 或者其他适当的值
+        return null;
+    }
+
+    public static string GetPolylineIdentifier(Polyline polyline)
+    {
+        // 对 Polyline 的点按照坐标值进行排序
+        var sortedPoints = polyline.Points.OrderBy(p => p.X).ThenBy(p => p.Y).ThenBy(p => p.Z);
+
+        // 获取 Polyline 的起点和终点
+        MapPoint startPoint = sortedPoints.First();
+        MapPoint endPoint = sortedPoints.Last();
+
+        // 获取排序后的点集合的哈希值作为唯一标识符
+        return $"{startPoint.X},{startPoint.Y},{startPoint.Z},{endPoint.X},{endPoint.Y},{endPoint.Z}";
+    }
 }
 
 public class TinTriangle
@@ -583,19 +664,6 @@ public class TinTriangle
     public List<int> GetTriangleEdgeIDs()
     {
         return EdgeIDs.ToList();
-    }
-
-    public static string GetPolylineIdentifier(Polyline polyline)
-    {
-        // 对 Polyline 的点按照坐标值进行排序
-        var sortedPoints = polyline.Points.OrderBy(p => p.X).ThenBy(p => p.Y).ThenBy(p => p.Z);
-
-        // 获取 Polyline 的起点和终点
-        MapPoint startPoint = sortedPoints.First();
-        MapPoint endPoint = sortedPoints.Last();
-
-        // 获取排序后的点集合的哈希值作为唯一标识符
-        return $"{startPoint.X},{startPoint.Y},{startPoint.Z},{endPoint.X},{endPoint.Y},{endPoint.Z}";
     }
 
     public static int GetTriangleNum(string triangleLyrName)
@@ -762,9 +830,9 @@ public class TinTriangle
                         Polyline edgeLine1 = PolylineBuilder.CreatePolyline(new List<MapPoint> { point2Shape, point1Shape }); // 第一条边
                         Polyline edgeLine2 = PolylineBuilder.CreatePolyline(new List<MapPoint> { point3Shape, point2Shape }); // 第二条边
                         Polyline edgeLine3 = PolylineBuilder.CreatePolyline(new List<MapPoint> { point1Shape, point3Shape }); // 第三条边
-                        string edge1Key = $"{GetPolylineIdentifier(edgeLine1)}"; // 边1的唯一标识符
-                        string edge2Key = $"{GetPolylineIdentifier(edgeLine2)}"; // 边2的唯一标识符
-                        string edge3Key = $"{GetPolylineIdentifier(edgeLine3)}"; // 边3的唯一标识符
+                        string edge1Key = $"{TinEdge.GetPolylineIdentifier(edgeLine1)}"; // 边1的唯一标识符
+                        string edge2Key = $"{TinEdge.GetPolylineIdentifier(edgeLine2)}"; // 边2的唯一标识符
+                        string edge3Key = $"{TinEdge.GetPolylineIdentifier(edgeLine3)}"; // 边3的唯一标识符
 
                         Debug.WriteLine("对于三角形" + objectIdString + "," + "三条边的唯一标志符号分别是: " + "edge1Key: " + edge1Key +
                         "," + "edge2Key: " + edge2Key + "," + "edge3Key: " + edge3Key);
@@ -894,7 +962,7 @@ public class TinDataset
         Triangles = triangles;
     }
 
-    public Tuple<List<int>, List<int>> GetTriangleEdgeIDs(int triangle1ID, int triangle2ID, TinDataset dataset)
+    public static Tuple<List<int>, List<int>> GetTriangleEdgeIDs(int triangle1ID, int triangle2ID, TinDataset dataset)
     {
         // 检查三角形ID是否存在于数据集中
         if (dataset.Triangles.Any(triangle => triangle.TriangleID == triangle1ID) == false ||
@@ -919,88 +987,33 @@ public class TinDataset
         return new Tuple<List<int>, List<int>>(triangle1.GetTriangleEdgeIDs(), triangle2.GetTriangleEdgeIDs());
     }
 
-    public Tuple<int, int> GetSharedEdgeIDs(int triangle1ID, int triangle2ID, TinDataset dataset, string edgeLyrName)
+    public static Tuple<int, int> GetSharedEdgeIDs(int triangle1ID, int triangle2ID, TinDataset dataset, string edgeLyrName)
     {
-        var Edgelyr = MapView.Active.Map.GetLayersAsFlattenedList().OfType<FeatureLayer>().Where(l => (l as FeatureLayer).Name == edgeLyrName).FirstOrDefault() as FeatureLayer;
-        if (Edgelyr == null)
-        {
-            MessageBox.Show("未找到" + edgeLyrName + "图层!", "提示");
-            return new Tuple<int, int>(0, 0);
-        }
-
-        // 获取线要素层的要素类描述
-        var EdgeClass = Edgelyr.GetTable() as FeatureClass;
-
-        if (EdgeClass == null)
-        {
-            MessageBox.Show(edgeLyrName + " 不是一个有效的要素类");
-            return new Tuple<int, int>(0, 0);
-        }
-
         Tuple<List<int>, List<int>> edgeIDsTuple = GetTriangleEdgeIDs(triangle1ID, triangle2ID, dataset);
         List<int> edgeIDsForTriangle1 = edgeIDsTuple.Item1;
         List<int> edgeIDsForTriangle2 = edgeIDsTuple.Item2;
-
-        Feature edge1;
-        Feature edge2;
 
         if (edgeIDsForTriangle1.Count != 0 && edgeIDsForTriangle2.Count != 0)
         {
             foreach (int edgeID1 in edgeIDsForTriangle1)
             {
-                // 构建查询过滤器
-                QueryFilter queryFilter1 = new QueryFilter
+                foreach (int edgeID2 in edgeIDsForTriangle2)
                 {
-                    WhereClause = $"OBJECTID = {edgeID1}" // 根据 OID 进行查询
-                };
+                    TinEdge edge1 = dataset.Edges.FirstOrDefault(e => e.EdgeID == edgeID1);
+                    TinEdge edge2 = dataset.Edges.FirstOrDefault(e => e.EdgeID == edgeID2);
 
-                // 使用查询过滤器进行搜索
-                using (RowCursor rowCursor1 = EdgeClass.Search(queryFilter1))
-                {
-                    while (rowCursor1.MoveNext())
+                    // 假设 edge1 和 edge2 不为 null
+                    if (edge1 != null && edge2 != null)
                     {
-                        using (edge1 = (Feature)rowCursor1.Current)
+                        var polyline1 = TinEdge.GetPolylineByID(edgeLyrName, edgeID1);
+                        var polyline2 = TinEdge.GetPolylineByID(edgeLyrName, edgeID2);
+                        var identifier1 = TinEdge.GetPolylineIdentifier(polyline1);
+                        var identifier2 = TinEdge.GetPolylineIdentifier(polyline2);
+
+                        if (!string.IsNullOrEmpty(identifier1) && !string.IsNullOrEmpty(identifier2) && string.Equals(identifier1, identifier2))
                         {
-                            if (edge1 != null)
-                            {
-                                // 获取要素的形状（Shape）并转换为 Polyline
-                                var polyline1 = edge1.GetShape() as Polyline;
+                            return new Tuple<int, int>(edgeID1, edgeID2);
 
-                                // 使用 GetPolylineIdentifier 方法获取要素的标识符
-                                var identifier1 = TinTriangle.GetPolylineIdentifier(polyline1);
-
-                                foreach (int edgeID2 in edgeIDsForTriangle2)
-                                {
-                                    // 构建查询过滤器
-                                    QueryFilter queryFilter2 = new QueryFilter
-                                    {
-                                        WhereClause = $"OBJECTID = {edgeID2}" // 根据 OID 进行查询
-                                    };
-
-                                    using (RowCursor rowCursor2 = EdgeClass.Search(queryFilter2))
-                                    {
-                                        while (rowCursor2.MoveNext())
-                                        {
-                                            using (edge2 = (Feature)rowCursor2.Current)
-                                            {
-                                                if (edge2 != null)
-                                                {
-                                                    // 获取要素的形状（Shape）并转换为 Polyline
-                                                    var polyline2 = edge2.GetShape() as Polyline;
-
-                                                    // 使用 GetPolylineIdentifier 方法获取要素的标识符
-                                                    var identifier2 = TinTriangle.GetPolylineIdentifier(polyline2);
-
-                                                    if (identifier1 == identifier2)
-                                                    {
-                                                        return new Tuple<int, int>(edgeID1, edgeID2);
-                                                    }
-                                                }
-                                            }
-                                        }
-                                    }
-                                }
-                            }
                         }
                     }
                 }
@@ -1009,6 +1022,24 @@ public class TinDataset
 
         return new Tuple<int, int>(0, 0);
     }
+
+    public static int GetTriangleIDByEdgeID(int edgeID, TinDataset dataset)
+    {
+        // 遍历数据集中的每个三角形
+        foreach (TinTriangle triangle in dataset.Triangles)
+        {
+            // 检查当前三角形是否包含指定的边
+            if (triangle.EdgeIDs.Contains(edgeID))
+            {
+                // 如果包含，返回该三角形的ID
+                return triangle.TriangleID;
+            }
+        }
+
+        // 如果未找到包含指定边的三角形，返回一个默认值（例如：-1）
+        return -1;
+    }
+
 
 }
  */
