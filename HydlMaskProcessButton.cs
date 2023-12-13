@@ -255,7 +255,7 @@ namespace SMGI_Plugin_EmergencyMap
                 int trinangleId = TinDataset.GetTriangleIDByEdgeID(1, tinData);
                 GApplication.writeLog("边 1存在于三角形" + trinangleId, GApplication.FATAL, false);
 
-                TinNode.GetPointByID("CCC_TinNodesAll", 1);
+                TinNode.ToMapPointByID("CCC_TinNodesAll", 1);
 */
 
                 #endregion
