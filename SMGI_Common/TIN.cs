@@ -518,6 +518,20 @@ namespace SMGI_Common
     }
 
     /*
+using ArcGIS.Core.Data.DDL;
+using ArcGIS.Core.Data.Exceptions;
+using ArcGIS.Core.Data;
+using ArcGIS.Core.Geometry;
+using ArcGIS.Desktop.Core;
+using ArcGIS.Desktop.Editing;
+using ArcGIS.Desktop.Mapping;
+using System.Collections.Generic;
+using System;
+using System.Diagnostics;
+using System.Linq;
+using ArcGIS.Core.Internal.Geometry;
+using ArcGIS.Desktop.Framework.Dialogs;
+
 public class TinNode
 {
     public int NodeID { get; set; }
@@ -649,7 +663,7 @@ public class TinTriangle
     public int TriangleID { get; set; }
     public int[] EdgeIDs { get; set; }
 
-    public TinTriangle(int id, int edge1ID, int edge2ID, int edge3ID, TinDataset dataset)
+    public TinTriangle(int id, int edge1ID, int edge2ID, int edge3ID)
     {
         // 检测边是否不相同
         if (edge1ID == edge2ID || edge1ID == edge3ID || edge2ID == edge3ID)
@@ -996,6 +1010,76 @@ public class TinDataset
         Triangles = triangles;
     }
 
+    public static TinDataset GetTinDatasetDefinition(string triangleLyrName)
+    {
+        int triangleNum = TinTriangle.GetTriangleNum(triangleLyrName);
+        TinTriangle.TinTriangleTransition(triangleLyrName, "CCC_TinNodesAll", "Node", true);
+        TinTriangle.TinTriangleTransition(triangleLyrName, "CCC_TinEdgesAll", "Edge", true);
+        TinTriangle.TinTriangleTransition(triangleLyrName, "CCC_TinNodesNotAll", "Node", false);
+        TinTriangle.TinTriangleTransition(triangleLyrName, "CCC_TinEdgesNotAll", "Edge", false);
+
+        List<TinNode> nodes = new List<TinNode>();
+        // 添加节点到 nodes 列表中
+
+        List<TinEdge> edges = new List<TinEdge>();
+        // 添加边到 edges 列表中
+
+        List<TinTriangle> triangles = new List<TinTriangle>();
+        // 添加三角形到 triangles 列表中
+
+        TinDataset tinData = new TinDataset(nodes, edges, triangles);
+
+
+        // 创建节点
+
+        for (int i = 1; i <= 3 * triangleNum; i++)
+        {
+            TinNode node = new TinNode(i);
+            nodes.Add(node);
+        }
+
+        // 创建边
+
+        for (int i = 1; i <= 3 * triangleNum; i++)
+        {
+            if (i % 3 == 1)
+            {
+                TinEdge edge = new TinEdge(i, i, i + 1, tinData);
+                edges.Add(edge);
+
+            }
+            else if (i % 3 == 2)
+            {
+                TinEdge edge = new TinEdge(i, i, i + 1, tinData);
+                edges.Add(edge);
+            }
+            else if (i % 3 == 0)
+            {
+                TinEdge edge = new TinEdge(i, i - 2, i, tinData);
+                edges.Add(edge);
+            }
+            else
+            {
+                break;
+            }
+        }
+
+        // 创建三角形
+
+        for (int i = 1; i <= triangleNum; i++)
+        {
+            TinTriangle triangle = new TinTriangle(i, 3 * i - 2, 3 * i - 1, 3 * i);
+            triangles.Add(triangle);
+        }
+
+        // 添加节点、边和三角形到数据结构中
+        tinData.Nodes = nodes;
+        tinData.Edges = edges;
+        tinData.Triangles = triangles;
+
+        return tinData;
+    }
+
     public static Tuple<List<int>, List<int>> GetTriangleEdgeIDs(int triangle1ID, int triangle2ID, TinDataset dataset)
     {
         // 检查三角形ID是否存在于数据集中
@@ -1077,6 +1161,9 @@ public class TinDataset
         // 如果未找到包含指定边的三角形，返回一个默认值（例如：-1）
         return -1;
     }
+
+
+}
 
 
 }

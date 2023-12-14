@@ -163,72 +163,61 @@ namespace SMGI_Plugin_EmergencyMap
                     MessageBox.Show("未找到匹配的三角形。");
                 }
 
-                /*
-                
-                int triangleNum = TinTriangle.GetTriangleNum("CCC_TinTriangle");
-                TinTriangle.TinTriangleTransition("CCC_TinTriangle", "CCC_TinNodesAll", "Node", true);
-                TinTriangle.TinTriangleTransition("CCC_TinTriangle", "CCC_TinEdgesAll", "Edge", true);
-                TinTriangle.TinTriangleTransition("CCC_TinTriangle", "CCC_TinNodesNotAll", "Node", false);
-                TinTriangle.TinTriangleTransition("CCC_TinTriangle", "CCC_TinEdgesNotAll", "Edge", false);
+                #endregion
+            });
+            MessageBox.Show("水系结构线消隐完成！");
+        }
 
-                List<TinNode> nodes = new List<TinNode>();
-                // 添加节点到 nodes 列表中
+        /// <summary>
+        /// 获取要素类
+        /// </summary>
+        /// <param name="pws"></param>
+        /// <param name="fclName"></param>
+        /// <returns></returns>
+        public static FeatureClass GetFclViaWs(Geodatabase geodatabase, string fclName)
+        {
+            try
+            {
+                FeatureClass fcl = null;
+                fcl = geodatabase.OpenDataset<FeatureClass>(fclName);
+                return fcl;
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Trace.WriteLine(ex.Message);
+                System.Diagnostics.Trace.WriteLine(ex.Source);
+                System.Diagnostics.Trace.WriteLine(ex.StackTrace);
+                return null;
+            }
+        }
+    }
+}
 
-                List<TinEdge> edges = new List<TinEdge>();
-                // 添加边到 edges 列表中
+/*
+using ArcGIS.Core.CIM;
+using ArcGIS.Core.Data;
+using ArcGIS.Desktop.Framework.Contracts;
+using ArcGIS.Desktop.Framework.Dialogs;
+using ArcGIS.Desktop.Framework.Threading.Tasks;
+using ArcGIS.Desktop.Mapping;
+using System;
+using System.Data;
+using System.Linq;
+using SMGI_Common;
+using System.Collections.Generic;
 
-                List<TinTriangle> triangles = new List<TinTriangle>();
-                // 添加三角形到 triangles 列表中
+namespace SMGI_Plugin_EmergencyMap
+{
+    internal class HydlMaskProcessButton : Button
+    {
+        protected override async void OnClick()
+        {
 
-                TinDataset tinData = new TinDataset(nodes, edges, triangles);
-
-
-                // 创建节点
-
-                for (int i = 1; i <= 3 * triangleNum; i++)
-                {
-                    TinNode node = new TinNode(i);
-                    nodes.Add(node);
-                }
-
-                // 创建边
-
-                for (int i = 1; i <= 3 * triangleNum; i++)
-                {
-                    if (i % 3 == 1)
-                    {
-                        TinEdge edge = new TinEdge(i, i, i + 1, tinData);
-                        edges.Add(edge);
-
-                    }
-                    else if (i % 3 == 2)
-                    {
-                        TinEdge edge = new TinEdge(i, i, i + 1, tinData);
-                        edges.Add(edge);
-                    }
-                    else if (i % 3 == 0)
-                    {
-                        TinEdge edge = new TinEdge(i, i - 2, i, tinData);
-                        edges.Add(edge);
-                    }
-                    else
-                    {
-                        break;
-                    }
-                }
-
-                // 创建三角形
-
-                for (int i = 1; i <= triangleNum; i++)
-                {
-                    TinTriangle triangle = new TinTriangle(i, 3 * i - 2, 3 * i - 1, 3 * i, tinData);
-                    triangles.Add(triangle);
-                }
-
-                // 添加节点、边和三角形到数据结构中
-                tinData.Nodes = nodes;
-                tinData.Edges = edges;
-                tinData.Triangles = triangles;
+            #region
+            //目前还未找到方法判断不是临时数据
+            await QueuedTask.Run(() =>
+            {
+                TinDataset tinData = TinDataset.GetTinDatasetDefinition("CCC_TinTriangle");
 
                 // 输出节点、边和三角形的关联信息
                 foreach (var node in tinData.Nodes)
@@ -256,7 +245,6 @@ namespace SMGI_Plugin_EmergencyMap
                 GApplication.writeLog("边 1存在于三角形" + trinangleId, GApplication.FATAL, false);
 
                 TinNode.ToMapPointByID("CCC_TinNodesAll", 1);
-*/
 
                 #endregion
             });
@@ -287,3 +275,5 @@ namespace SMGI_Plugin_EmergencyMap
         }
     }
 }
+
+*/
