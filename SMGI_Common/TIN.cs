@@ -581,6 +581,30 @@ public class TinNode
         // 如果未找到对应 NodeID 的节点，返回 null 或者其他适当的值
         return null;
     }
+
+    public static List<int> GetAdjacentNodeIDsByID(int nodeID, TinDataset dataset)
+    {
+        // 创建用于存储相邻节点ID的集合
+        HashSet<int> adjacentNodeIDs = new HashSet<int>();
+
+        // 遍历数据集中的每条边
+        foreach (TinEdge edge in dataset.Edges)
+        {
+            // 找到连接到给定节点的边
+            if (edge.StartNodeID == nodeID)
+            {
+                adjacentNodeIDs.Add(edge.EndNodeID);
+            }
+            else if (edge.EndNodeID == nodeID)
+            {
+                adjacentNodeIDs.Add(edge.StartNodeID);
+            }
+        }
+
+        // 将HashSet转换为List并返回
+        return adjacentNodeIDs.ToList();
+    }
+
 }
 
 public class TinEdge
@@ -655,6 +679,41 @@ public class TinEdge
 
         // 获取排序后的点集合的哈希值作为唯一标识符
         return $"{startPoint.X},{startPoint.Y},{startPoint.Z},{endPoint.X},{endPoint.Y},{endPoint.Z}";
+    }
+
+    public static int GetNextEdgeIDInTriangleByID(int edgeID, TinDataset dataset)
+    {
+        // 获取给定边所在的三角形ID
+        int triangleID = TinDataset.GetTriangleIDByEdgeID(edgeID, dataset);
+
+        // 如果找不到边所在的三角形，返回默认值
+        if (triangleID == -1)
+        {
+            return -1;
+        }
+
+        // 找到当前三角形
+        TinTriangle triangle = dataset.Triangles.FirstOrDefault(t => t.TriangleID == triangleID);
+
+        // 检查当前三角形是否存在
+        if (triangle != null)
+        {
+            // 找到当前边在三角形中的索引位置
+            int edgeIndex = Array.IndexOf(triangle.EdgeIDs, edgeID);
+
+            // 如果找到了边在三角形中的位置
+            if (edgeIndex != -1)
+            {
+                // 获取下一个边的索引（以顺时针方向）
+                int nextEdgeIndex = (edgeIndex + 2) % 3;
+
+                // 返回下一个边的ID
+                return triangle.EdgeIDs[nextEdgeIndex];
+            }
+        }
+
+        // 如果未找到或出现问题，返回默认值
+        return -1;
     }
 }
 
@@ -1161,11 +1220,6 @@ public class TinDataset
         // 如果未找到包含指定边的三角形，返回一个默认值（例如：-1）
         return -1;
     }
-
-
-}
-
-
 }
  */
 

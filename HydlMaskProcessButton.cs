@@ -244,7 +244,16 @@ namespace SMGI_Plugin_EmergencyMap
                 int trinangleId = TinDataset.GetTriangleIDByEdgeID(1, tinData);
                 GApplication.writeLog("边 1存在于三角形" + trinangleId, GApplication.FATAL, false);
 
+                var NodeIDs = TinNode.GetAdjacentNodeIDsByID(44, tinData);
+                foreach (var id in NodeIDs)
+                {
+                    GApplication.writeLog(id.ToString(), GApplication.FATAL, false);
+                }
+
                 TinNode.ToMapPointByID("CCC_TinNodesAll", 1);
+
+                int edgeID = TinEdge.GetNextEdgeIDInTriangleByID(1915, tinData);
+                GApplication.writeLog("边 1915所在三角形的下一个（顺时针）边的ID为" + edgeID, GApplication.FATAL, false);
 
                 #endregion
             });
@@ -275,5 +284,6 @@ namespace SMGI_Plugin_EmergencyMap
         }
     }
 }
+
 
 */
