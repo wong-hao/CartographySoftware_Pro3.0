@@ -10,6 +10,10 @@ using System.Linq;
 using SMGI_Common;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Windows.Forms.VisualStyles;
+using ArcGIS.Core.Internal.CIM;
+using ArcGIS.Core.Geometry;
+using ArcGIS.Core.Internal.Geometry;
 
 namespace SMGI_Plugin_EmergencyMap
 {
@@ -23,7 +27,7 @@ namespace SMGI_Plugin_EmergencyMap
             await QueuedTask.Run(() =>
             {
                 // 创建TinDataset对象并建立关系
-                TinDataset tinData = new TinDataset();
+                TinDataset tinDataset = new TinDataset();
 
                 // 模拟一个进度报告器
                 IProgress<int> progress = new Progress<int>(percentage =>
@@ -32,31 +36,75 @@ namespace SMGI_Plugin_EmergencyMap
                 });
 
                 // 建立关系并显示进度
-                tinData.GetTinDatasetDefinition("CCC_TinTriangle", "CCC_TinEdge", "CCC_TinNode", progress);
+                tinDataset.GetTinDatasetDefinition("CCC_TinTriangle", "CCC_TinEdge", "CCC_TinNode", progress);
 
                 // 输出关系信息
-                tinData.PrintTinDatasetDefinition();
+                tinDataset.PrintTinDatasetDefinition();
 
-                int nodeCount = tinData.GetNodeCount();
+                int nodeCount = tinDataset.GetNodeCount();
                 GApplication.writeLog("一共有" + nodeCount + "个节点", GApplication.INFO, false);
 
                 // 假设 node 是你要找相邻节点的特定节点对象
-                TinNode node = tinData.GetNodeByIndex(145);
+                TinNode node = tinDataset.GetNodeByIndex(145);
                 GApplication.writeLog( "节点" + 145 + "一共有如下ID的相邻节点:", GApplication.INFO, false);
 
                 if (node != null)
                 {
-                    List<TinNode> adjacentNodes = node.GetAdjacentNodes(tinData.Edges, tinData.Nodes);
+                    List<TinNode> adjacentNodes = node.GetAdjacentNodes(tinDataset.Edges, tinDataset.Nodes);
                     // adjacentNodes 中包含了与特定节点相邻的其他节点
                     foreach (var adjacentNode in adjacentNodes)
                     {
                         GApplication.writeLog(adjacentNode.ID.ToString(), GApplication.INFO, false);
                     }
+
+                    List<TinEdge> incidentEdges = node.GetIncidentEdges(tinDataset.Edges);
+
+                    // 打印出连接到节点 的边的 ID
+                    foreach (var edge1 in incidentEdges)
+                    {
+                        GApplication.writeLog($"Edge ID connected to Node: {edge1.ID}", GApplication.INFO, false);
+                    }
+
+                    List<TinTriangle> incidentTriangles = node.GetIncidentTriangles(tinDataset.Triangles);
+
+                    // 打印出与节点 相关的三角形的 ID
+                    foreach (var triangle1 in incidentTriangles)
+                    {
+                        GApplication.writeLog($"Triangle ID connected to Node: {triangle1.ID}", GApplication.INFO, false);
+                    }
+
+                    GApplication.writeLog($"Node的横纵坐标为: {node.ToMapPoint(tinDataset).X}, {node.ToMapPoint(tinDataset).Y}", GApplication.INFO, false);
                 }
-                else
+
+                TinEdge edge = tinDataset.GetEdgeByIndex(75);
+                if (edge != null)
                 {
-                    // 处理未找到节点的情况
+                    var triangle1 = edge.GetTriangleByEdge(tinDataset.Triangles);
+
+                    TinEdge nextEdge = edge.GetNextEdgeInTriangle(triangle1, tinDataset.Edges);
+                    GApplication.writeLog($"nextEdgeID: {nextEdge.ID}", GApplication.INFO, false);
+
+                    TinEdge previousEdge = edge.GetPreviousEdgeInTriangle(triangle1, tinDataset.Edges);
+                    GApplication.writeLog($"previousEdgeID: {previousEdge.ID}", GApplication.INFO, false);
+
+                    GApplication.writeLog($"Edge的横纵坐标为: {edge.ToPolyline(tinDataset).Points.First().X}, {edge.ToPolyline(tinDataset).Points.First().Y}, {edge.ToPolyline(tinDataset).Points.Last().X}, {edge.ToPolyline(tinDataset).Points.Last().Y}", GApplication.INFO, false);
+
+                    ;
                 }
+
+                TinTriangle triangle = tinDataset.GetTriangleByIndex(33);
+                if (triangle != null)
+                {
+                    List<TinTriangle> adjacentTriangles = triangle.GetAdjacentTriangles(tinDataset.Edges, tinDataset.Triangles);
+
+                    // 打印与 triangle 相邻的其他三角形的 ID
+                    foreach (var triangle2 in adjacentTriangles)
+                    {
+                        GApplication.writeLog($"Adjacent Triangle ID to Triangle 33: {triangle2.ID}", GApplication.INFO, false);
+                    }
+                }
+
+                var polygon = triangle.ToPolygon(tinDataset);
 
                 #endregion
             });
