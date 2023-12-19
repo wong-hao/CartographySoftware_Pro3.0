@@ -236,6 +236,14 @@ public class TinDataset
         Triangles = new List<TinTriangle>();
     }
 
+    private static TinDataset _cachedTinDataset = new TinDataset();
+
+    // 获取缓存的 TIN 数据集
+    public static TinDataset GetCachedTinDataset()
+    {
+        return _cachedTinDataset;
+    }
+
     public void GetTinDatasetDefinition(string tempTriangleLyrName, string tempEdgeLyrName, string tempNodeLyrName, IProgress<int> progress = null)
     {
         // 假设您已按名称获取了图层
@@ -336,6 +344,9 @@ public class TinDataset
             int percentage = (int)((double)currentProgress / totalProgress * 100);
             progress?.Report(percentage);
         }
+
+        // 假设计算结果存储在当前对象中
+        _cachedTinDataset = this;
     }
 
     public List<int> GetObjectIDs(FeatureLayer layer)

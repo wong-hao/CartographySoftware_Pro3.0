@@ -27,7 +27,7 @@ namespace SMGI_Plugin_EmergencyMap
             await QueuedTask.Run(() =>
             {
                 // 创建TinDataset对象并建立关系
-                TinDataset tinDataset = new TinDataset();
+                TinDataset tinDataset = TinDataset.GetCachedTinDataset();
 
                 // 模拟一个进度报告器
                 IProgress<int> progress = new Progress<int>(percentage =>
@@ -35,8 +35,12 @@ namespace SMGI_Plugin_EmergencyMap
                     Debug.WriteLine($"Progress: {percentage}%");
                 });
 
-                // 建立关系并显示进度
-                tinDataset.GetTinDatasetDefinition("CCC_TinTriangle", "CCC_TinEdge", "CCC_TinNode", progress);
+                if (tinDataset == null || tinDataset.Nodes.Count == 0)
+                {
+                    // 建立关系并显示进度
+                    tinDataset.GetTinDatasetDefinition("CCC_TinTriangle", "CCC_TinEdge", "CCC_TinNode", progress);
+
+                }
 
                 // 输出关系信息
                 tinDataset.PrintTinDatasetDefinition();
