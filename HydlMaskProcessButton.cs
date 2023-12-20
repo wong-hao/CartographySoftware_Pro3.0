@@ -58,23 +58,23 @@ namespace SMGI_Plugin_EmergencyMap
                     // adjacentNodes 中包含了与特定节点相邻的其他节点
                     foreach (var adjacentNode in adjacentNodes)
                     {
-                        GApplication.writeLog(adjacentNode.ID.ToString(), GApplication.INFO, false);
+                        GApplication.writeLog(adjacentNode.Index.ToString(), GApplication.INFO, false);
                     }
 
                     List<TinEdge> incidentEdges = node.GetIncidentEdges(tinDataset.Edges);
 
-                    // 打印出连接到节点 的边的 ID
+                    // 打印出连接到节点 的边的 Index
                     foreach (var edge1 in incidentEdges)
                     {
-                        GApplication.writeLog($"Edge ID connected to Node: {edge1.ID}", GApplication.INFO, false);
+                        GApplication.writeLog($"Edge Index connected to Node: {edge1.Index}", GApplication.INFO, false);
                     }
 
                     List<TinTriangle> incidentTriangles = node.GetIncidentTriangles(tinDataset.Triangles);
 
-                    // 打印出与节点 相关的三角形的 ID
+                    // 打印出与节点 相关的三角形的 Index
                     foreach (var triangle1 in incidentTriangles)
                     {
-                        GApplication.writeLog($"Triangle ID connected to Node: {triangle1.ID}", GApplication.INFO, false);
+                        GApplication.writeLog($"Triangle Index connected to Node: {triangle1.Index}", GApplication.INFO, false);
                     }
 
                     GApplication.writeLog($"Node的横纵坐标为: {node.ToMapPoint(tinDataset).X}, {node.ToMapPoint(tinDataset).Y}", GApplication.INFO, false);
@@ -86,10 +86,10 @@ namespace SMGI_Plugin_EmergencyMap
                     var triangle1 = edge.GetTriangleByEdge(tinDataset.Triangles);
 
                     TinEdge nextEdge = edge.GetNextEdgeInTriangle(triangle1, tinDataset.Edges);
-                    GApplication.writeLog($"nextEdgeID: {nextEdge.ID}", GApplication.INFO, false);
+                    GApplication.writeLog($"nextEdgeID: {nextEdge.Index}", GApplication.INFO, false);
 
                     TinEdge previousEdge = edge.GetPreviousEdgeInTriangle(triangle1, tinDataset.Edges);
-                    GApplication.writeLog($"previousEdgeID: {previousEdge.ID}", GApplication.INFO, false);
+                    GApplication.writeLog($"previousEdgeID: {previousEdge.Index}", GApplication.INFO, false);
 
                     GApplication.writeLog($"Edge的横纵坐标为: {edge.ToPolyline(tinDataset).Points.First().X}, {edge.ToPolyline(tinDataset).Points.First().Y}, {edge.ToPolyline(tinDataset).Points.Last().X}, {edge.ToPolyline(tinDataset).Points.Last().Y}", GApplication.INFO, false);
 
@@ -101,10 +101,10 @@ namespace SMGI_Plugin_EmergencyMap
                 {
                     List<TinTriangle> adjacentTriangles = triangle.GetAdjacentTriangles(tinDataset.Edges, tinDataset.Triangles);
 
-                    // 打印与 triangle 相邻的其他三角形的 ID
+                    // 打印与 triangle 相邻的其他三角形的 Index
                     foreach (var triangle2 in adjacentTriangles)
                     {
-                        GApplication.writeLog($"Adjacent Triangle ID to Triangle 33: {triangle2.ID}", GApplication.INFO, false);
+                        GApplication.writeLog($"Adjacent Triangle Index to Triangle 33: {triangle2.Index}", GApplication.INFO, false);
                     }
                 }
 
