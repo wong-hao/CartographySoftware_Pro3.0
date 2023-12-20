@@ -18,9 +18,9 @@ using System.Xml.Linq;
 using System.Windows.Input;
 using ArcGIS.Desktop.Framework.Dialogs;
 using ArcGIS.Desktop.Internal.Mapping;
-using System.Windows;
-using log4net;
 using log4net.Config;
+using log4net;
+using System.Windows;
 using MessageBox = ArcGIS.Desktop.Framework.Dialogs.MessageBox;
 
 namespace SMGI_Common
@@ -324,12 +324,12 @@ namespace SMGI_Common
                 return assemblyCacheFolder;
             }
         }
-
+        
         public string ProjectPath
         {
             get
             {
-                string path = Project.Current.GetItems<MapProjectItem>().First().Path;
+                string path = Project.Current.GetItems<MapProjectItem>().First().Path;  
                 return path;
             }
         }
@@ -380,9 +380,9 @@ namespace SMGI_Common
             bool inited = false;
             ThreadStart start = () =>
             {
-                //WaitForm wait = new WaitForm(this);
-                //inited = true;
-                //wait.ShowDialog();
+                WaitForm wait = new WaitForm(this);
+                inited = true;
+                wait.ShowDialog();
             };
             thread = new Thread(start);
             thread.Start();
@@ -460,7 +460,7 @@ namespace SMGI_Common
                 {
                     return;
                 }
-                
+
                 storageLocation = fileLocation + "\\log\\";
 
                 if (!File.Exists(storageLocation))
@@ -593,9 +593,9 @@ namespace SMGI_Common
                 throw;
             }
         }
-    }
 
-    #endregion
+        #endregion
+    }
 
     public class WaitOperation : IDisposable
     {
