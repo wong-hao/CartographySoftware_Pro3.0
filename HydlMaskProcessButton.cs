@@ -30,11 +30,12 @@ namespace SMGI_Plugin_EmergencyMap
             {
                 TinDataset tinDataset = null;
 
-                string filePath = GApplication.GetAppDataPath() + "//" + "tinDataset.json";
+                string jsonFilePath = GApplication.GetAppDataPath() + "//" + "tinDataset.json";
+                string xmlFilePath = GApplication.GetAppDataPath() + "//" + "tinDataset.xml";
 
-                if (File.Exists(filePath))
+                if (File.Exists(jsonFilePath))
                 {
-                    TinDataset deserializedDataset = TinDataset.DeserializeFromFile(filePath);
+                    TinDataset deserializedDataset = TinDataset.DeserializeFromJSONFile(jsonFilePath);
 
                     // 如果反序列化的结果不为空，则将其赋值给 tinDataset
                     if (deserializedDataset != null)
@@ -57,7 +58,8 @@ namespace SMGI_Plugin_EmergencyMap
                     // 建立关系并保存为 JSON
                     tinDataset.GetTinDatasetDefinition("CCC_TinTriangle", "CCC_TinEdge", "CCC_TinNode", progress);
 
-                    tinDataset.SerializeToFile(filePath);
+                    tinDataset.SerializeToJSONFile(jsonFilePath);
+                    tinDataset.SerializeToXMLFile(xmlFilePath);
                 }
 
                 tinDataset.PrintTinDatasetDefinition();

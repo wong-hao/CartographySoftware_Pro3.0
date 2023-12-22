@@ -14,6 +14,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Windows.Input;
+using System.Xml;
 
 public class TinNode
 {
@@ -631,24 +632,44 @@ public class TinDataset
         return nearestEdge;
     }
 
-    public void SerializeToFile(string filePath)
+    public void SerializeToJSONFile(string jsonFilePath)
     {
         // 将 TinDataset 对象转换为 JSON 字符串
-        string jsonString = JsonConvert.SerializeObject(this, Formatting.Indented);
+        string jsonString = JsonConvert.SerializeObject(this, Newtonsoft.Json.Formatting.Indented);
 
         // 保存 JSON 字符串到文件
-        File.WriteAllText(filePath, jsonString);
+        File.WriteAllText(jsonFilePath, jsonString);
     }
 
-    public static TinDataset DeserializeFromFile(string filePath)
+    public void SerializeToXMLFile(string xmlFilePath)
+    {
+        // 将 TinDataset 对象转换为 JSON 字符串
+        string jsonString = JsonConvert.SerializeObject(this, Newtonsoft.Json.Formatting.Indented);
+
+        // 将对象从 JSON 转换为 XML
+        XmlDocument xmlDocument = JsonConvert.DeserializeXmlNode(jsonString, "TinDataset");
+
+        // 保存 XML 数据到文件
+        xmlDocument.Save(xmlFilePath);
+    }
+
+    public static TinDataset DeserializeFromJSONFile(string filePath)
     {
         if (File.Exists(filePath))
         {
-            // 从文件中读取 JSON 字符串
-            string jsonString = File.ReadAllText(filePath);
+            try
+            {
+                // 从文件中读取 JSON 字符串
+                string jsonString = File.ReadAllText(filePath);
 
-            // 尝试反序列化 JSON 字符串为 TinDataset 对象
-            return JsonConvert.DeserializeObject<TinDataset>(jsonString);
+                // 尝试反序列化 JSON 字符串为 TinDataset 对象
+                return JsonConvert.DeserializeObject<TinDataset>(jsonString);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"反序列化失败: {ex.Message}");
+                throw;
+            }
         }
         else
         {
@@ -656,6 +677,43 @@ public class TinDataset
             return null;
         }
     }
+
+    public static TinDataset DeserializeFromXMLFile(string xmlFilePath)
+    {
+        if (File.Exists(xmlFilePath))
+        {
+            try
+            {
+                // 读取 XML 文件内容
+                string xmlContent = File.ReadAllText(xmlFilePath);
+
+                // 加载 XML 文档
+                XmlDocument xmlDocument = new XmlDocument();
+                xmlDocument.LoadXml(xmlContent);
+
+                // 获取 TinDataset 节点的内部内容
+                XmlNode tinDatasetNode = xmlDocument.SelectSingleNode("TinDataset");
+
+                // 将内部内容转换为 JSON
+                string jsonString = JsonConvert.SerializeXmlNode(tinDatasetNode, Newtonsoft.Json.Formatting.None, true);
+
+                // 将 JSON 反序列化为 TinDataset 对象
+                return JsonConvert.DeserializeObject<TinDataset>(jsonString);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"反序列化失败: {ex.Message}");
+                return null;
+            }
+        }
+        else
+        {
+            Console.WriteLine("文件不存在.");
+            return null;
+        }
+    }
+
+
 }
 
 
