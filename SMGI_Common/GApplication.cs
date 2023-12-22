@@ -20,8 +20,6 @@ using ArcGIS.Desktop.Framework.Dialogs;
 using ArcGIS.Desktop.Internal.Mapping;
 using log4net.Config;
 using log4net;
-using System.Windows;
-using MessageBox = ArcGIS.Desktop.Framework.Dialogs.MessageBox;
 
 namespace SMGI_Common
 {
@@ -495,8 +493,7 @@ namespace SMGI_Common
 
                 if (!File.Exists(configFilePath))
                 {
-                    MessageBox.Show("日志配置文件" + configFilePath + "日志问题", "错误提示", MessageBoxButton.OK,
-                        MessageBoxImage.Error);
+                    MessageBox.Show("日志配置文件" + configFilePath + "不存在","日志问题");
                 }
 
                 XmlConfigurator.ConfigureAndWatch(new FileInfo(configFilePath));
@@ -505,7 +502,7 @@ namespace SMGI_Common
             }
             catch (Exception ex)
             {
-                MessageBox.Show(ex.ToString(), "日志问题", MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show(ex.ToString(), "日志问题");
                 throw;
             }
         }
@@ -583,13 +580,13 @@ namespace SMGI_Common
                         }
                         break;
                     default:
-                        MessageBox.Show("日志消息类型不受支持!", "日志问题", MessageBoxButton.OK, MessageBoxImage.Error);
+                        MessageBox.Show("日志消息类型不受支持!", "日志问题");
                         break;
                 }
             }
             catch (Exception ex)
             {
-                MessageBox.Show(ex.ToString(), "日志问题", MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show(ex.ToString(), "日志问题");
                 throw;
             }
         }
