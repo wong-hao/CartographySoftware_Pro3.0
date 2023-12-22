@@ -6,10 +6,12 @@ using ArcGIS.Desktop.Core;
 using ArcGIS.Desktop.Framework.Dialogs;
 using ArcGIS.Desktop.Framework.Threading.Tasks;
 using ArcGIS.Desktop.Mapping;
+using Newtonsoft.Json;
 using SMGI_Common;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Windows.Input;
 
@@ -236,14 +238,6 @@ public class TinDataset
         Triangles = new List<TinTriangle>();
     }
 
-    private static TinDataset _cachedTinDataset = new TinDataset();
-
-    // 获取缓存的 TIN 数据集
-    public static TinDataset GetCachedTinDataset()
-    {
-        return _cachedTinDataset;
-    }
-
     public void GetTinDatasetDefinition(string tempTriangleLyrName, string tempEdgeLyrName, string tempNodeLyrName, IProgress<int> progress = null)
     {
         // 假设您已按名称获取了图层
@@ -344,9 +338,6 @@ public class TinDataset
             int percentage = (int)((double)currentProgress / totalProgress * 100);
             progress?.Report(percentage);
         }
-
-        // 假设计算结果存储在当前对象中
-        _cachedTinDataset = this;
     }
 
     public List<int> GetObjectIDs(FeatureLayer layer)
@@ -638,6 +629,32 @@ public class TinDataset
         }
 
         return nearestEdge;
+    }
+
+    public void SerializeToFile(string filePath)
+    {
+        // 将 TinDataset 对象转换为 JSON 字符串
+        string jsonString = JsonConvert.SerializeObject(this, Formatting.Indented);
+
+        // 保存 JSON 字符串到文件
+        File.WriteAllText(filePath, jsonString);
+    }
+
+    public static TinDataset DeserializeFromFile(string filePath)
+    {
+        if (File.Exists(filePath))
+        {
+            // 从文件中读取 JSON 字符串
+            string jsonString = File.ReadAllText(filePath);
+
+            // 尝试反序列化 JSON 字符串为 TinDataset 对象
+            return JsonConvert.DeserializeObject<TinDataset>(jsonString);
+        }
+        else
+        {
+            // 如果文件不存在，则返回 null 或者进行其他适当的处理
+            return null;
+        }
     }
 }
 

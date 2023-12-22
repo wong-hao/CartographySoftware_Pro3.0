@@ -10,10 +10,12 @@ using System.Linq;
 using SMGI_Common;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Windows.Forms.VisualStyles;
 using ArcGIS.Core.Internal.CIM;
 using ArcGIS.Core.Geometry;
 using ArcGIS.Core.Internal.Geometry;
+using Newtonsoft.Json;
 
 namespace SMGI_Plugin_EmergencyMap
 {
@@ -26,23 +28,38 @@ namespace SMGI_Plugin_EmergencyMap
             //目前还未找到方法判断不是临时数据
             await QueuedTask.Run(() =>
             {
-                // 创建TinDataset对象并建立关系
-                TinDataset tinDataset = TinDataset.GetCachedTinDataset();
+                TinDataset tinDataset = null;
 
-                // 模拟一个进度报告器
-                IProgress<int> progress = new Progress<int>(percentage =>
+                string filePath = GApplication.GetAppDataPath() + "//" + "tinDataset.json";
+
+                if (File.Exists(filePath))
                 {
-                    Debug.WriteLine($"Progress: {percentage}%");
-                });
+                    TinDataset deserializedDataset = TinDataset.DeserializeFromFile(filePath);
 
-                if (tinDataset == null || tinDataset.Nodes.Count == 0)
-                {
-                    // 建立关系并显示进度
-                    tinDataset.GetTinDatasetDefinition("CCC_TinTriangle", "CCC_TinEdge", "CCC_TinNode", progress);
-
+                    // 如果反序列化的结果不为空，则将其赋值给 tinDataset
+                    if (deserializedDataset != null)
+                    {
+                        tinDataset = deserializedDataset;
+                    }
                 }
 
-                // 输出关系信息
+                // 如果 tinDataset 仍为空，执行建立关系和序列化的操作
+                if (tinDataset == null || tinDataset.Nodes.Count == 0)
+                {
+                    tinDataset = new TinDataset();
+
+                    // 模拟进度报告器
+                    IProgress<int> progress = new Progress<int>(percentage =>
+                    {
+                        Debug.WriteLine($"Progress: {percentage}%");
+                    });
+
+                    // 建立关系并保存为 JSON
+                    tinDataset.GetTinDatasetDefinition("CCC_TinTriangle", "CCC_TinEdge", "CCC_TinNode", progress);
+
+                    tinDataset.SerializeToFile(filePath);
+                }
+
                 tinDataset.PrintTinDatasetDefinition();
 
                 int nodeCount = tinDataset.GetNodeCount();
