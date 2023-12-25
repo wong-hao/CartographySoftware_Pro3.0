@@ -1,53 +1,46 @@
-﻿using ArcGIS.Core.Data;
-using ArcGIS.Core.Data.DDL;
+﻿using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Xml;
+using ArcGIS.Core.Data;
 using ArcGIS.Core.Geometry;
 using ArcGIS.Core.Internal.Geometry;
-using ArcGIS.Desktop.Core;
 using ArcGIS.Desktop.Framework.Dialogs;
-using ArcGIS.Desktop.Framework.Threading.Tasks;
 using ArcGIS.Desktop.Mapping;
 using Newtonsoft.Json;
 using SMGI_Common;
-using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.IO;
-using System.Linq;
-using System.Windows.Input;
-using System.Xml;
+using Formatting = Newtonsoft.Json.Formatting;
 
 public class TinNode
 {
-    public int Index { get; }
-    public List<int> ConnectedEdgeIndexes { get; }
-
-    public TinNode(int index)
+    public TinNode(int Index)
     {
-        if (index <= 0)
-        {
-            throw new ArgumentException("Node Index must be a positive integer.");
-        }
+        if (Index <= 0) throw new ArgumentException("Node Index must be a positive integer.");
 
-        Index = index;
+        this.Index = Index;
         ConnectedEdgeIndexes = new List<int>();
     }
+
+    public int Index { get; }
+    public List<int> ConnectedEdgeIndexes { get; }
 
     public MapPoint ToMapPoint(TinDataset tinDataset)
     {
         // 获取包含节点信息的图层
-        FeatureLayer nodeLayer = MapView.Active.Map.GetLayersAsFlattenedList()
+        var nodeLayer = MapView.Active.Map.GetLayersAsFlattenedList()
             .OfType<FeatureLayer>()
             .FirstOrDefault(layer => layer.Name == tinDataset.nodeLyrName);
 
-        int nodeIndex = this.Index; // 假设节点对象有一个属性叫做 Index，表示节点的 Index
+        var nodeIndex = Index; // 假设节点对象有一个属性叫做 Index，表示节点的 Index
 
         // 使用 GetFeatureByOID 方法获取节点要素
-        Feature nodeFeature = tinDataset.GetFeatureByOID(nodeLayer, nodeIndex);
+        var nodeFeature = tinDataset.GetFeatureByOID(nodeLayer, nodeIndex);
 
         if (nodeFeature != null)
         {
             // 提取节点要素中的点位置信息
-            MapPoint nodePoint = nodeFeature.GetShape() as MapPoint;
+            var nodePoint = nodeFeature.GetShape() as MapPoint;
             return nodePoint;
         }
 
@@ -55,9 +48,9 @@ public class TinNode
         return null;
     }
 
-    public List<TinNode> GetAdjacentNodes(List<TinEdge> edges, List<TinNode> allNodes)
+    public List<TinNode> GetAdjacentNodes(List<TinEdge> allEdges, List<TinNode> allNodes)
     {
-        var adjacentNodes = edges
+        var adjacentNodes = allEdges
             .Where(edge => edge.ConnectedNodeIndexes.Contains(this.Index))
             .SelectMany(edge => edge.ConnectedNodeIndexes.Where(Index => Index != this.Index))
             .Distinct()
@@ -68,52 +61,49 @@ public class TinNode
         return adjacentNodes;
     }
 
-    public List<TinEdge> GetIncidentEdges(List<TinEdge> edges)
+    public List<TinEdge> GetIncidentEdges(List<TinEdge> allEdges)
     {
         // 根据连接的节点筛选边，其中该节点是“起始”节点或“结束”节点
-        return edges.Where(edge => edge.ConnectedNodeIndexes.Contains(this.Index)).ToList();
+        return allEdges.Where(edge => edge.ConnectedNodeIndexes.Contains(Index)).ToList();
     }
 
-    public List<TinTriangle> GetIncidentTriangles(List<TinTriangle> triangles)
+    public List<TinTriangle> GetIncidentTriangles(List<TinTriangle> allTriangles)
     {
         // 根据由连接边组成的三角形筛选三角形，其中该节点的连接边是三角形的一部分
-        return triangles.Where(triangle => triangle.ConsistedEdgeIndexes.Any(edgeIndex => ConnectedEdgeIndexes.Contains(edgeIndex))).ToList();
+        return allTriangles.Where(triangle =>
+            triangle.ConsistedEdgeIndexes.Any(edgeIndex => ConnectedEdgeIndexes.Contains(edgeIndex))).ToList();
     }
-
 }
 
 public class TinEdge
 {
-    public int Index { get; }
-    public List<int> ConnectedNodeIndexes { get; }
-
-    public TinEdge(int index)
+    public TinEdge(int Index)
     {
-        if (index <= 0)
-        {
-            throw new ArgumentException("Edge Index must be a positive integer.");
-        }
+        if (Index <= 0) throw new ArgumentException("Edge Index must be a positive integer.");
 
-        Index = index;
+        this.Index = Index;
         ConnectedNodeIndexes = new List<int>();
     }
+
+    public int Index { get; }
+    public List<int> ConnectedNodeIndexes { get; }
 
     public Polyline ToPolyline(TinDataset tinDataset)
     {
         // 获取包含边信息的图层
-        FeatureLayer edgeLayer = MapView.Active.Map.GetLayersAsFlattenedList()
+        var edgeLayer = MapView.Active.Map.GetLayersAsFlattenedList()
             .OfType<FeatureLayer>()
             .FirstOrDefault(layer => layer.Name == tinDataset.edgeLyrName);
 
-        int edgeIndex = this.Index; // 假设边对象有一个属性叫做 Index，表示边的 Index
+        var edgeIndex = Index; // 假设边对象有一个属性叫做 Index，表示边的 Index
 
         // 使用 GetFeatureByOID 方法获取边要素
-        Feature edgeFeature = tinDataset.GetFeatureByOID(edgeLayer, edgeIndex);
+        var edgeFeature = tinDataset.GetFeatureByOID(edgeLayer, edgeIndex);
 
         if (edgeFeature != null)
         {
             // 提取边要素中的 Polyline 信息
-            Polyline edgePolyline = edgeFeature.GetShape() as Polyline;
+            var edgePolyline = edgeFeature.GetShape() as Polyline;
             return edgePolyline;
         }
 
@@ -128,12 +118,12 @@ public class TinEdge
         var triangleEdges = allEdges.Where(edge => triangle.ConsistedEdgeIndexes.Contains(edge.Index)).ToList();
 
         // 找到当前边在三角形中的索引
-        int currentIndex = triangleEdges.FindIndex(edge => edge.Index == this.Index);
+        var currentIndex = triangleEdges.FindIndex(edge => edge.Index == Index);
 
         if (currentIndex != -1)
         {
             // 获取下一个边的索引（按顺时针方向）
-            int nextIndex = (currentIndex + 1) % triangleEdges.Count;
+            var nextIndex = (currentIndex + 1) % triangleEdges.Count;
 
             // 返回下一个边
             return triangleEdges[nextIndex];
@@ -149,12 +139,12 @@ public class TinEdge
         var triangleEdges = allEdges.Where(edge => triangle.ConsistedEdgeIndexes.Contains(edge.Index)).ToList();
 
         // 找到当前边在三角形中的索引
-        int currentIndex = triangleEdges.FindIndex(edge => edge.Index == this.Index);
+        var currentIndex = triangleEdges.FindIndex(edge => edge.Index == Index);
 
         if (currentIndex != -1)
         {
             // 获取前一个边的索引（按逆时针方向）
-            int previousIndex = (currentIndex - 1 + triangleEdges.Count) % triangleEdges.Count;
+            var previousIndex = (currentIndex - 1 + triangleEdges.Count) % triangleEdges.Count;
 
             // 返回前一个边
             return triangleEdges[previousIndex];
@@ -167,42 +157,39 @@ public class TinEdge
     public TinTriangle GetTriangleByEdge(List<TinTriangle> allTriangles)
     {
         // 查找包含当前边的三角形
-        return allTriangles.FirstOrDefault(triangle => triangle.ConsistedEdgeIndexes.Contains(this.Index));
+        return allTriangles.FirstOrDefault(triangle => triangle.ConsistedEdgeIndexes.Contains(Index));
     }
 }
 
 public class TinTriangle
 {
-    public int Index { get; }
-    public List<int> ConsistedEdgeIndexes { get; }
-
-    public TinTriangle(int index)
+    public TinTriangle(int Index)
     {
-        if (index <= 0)
-        {
-            throw new ArgumentException("Triangle Index must be a positive integer.");
-        }
+        if (Index <= 0) throw new ArgumentException("Triangle Index must be a positive integer.");
 
-        Index = index;
+        this.Index = Index;
         ConsistedEdgeIndexes = new List<int>();
     }
+
+    public int Index { get; }
+    public List<int> ConsistedEdgeIndexes { get; }
 
     public Polygon ToPolygon(TinDataset tinDataset)
     {
         // 获取包含三角形信息的图层
-        FeatureLayer triangleLayer = MapView.Active.Map.GetLayersAsFlattenedList()
+        var triangleLayer = MapView.Active.Map.GetLayersAsFlattenedList()
             .OfType<FeatureLayer>()
             .FirstOrDefault(layer => layer.Name == tinDataset.triangleLyrName);
 
-        int triangleIndex = this.Index; // 假设三角形对象有一个属性叫做 Index，表示三角形的 Index
+        var triangleIndex = Index; // 假设三角形对象有一个属性叫做 Index，表示三角形的 Index
 
         // 使用 GetFeatureByOID 方法获取三角形要素
-        Feature triangleFeature = tinDataset.GetFeatureByOID(triangleLayer, triangleIndex);
+        var triangleFeature = tinDataset.GetFeatureByOID(triangleLayer, triangleIndex);
 
         if (triangleFeature != null)
         {
             // 提取三角形要素中的 Polygon 信息
-            Polygon trianglePolygon = triangleFeature.GetShape() as Polygon;
+            var trianglePolygon = triangleFeature.GetShape() as Polygon;
             return trianglePolygon;
         }
 
@@ -211,19 +198,27 @@ public class TinTriangle
     }
 
 
-    public List<TinTriangle> GetAdjacentTriangles(List<TinEdge> edges, List<TinTriangle> allTriangles)
+    public List<TinTriangle> GetAdjacentTriangles(List<TinTriangle> allTriangles)
     {
         var adjacentTriangles = allTriangles
-            .Where(triangle => triangle != this && triangle.ConsistedEdgeIndexes.Any(edgeIndex => this.ConsistedEdgeIndexes.Contains(edgeIndex)))
+            .Where(triangle =>
+                triangle != this &&
+                triangle.ConsistedEdgeIndexes.Any(edgeIndex => ConsistedEdgeIndexes.Contains(edgeIndex)))
             .ToList();
 
         return adjacentTriangles;
     }
-
 }
 
 public class TinDataset
 {
+    public TinDataset()
+    {
+        Nodes = new List<TinNode>();
+        Edges = new List<TinEdge>();
+        Triangles = new List<TinTriangle>();
+    }
+
     public List<TinNode> Nodes { get; }
     public List<TinEdge> Edges { get; }
     public List<TinTriangle> Triangles { get; }
@@ -232,23 +227,20 @@ public class TinDataset
     public string edgeLyrName { get; set; }
     public string nodeLyrName { get; set; }
 
-    public TinDataset()
-    {
-        Nodes = new List<TinNode>();
-        Edges = new List<TinEdge>();
-        Triangles = new List<TinTriangle>();
-    }
-
-    public void GetTinDatasetDefinition(string tempTriangleLyrName, string tempEdgeLyrName, string tempNodeLyrName, IProgress<int> progress = null)
+    public void GetTinDatasetDefinition(string tempTriangleLyrName, string tempEdgeLyrName, string tempNodeLyrName,
+        IProgress<int> progress = null)
     {
         // 假设您已按名称获取了图层
         triangleLyrName = tempTriangleLyrName;
         edgeLyrName = tempEdgeLyrName;
         nodeLyrName = tempNodeLyrName;
 
-        FeatureLayer triangleLayer = MapView.Active.Map.GetLayersAsFlattenedList().OfType<FeatureLayer>().FirstOrDefault(layer => layer.Name == triangleLyrName);
-        FeatureLayer edgeLayer = MapView.Active.Map.GetLayersAsFlattenedList().OfType<FeatureLayer>().FirstOrDefault(layer => layer.Name == edgeLyrName);
-        FeatureLayer nodeLayer = MapView.Active.Map.GetLayersAsFlattenedList().OfType<FeatureLayer>().FirstOrDefault(layer => layer.Name == nodeLyrName);
+        var triangleLayer = MapView.Active.Map.GetLayersAsFlattenedList().OfType<FeatureLayer>()
+            .FirstOrDefault(layer => layer.Name == triangleLyrName);
+        var edgeLayer = MapView.Active.Map.GetLayersAsFlattenedList().OfType<FeatureLayer>()
+            .FirstOrDefault(layer => layer.Name == edgeLyrName);
+        var nodeLayer = MapView.Active.Map.GetLayersAsFlattenedList().OfType<FeatureLayer>()
+            .FirstOrDefault(layer => layer.Name == nodeLyrName);
 
         if (triangleLayer == null || edgeLayer == null || nodeLayer == null)
         {
@@ -257,43 +249,37 @@ public class TinDataset
         }
 
         // 获取每个图层中的要素 ObjectIDs
-        List<int> triangleOIDs = GetObjectIDs(triangleLayer);
-        List<int> edgeOIDs = GetObjectIDs(edgeLayer);
-        List<int> nodeOIDs = GetObjectIDs(nodeLayer);
+        var triangleOIDs = GetObjectIDs(triangleLayer);
+        var edgeOIDs = GetObjectIDs(edgeLayer);
+        var nodeOIDs = GetObjectIDs(nodeLayer);
 
 
-        int totalProgress = edgeOIDs.Count * nodeOIDs.Count; // 计算总进度步数
+        var totalProgress = edgeOIDs.Count * nodeOIDs.Count; // 计算总进度步数
 
-        int currentProgress = 0;
+        var currentProgress = 0;
 
         // 假设根据其 ObjectIDs 对特征进行排序
-        foreach (int edgeOID in edgeOIDs)
+        foreach (var edgeOID in edgeOIDs)
         {
-            Feature edgeFeature = GetFeatureByOID(edgeLayer, edgeOID);
-            Polyline edgePolyline = edgeFeature.GetShape() as Polyline;
+            var edgeFeature = GetFeatureByOID(edgeLayer, edgeOID);
+            var edgePolyline = edgeFeature.GetShape() as Polyline;
 
-            foreach (int nodeOID in nodeOIDs)
+            foreach (var nodeOID in nodeOIDs)
             {
-                Feature nodeFeature = GetFeatureByOID(nodeLayer, nodeOID);
-                MapPoint nodePoint = nodeFeature.GetShape() as MapPoint;
+                var nodeFeature = GetFeatureByOID(nodeLayer, nodeOID);
+                var nodePoint = nodeFeature.GetShape() as MapPoint;
 
                 if (EdgeHasNodeAtEndpoints(edgePolyline, nodePoint))
                 {
                     // 如果节点不存在，则创建 TinNode
-                    if (!Nodes.Any(node => node.Index == nodeOID))
-                    {
-                        Nodes.Add(new TinNode(nodeOID));
-                    }
+                    if (!Nodes.Any(node => node.Index == nodeOID)) Nodes.Add(new TinNode(nodeOID));
 
                     // 如果边不存在，则创建 TinEdge
-                    if (!Edges.Any(edge => edge.Index == edgeOID))
-                    {
-                        Edges.Add(new TinEdge(edgeOID));
-                    }
+                    if (!Edges.Any(edge => edge.Index == edgeOID)) Edges.Add(new TinEdge(edgeOID));
 
                     // 建立节点和边之间的连接关系
-                    TinNode currentNode = Nodes.First(node => node.Index == nodeOID);
-                    TinEdge currentEdge = Edges.First(edge => edge.Index == edgeOID);
+                    var currentNode = Nodes.First(node => node.Index == nodeOID);
+                    var currentEdge = Edges.First(edge => edge.Index == edgeOID);
 
                     currentNode.ConnectedEdgeIndexes.Add(edgeOID);
                     currentEdge.ConnectedNodeIndexes.Add(nodeOID);
@@ -301,7 +287,7 @@ public class TinDataset
 
                 // 这里模拟进度
                 currentProgress++;
-                int percentage = (int)((double)currentProgress / totalProgress * 100);
+                var percentage = (int)((double)currentProgress / totalProgress * 100);
                 progress?.Report(percentage);
             }
         }
@@ -312,21 +298,21 @@ public class TinDataset
 
         currentProgress = 0;
 
-        foreach (int triangleOID in triangleOIDs)
+        foreach (var triangleOID in triangleOIDs)
         {
             // 获取三角形要素
-            Feature triangleFeature = GetFeatureByOID(triangleLayer, triangleOID);
+            var triangleFeature = GetFeatureByOID(triangleLayer, triangleOID);
 
             // 获取构成三角形的边要素
-            List<Feature> edgeFeatures = GetEdgesForTriangle(triangleFeature, edgeLayer);
+            var edgeFeatures = GetEdgesForTriangle(triangleFeature, edgeLayer);
 
             // 新建一个 TinTriangle 对象表示当前的三角形
-            TinTriangle currentTriangle = new TinTriangle(triangleOID);
+            var currentTriangle = new TinTriangle(triangleOID);
 
             // 将每个边的 Index 添加到当前三角形的边列表中
-            foreach (Feature edgeFeature in edgeFeatures)
+            foreach (var edgeFeature in edgeFeatures)
             {
-                int edgeOID = Convert.ToInt32(edgeFeature.GetObjectID());
+                var edgeOID = Convert.ToInt32(edgeFeature.GetObjectID());
                 currentTriangle.ConsistedEdgeIndexes.Add(edgeOID);
             }
 
@@ -336,20 +322,20 @@ public class TinDataset
             // 更新进度
             currentProgress++;
 
-            int percentage = (int)((double)currentProgress / totalProgress * 100);
+            var percentage = (int)((double)currentProgress / totalProgress * 100);
             progress?.Report(percentage);
         }
     }
 
     public List<int> GetObjectIDs(FeatureLayer layer)
     {
-        List<int> oids = new List<int>();
+        var oids = new List<int>();
 
-        using (RowCursor cursor = layer.Search())
+        using (var cursor = layer.Search())
         {
             while (cursor.MoveNext())
             {
-                Feature feature = (Feature)cursor.Current;
+                var feature = (Feature)cursor.Current;
                 oids.Add(Convert.ToInt32(feature.GetObjectID()));
             }
         }
@@ -359,26 +345,19 @@ public class TinDataset
 
     public Feature GetFeatureByOID(FeatureLayer layer, int oid)
     {
-        string objectIdField = GetObjectIDField(layer);
+        var objectIdField = GetObjectIDField(layer);
 
-        QueryFilter queryFilter = new QueryFilter();
+        var queryFilter = new QueryFilter();
 
         // 根据存在的字段设置查询条件
         if (!string.IsNullOrEmpty(objectIdField))
-        {
             queryFilter.WhereClause = $"{objectIdField} = {oid}";
-        }
         else
-        {
             queryFilter.WhereClause = $"OID = {oid}"; // 或者您的特定字段
-        }
 
-        using (RowCursor rowCursor = layer.Search(queryFilter))
+        using (var rowCursor = layer.Search(queryFilter))
         {
-            if (rowCursor.MoveNext())
-            {
-                return rowCursor.Current as Feature;
-            }
+            if (rowCursor.MoveNext()) return rowCursor.Current as Feature;
         }
 
         return null;
@@ -391,24 +370,20 @@ public class TinDataset
 
         // 检查字段是否包含 OID 或 OBJECTID
         foreach (var field in fields)
-        {
             if (field.FieldType == FieldType.OID || field.Name.ToUpper() == "OBJECTID")
-            {
                 return field.Name;
-            }
-        }
 
         return string.Empty;
     }
 
     private bool EdgeHasNodeAtEndpoints(Polyline edgePolyline, MapPoint nodePoint)
     {
-        MapPoint edgeStartPoint = edgePolyline.Points.First();
-        MapPoint edgeEndPoint = edgePolyline.Points.Last();
+        var edgeStartPoint = edgePolyline.Points.First();
+        var edgeEndPoint = edgePolyline.Points.Last();
 
         // 检查节点是否与边的起点或终点完全重合
-        bool isNodeAtStart = ArePointsEqual(edgeStartPoint, nodePoint);
-        bool isNodeAtEnd = ArePointsEqual(edgeEndPoint, nodePoint);
+        var isNodeAtStart = ArePointsEqual(edgeStartPoint, nodePoint);
+        var isNodeAtEnd = ArePointsEqual(edgeEndPoint, nodePoint);
 
         return isNodeAtStart || isNodeAtEnd;
     }
@@ -422,31 +397,29 @@ public class TinDataset
 
     private List<Feature> GetEdgesForTriangle(Feature triangleFeature, FeatureLayer edgeLayer)
     {
-        List<Feature> edgeFeatures = new List<Feature>();
-        List<int> edgeOIDs = GetObjectIDs(edgeLayer);
+        var edgeFeatures = new List<Feature>();
+        var edgeOIDs = GetObjectIDs(edgeLayer);
 
         // 获取三角形的顶点集合
-        Polygon trianglePolygon = triangleFeature.GetShape() as Polygon;
+        var trianglePolygon = triangleFeature.GetShape() as Polygon;
         var points = trianglePolygon.Points;
-        MapPoint point1Shape = points[2];
-        MapPoint point2Shape = points[1];
-        MapPoint point3Shape = points[0];
+        var point1Shape = points[2];
+        var point2Shape = points[1];
+        var point3Shape = points[0];
 
         // 获取三角形的三条边
-        Polyline edgeLine1 = PolylineBuilder.CreatePolyline(new List<MapPoint> { point2Shape, point1Shape }); // 第一条边
-        Polyline edgeLine2 = PolylineBuilder.CreatePolyline(new List<MapPoint> { point3Shape, point2Shape }); // 第二条边
-        Polyline edgeLine3 = PolylineBuilder.CreatePolyline(new List<MapPoint> { point1Shape, point3Shape }); // 第三条边
+        var edgeLine1 = PolylineBuilder.CreatePolyline(new List<MapPoint> { point2Shape, point1Shape }); // 第一条边
+        var edgeLine2 = PolylineBuilder.CreatePolyline(new List<MapPoint> { point3Shape, point2Shape }); // 第二条边
+        var edgeLine3 = PolylineBuilder.CreatePolyline(new List<MapPoint> { point1Shape, point3Shape }); // 第三条边
 
-        foreach (int edgeOID in edgeOIDs)
+        foreach (var edgeOID in edgeOIDs)
         {
-            Feature edgeFeature = GetFeatureByOID(edgeLayer, edgeOID);
-            Polyline edgeGeometry = edgeFeature.GetShape() as Polyline;
+            var edgeFeature = GetFeatureByOID(edgeLayer, edgeOID);
+            var edgeGeometry = edgeFeature.GetShape() as Polyline;
 
             // 检查三角形的每条边是否与当前图层中的要素相匹配
-            if (GeometriesAreEqual(edgeLine1, edgeGeometry) || GeometriesAreEqual(edgeLine2, edgeGeometry) || GeometriesAreEqual(edgeLine3, edgeGeometry))
-            {
-                edgeFeatures.Add(edgeFeature);
-            }
+            if (GeometriesAreEqual(edgeLine1, edgeGeometry) || GeometriesAreEqual(edgeLine2, edgeGeometry) ||
+                GeometriesAreEqual(edgeLine3, edgeGeometry)) edgeFeatures.Add(edgeFeature);
         }
 
         return edgeFeatures;
@@ -458,8 +431,8 @@ public class TinDataset
         if (geometry1 is Polyline && geometry2 is Polyline)
         {
             // Get identifiers for both geometries
-            string identifier1 = GetPolylineIdentifier((Polyline)geometry1);
-            string identifier2 = GetPolylineIdentifier((Polyline)geometry2);
+            var identifier1 = GetPolylineIdentifier((Polyline)geometry1);
+            var identifier2 = GetPolylineIdentifier((Polyline)geometry2);
 
             // Compare identifiers to check if the polylines have the same shape
             return identifier1 == identifier2;
@@ -474,25 +447,22 @@ public class TinDataset
         var sortedPoints = polyline.Points.OrderBy(p => p.X).ThenBy(p => p.Y).ThenBy(p => p.Z);
 
         // Get start and end points of the Polyline
-        MapPoint startPoint = sortedPoints.First();
-        MapPoint endPoint = sortedPoints.Last();
+        var startPoint = sortedPoints.First();
+        var endPoint = sortedPoints.Last();
 
         // Get the hash value of the sorted points as a unique identifier
         return $"{startPoint.X},{startPoint.Y},{startPoint.Z},{endPoint.X},{endPoint.Y},{endPoint.Z}";
     }
 
     public void PrintTinDatasetDefinition()
-    {        
-
+    {
         // 输出节点和其连接的边
         foreach (var node in Nodes)
         {
             GApplication.writeLog($"Node Index: {node.Index}", GApplication.INFO, false);
             GApplication.writeLog("Connected Edge IDs:", GApplication.INFO, false);
             foreach (var edgeIndex in node.ConnectedEdgeIndexes)
-            {
                 GApplication.writeLog(edgeIndex.ToString(), GApplication.INFO, false);
-            }
             GApplication.writeLog("------", GApplication.INFO, false);
         }
 
@@ -502,9 +472,7 @@ public class TinDataset
             GApplication.writeLog($"Edge Index: {edge.Index}", GApplication.INFO, false);
             GApplication.writeLog("Connected Node IDs:", GApplication.INFO, false);
             foreach (var nodeIndex in edge.ConnectedNodeIndexes)
-            {
                 GApplication.writeLog(nodeIndex.ToString(), GApplication.INFO, false);
-            }
             GApplication.writeLog("------", GApplication.INFO, false);
         }
 
@@ -514,9 +482,7 @@ public class TinDataset
             GApplication.writeLog($"Triangle Index: {triangle.Index}", GApplication.INFO, false);
             GApplication.writeLog("Edge IDs:", GApplication.INFO, false);
             foreach (var edgeIndex in triangle.ConsistedEdgeIndexes)
-            {
                 GApplication.writeLog(edgeIndex.ToString(), GApplication.INFO, false);
-            }
             GApplication.writeLog("------", GApplication.INFO, false);
         }
     }
@@ -529,13 +495,10 @@ public class TinDataset
     public TinNode GetNodeByIndex(int index)
     {
         if (index < 1 || index > Nodes.Count)
-        {
             // 处理索引超出范围的情况，这里你可以选择抛出异常或返回 null
             throw new IndexOutOfRangeException("Index is out of range for Nodes list.");
-            // 或者返回 null 或者其他适当的处理方式
-            // return null;
-        }
-
+        // 或者返回 null 或者其他适当的处理方式
+        // return null;
         return Nodes[index - 1];
     }
 
@@ -547,13 +510,10 @@ public class TinDataset
     public TinEdge GetEdgeByIndex(int index)
     {
         if (index < 1 || index > Edges.Count)
-        {
             // 处理索引超出范围的情况，这里你可以选择抛出异常或返回 null
             throw new IndexOutOfRangeException("Index is out of range for Edges list.");
-            // 或者返回 null 或者其他适当的处理方式
-            // return null;
-        }
-
+        // 或者返回 null 或者其他适当的处理方式
+        // return null;
         return Edges[index - 1];
     }
 
@@ -565,29 +525,26 @@ public class TinDataset
     public TinTriangle GetTriangleByIndex(int index)
     {
         if (index < 1 || index > Nodes.Count)
-        {
             // 处理索引超出范围的情况，这里你可以选择抛出异常或返回 null
             throw new IndexOutOfRangeException("Index is out of range for Triangles list.");
-            // 或者返回 null 或者其他适当的处理方式
-            // return null;
-        }
-
+        // 或者返回 null 或者其他适当的处理方式
+        // return null;
         return Triangles[index - 1];
     }
 
     public TinNode GetNearestNode(MapPoint mapPoint)
     {
         TinNode nearestNode = null;
-        double minDistance = double.MaxValue;
+        var minDistance = double.MaxValue;
 
-        foreach (TinNode node in Nodes)
+        foreach (var node in Nodes)
         {
             // 假设节点有 X 和 Y 坐标属性
-            double nodeX = node.ToMapPoint(this).X; // 节点的 X 坐标
-            double nodeY = node.ToMapPoint(this).Y; // 节点的 Y 坐标
+            var nodeX = node.ToMapPoint(this).X; // 节点的 X 坐标
+            var nodeY = node.ToMapPoint(this).Y; // 节点的 Y 坐标
 
             // 计算给定点与当前节点地图点之间的距离
-            double distance = CalculateDistance(mapPoint.X, mapPoint.Y, nodeX, nodeY);
+            var distance = CalculateDistance(mapPoint.X, mapPoint.Y, nodeX, nodeY);
 
             // 更新最小距离和对应的最近节点
             if (distance < minDistance)
@@ -609,23 +566,21 @@ public class TinDataset
     public TinEdge GetNearestEdge(MapPoint mapPoint)
     {
         TinEdge nearestEdge = null;
-        double minDistance = double.MaxValue;
+        var minDistance = double.MaxValue;
 
-        foreach (TinEdge edge in Edges)
+        foreach (var edge in Edges)
+        foreach (var nodeIndex in edge.ConnectedNodeIndexes)
         {
-            foreach (int nodeIndex in edge.ConnectedNodeIndexes)
+            // 使用节点 Index 获取地图点
+            var nodePoint = GetNodeByIndex(nodeIndex).ToMapPoint(this);
+
+            // 计算给定点与当前节点地图点之间的距离
+            var distance = CalculateDistance(mapPoint.X, mapPoint.Y, nodePoint.X, nodePoint.Y);
+
+            if (distance < minDistance)
             {
-                // 使用节点 Index 获取地图点
-                MapPoint nodePoint = GetNodeByIndex(nodeIndex).ToMapPoint(this);
-
-                // 计算给定点与当前节点地图点之间的距离
-                double distance = CalculateDistance(mapPoint.X, mapPoint.Y, nodePoint.X, nodePoint.Y);
-
-                if (distance < minDistance)
-                {
-                    minDistance = distance;
-                    nearestEdge = edge;
-                }
+                minDistance = distance;
+                nearestEdge = edge;
             }
         }
 
@@ -635,7 +590,7 @@ public class TinDataset
     public void SerializeToJSONFile(string jsonFilePath)
     {
         // 将 TinDataset 对象转换为 JSON 字符串
-        string jsonString = JsonConvert.SerializeObject(this, Newtonsoft.Json.Formatting.Indented);
+        var jsonString = JsonConvert.SerializeObject(this, Formatting.Indented);
 
         // 保存 JSON 字符串到文件
         File.WriteAllText(jsonFilePath, jsonString);
@@ -644,10 +599,10 @@ public class TinDataset
     public void SerializeToXMLFile(string xmlFilePath)
     {
         // 将 TinDataset 对象转换为 JSON 字符串
-        string jsonString = JsonConvert.SerializeObject(this, Newtonsoft.Json.Formatting.Indented);
+        var jsonString = JsonConvert.SerializeObject(this, Formatting.Indented);
 
         // 将对象从 JSON 转换为 XML
-        XmlDocument xmlDocument = JsonConvert.DeserializeXmlNode(jsonString, "TinDataset");
+        var xmlDocument = JsonConvert.DeserializeXmlNode(jsonString, "TinDataset");
 
         // 保存 XML 数据到文件
         xmlDocument.Save(xmlFilePath);
@@ -656,11 +611,10 @@ public class TinDataset
     public static TinDataset DeserializeFromJSONFile(string filePath)
     {
         if (File.Exists(filePath))
-        {
             try
             {
                 // 从文件中读取 JSON 字符串
-                string jsonString = File.ReadAllText(filePath);
+                var jsonString = File.ReadAllText(filePath);
 
                 // 尝试反序列化 JSON 字符串为 TinDataset 对象
                 return JsonConvert.DeserializeObject<TinDataset>(jsonString);
@@ -670,12 +624,9 @@ public class TinDataset
                 MessageBox.Show($"反序列化失败: {ex.Message}");
                 throw;
             }
-        }
-        else
-        {
-            // 如果文件不存在，则返回 null 或者进行其他适当的处理
-            return null;
-        }
+
+        // 如果文件不存在，则返回 null 或者进行其他适当的处理
+        return null;
     }
 
     public static TinDataset DeserializeFromXMLFile(string xmlFilePath)
@@ -685,17 +636,17 @@ public class TinDataset
             try
             {
                 // 读取 XML 文件内容
-                string xmlContent = File.ReadAllText(xmlFilePath);
+                var xmlContent = File.ReadAllText(xmlFilePath);
 
                 // 加载 XML 文档
-                XmlDocument xmlDocument = new XmlDocument();
+                var xmlDocument = new XmlDocument();
                 xmlDocument.LoadXml(xmlContent);
 
                 // 获取 TinDataset 节点的内部内容
-                XmlNode tinDatasetNode = xmlDocument.SelectSingleNode("TinDataset");
+                var tinDatasetNode = xmlDocument.SelectSingleNode("TinDataset");
 
                 // 将内部内容转换为 JSON
-                string jsonString = JsonConvert.SerializeXmlNode(tinDatasetNode, Newtonsoft.Json.Formatting.None, true);
+                var jsonString = JsonConvert.SerializeXmlNode(tinDatasetNode, Formatting.None, true);
 
                 // 将 JSON 反序列化为 TinDataset 对象
                 return JsonConvert.DeserializeObject<TinDataset>(jsonString);
@@ -706,14 +657,8 @@ public class TinDataset
                 return null;
             }
         }
-        else
-        {
-            Console.WriteLine("文件不存在.");
-            return null;
-        }
+
+        Console.WriteLine("文件不存在.");
+        return null;
     }
-
-
 }
-
-
