@@ -98,54 +98,48 @@ namespace SMGI_Common
         }
 
         /// <summary>
-        /// 读取gdb数据库
+        ///     读取gdb数据库
         /// </summary>
         /// <param name="gdbFilePath"></param>
         /// <param name="tableName"></param>
         /// <returns></returns>
         public static DataTable ReadGDBToDataTable(string gdbFilePath, string tableName)
         {
-            DataTable dataTable = new DataTable();
+            var dataTable = new DataTable();
             try
             {
-                using (Geodatabase geodatabase = new Geodatabase(new FileGeodatabaseConnectionPath(new Uri(gdbFilePath))))
-                using (Table table = geodatabase.OpenDataset<Table>(tableName))
+                using var geodatabase = new Geodatabase(new FileGeodatabaseConnectionPath(new Uri(gdbFilePath)));
+                using var table = geodatabase.OpenDataset<Table>(tableName);
+                foreach (var field in table.GetDefinition().GetFields())
                 {
-                    foreach (Field field in table.GetDefinition().GetFields())
-                    {
-                        // 使用字段名作为列名
-                        string columnName = field.Name;
+                    // 使用字段名作为列名
+                    var columnName = field.Name;
 
-                        // 检查列是否已经存在于DataTable中
-                        if (!dataTable.Columns.Contains(columnName))
-                        {
-                            // 如果列不存在，则将其添加到DataTable中
-                            dataTable.Columns.Add(columnName, typeof(string));
-                        }
-                    }
-
-                    using (RowCursor rowCursor = table.Search(null, false))
-                    {
-                        while (rowCursor.MoveNext())
-                        {
-                            using (Row row = rowCursor.Current)
-                            {
-                                DataRow dataRow = dataTable.NewRow();
-                                foreach (Field field in table.GetDefinition().GetFields())
-                                {
-                                    object value = row[field.Name];
-                                    dataRow[field.Name] = value != null ? value.ToString() : string.Empty;
-                                }
-                                dataTable.Rows.Add(dataRow);
-                            }
-                        }
-                    }
+                    // 检查列是否已经存在于DataTable中
+                    if (!dataTable.Columns.Contains(columnName))
+                        // 如果列不存在，则将其添加到DataTable中
+                        dataTable.Columns.Add(columnName, typeof(string));
                 }
+
+                using var rowCursor = table.Search(null, false);
+                while (rowCursor.MoveNext())
+                    using (var row = rowCursor.Current)
+                    {
+                        var dataRow = dataTable.NewRow();
+                        foreach (var field in table.GetDefinition().GetFields())
+                        {
+                            var value = row[field.Name];
+                            dataRow[field.Name] = value != null ? value.ToString() : string.Empty;
+                        }
+
+                        dataTable.Rows.Add(dataRow);
+                    }
             }
             catch (Exception ex)
             {
                 MessageBox.Show(ex.Message);
             }
+
             return dataTable;
         }
     }
