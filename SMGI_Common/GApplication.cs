@@ -10,6 +10,7 @@ using System.ComponentModel;
 using System.Runtime.Serialization.Formatters.Binary;
 using Microsoft.Win32;
 using System.IO;
+using System.Runtime.CompilerServices;
 using System.Security.Cryptography;
 using ArcGIS.Core.Geometry;
 using ArcGIS.Desktop.Framework.Threading.Tasks;
@@ -20,7 +21,6 @@ using ArcGIS.Desktop.Framework.Dialogs;
 using ArcGIS.Desktop.Internal.Mapping;
 using log4net.Config;
 using log4net;
-using System.Runtime.CompilerServices;
 
 namespace SMGI_Common
 {
@@ -318,7 +318,7 @@ namespace SMGI_Common
         {
             get
             {
-                string codeBase = System.Reflection.Assembly.GetExecutingAssembly().Location;
+                string codeBase = System.Reflection.Assembly.GetCallingAssembly().Location;
                 string assemblyCacheFolder = Path.GetDirectoryName(new Uri(codeBase).LocalPath);
                 return assemblyCacheFolder;
             }
@@ -412,19 +412,22 @@ namespace SMGI_Common
             return wo;
         }
 
-        public static string GetAppDataPath()
+        public string AppDataPath
         {
-            var dp = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
-            var di = new DirectoryInfo(dp);
-            var ds = di.GetDirectories("SMGI");
-            if (ds == null || ds.Length == 0)
+            get
             {
-                var sdi = di.CreateSubdirectory("SMGI");
-                return sdi.FullName;
-            }
-            else
-            {
-                return ds[0].FullName;
+                var dp = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
+                var di = new DirectoryInfo(dp);
+                var ds = di.GetDirectories("SMGI");
+                if (ds == null || ds.Length == 0)
+                {
+                    var sdi = di.CreateSubdirectory("SMGI");
+                    return sdi.FullName;
+                }
+                else
+                {
+                    return ds[0].FullName;
+                }
             }
         }
 
@@ -440,7 +443,7 @@ namespace SMGI_Common
         public const string FATAL = "FATAL";
         public const string ERROR = "ERROR";
 
-        public static void loadLog(string fileLocation, bool storageType)
+        public static void loadLog(string configFilePath, string fileLocation, bool storageType)
         {
             try
             {
@@ -449,9 +452,6 @@ namespace SMGI_Common
 
                 // 时间戳
                 var fixedIdentifier = string.Empty;
-
-                // log4net配置文件路径
-                var configFilePath = GetAppDataPath() + "\\log4net.config";
 
                 #region 动态设置日志文件存储路径
 
@@ -491,14 +491,14 @@ namespace SMGI_Common
             }
         }
 
-        public static void InitializeLog()
+        public static void InitializeLog(string configFilePath)
         {
             if (sysLog != null && dataLog != null) return;
 
             // 加载系统日志
-            loadLog(GetAppDataPath(), true);
+            loadLog(configFilePath, Application.AppDataPath, true);
             // 加载数据日志
-            loadLog(Project.Current.HomeFolderPath, false);
+            loadLog(configFilePath, Project.Current.HomeFolderPath, false);
         }
 
         public static void writeLog(string message, string messageType, bool storageType,
