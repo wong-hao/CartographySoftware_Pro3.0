@@ -355,10 +355,8 @@ public class TinDataset
         else
             queryFilter.WhereClause = $"OID = {oid}"; // 或者您的特定字段
 
-        using (var rowCursor = layer.Search(queryFilter))
-        {
-            if (rowCursor.MoveNext()) return rowCursor.Current as Feature;
-        }
+        using var rowCursor = layer.Search(queryFilter);
+        if (rowCursor.MoveNext()) return rowCursor.Current as Feature;
 
         return null;
     }
@@ -632,7 +630,6 @@ public class TinDataset
     public static TinDataset DeserializeFromXMLFile(string xmlFilePath)
     {
         if (File.Exists(xmlFilePath))
-        {
             try
             {
                 // 读取 XML 文件内容
@@ -656,7 +653,6 @@ public class TinDataset
                 MessageBox.Show($"反序列化失败: {ex.Message}");
                 return null;
             }
-        }
 
         Console.WriteLine("文件不存在.");
         return null;

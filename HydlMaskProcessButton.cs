@@ -28,6 +28,32 @@ namespace SMGI_Plugin_EmergencyMap
             //目前还未找到方法判断不是临时数据
             await QueuedTask.Run(() =>
             {
+                DataTable ruleDt = new DataTable();
+                try
+                {
+                    ruleDt = Helper.ReadGDBToDataTable(GApplication.GetAppDataPath() + @"\质检内容配置.gdb", "点线套合拓扑检查");//通用RuleID
+
+                }
+                catch (Exception exception)
+                {
+                    Console.WriteLine(exception.ToString());
+                    throw;
+                }
+
+                if (ruleDt.Rows.Count == 0)
+                {
+                    MessageBox.Show("质检内容配置表不存在或内容为空！");
+                    return;
+                }
+
+                foreach (DataRow dataRow in ruleDt.Rows)
+                {
+                    foreach (var item in dataRow.ItemArray)
+                    {
+                        GApplication.writeLog(item + "\t", GApplication.INFO, true);
+                    }
+                }
+
                 TinDataset tinDataset = null;
 
                 string jsonFilePath = GApplication.GetAppDataPath() + "//" + "tinDataset.json";
@@ -118,7 +144,7 @@ namespace SMGI_Plugin_EmergencyMap
                 TinTriangle triangle = tinDataset.GetTriangleByIndex(33);
                 if (triangle != null)
                 {
-                    List<TinTriangle> adjacentTriangles = triangle.GetAdjacentTriangles(tinDataset.Edges, tinDataset.Triangles);
+                    List<TinTriangle> adjacentTriangles = triangle.GetAdjacentTriangles(tinDataset.Triangles);
 
                     // 打印与 triangle 相邻的其他三角形的 Index
                     foreach (var triangle2 in adjacentTriangles)
