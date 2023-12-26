@@ -31,7 +31,7 @@ namespace SMGI_Plugin_EmergencyMap
                 DataTable ruleDt = new DataTable();
                 try
                 {
-                    ruleDt = Helper.ReadGDBToDataTable(GApplication.GetAppDataPath() + @"\质检内容配置.gdb", "点线套合拓扑检查");//通用RuleID
+                    ruleDt = Helper.ReadGDBToDataTable(GApplication.Application.AppDataPath + @"\质检内容配置.gdb", "点线套合拓扑检查");//通用RuleID
 
                 }
                 catch (Exception exception)
@@ -56,8 +56,8 @@ namespace SMGI_Plugin_EmergencyMap
 
                 TinDataset tinDataset = null;
 
-                string jsonFilePath = GApplication.GetAppDataPath() + "//" + "tinDataset.json";
-                string xmlFilePath = GApplication.GetAppDataPath() + "//" + "tinDataset.xml";
+                string jsonFilePath = GApplication.Application.AppDataPath + "//" + "tinDataset.json";
+                string xmlFilePath = GApplication.Application.AppDataPath + "//" + "tinDataset.xml";
 
                 if (File.Exists(jsonFilePath))
                 {
@@ -95,7 +95,7 @@ namespace SMGI_Plugin_EmergencyMap
 
                 // 假设 node 是你要找相邻节点的特定节点对象
                 TinNode node = tinDataset.GetNodeByIndex(145);
-                GApplication.writeLog( "节点" + 145 + "一共有如下ID的相邻节点:", GApplication.INFO, false);
+                GApplication.writeLog("节点" + 145 + "一共有如下ID的相邻节点:", GApplication.INFO, false);
 
                 if (node != null)
                 {
