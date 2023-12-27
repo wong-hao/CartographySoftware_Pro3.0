@@ -1,10 +1,14 @@
 ﻿using ArcGIS.Core.Data;
+using ArcGIS.Core.Data.Exceptions;
+using ArcGIS.Desktop.Core.Geoprocessing;
 using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.OleDb;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 
@@ -141,6 +145,55 @@ namespace SMGI_Common
             }
 
             return dataTable;
+        }
+
+        /// <summary>
+        ///     创建临时工作空间
+        /// </summary>
+        /// <param name="gdbFilePath"></param>
+        /// <param name="gdbFileName"></param>
+        /// <returns></returns>
+        public static Geodatabase CreateTempWorkspace(string gdbFilePath, string gdbFileName)
+        {
+            var fullPath = gdbFilePath + "//" + gdbFileName;
+
+            try
+            {
+                using (var geodatabase =
+                       new Geodatabase(new FileGeodatabaseConnectionPath(new Uri(fullPath))))
+                {
+                    // 如果成功打开工作空间，则直接返回
+                    return geodatabase;
+                }
+            }
+            catch (GeodatabaseNotFoundOrOpenedException)
+            {
+                // 处理异常
+
+                // 尝试创建工作空间
+                var parameters = Geoprocessing.MakeValueArray(gdbFilePath, gdbFileName);
+
+                var cts = new CancellationTokenSource();
+
+                var results = Geoprocessing.ExecuteToolAsync("management.CreateFileGDB", parameters, null, cts.Token,
+                    (eventName, o) => { Debug.WriteLine($@"GP event: {eventName}"); });
+
+                // 等待工具执行完成
+                results.Wait();
+
+                // 检查创建操作是否成功
+                if (results.IsCompletedSuccessfully)
+
+                    // 创建成功，尝试再次打开工作空间
+                    using (var geodatabase =
+                           new Geodatabase(new FileGeodatabaseConnectionPath(new Uri(fullPath))))
+                    {
+                        // 如果成功打开工作空间，则返回
+                        return geodatabase;
+                    }
+            }
+
+            return null;
         }
     }
 }

@@ -136,8 +136,8 @@ namespace SMGI_Common
             }
             else
             {
-                RegFrom reg = new RegFrom();
-                reg.ShowDialog();
+                //RegFrom reg = new RegFrom();
+                //reg.ShowDialog();
                 return false;
             }
             #endregion
