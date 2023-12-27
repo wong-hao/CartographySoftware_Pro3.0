@@ -66,7 +66,7 @@ namespace SMGI_Plugin_EmergencyMap
         }
 
         /// <summary>
-        /// Handle enable/disable request from the UI
+        /// Handle enable/disable request from the UI（在许可页面进行勾选时手动进行）
         /// </summary>
         public ExtensionState State
         {
@@ -109,9 +109,8 @@ namespace SMGI_Plugin_EmergencyMap
         }
 
         /// <summary>
-        /// Execute your authorization check
+        /// Execute your authorization check（打开许可页面时自动进行）
         /// </summary>
-        /// <param name="id"></param>
         /// <returns></returns>
         internal static void CheckLicensing()
         {
@@ -129,11 +128,6 @@ namespace SMGI_Plugin_EmergencyMap
 
         private SMGI应急快速制图()
         {
-
-            //TODO - read authorization id from....
-            //file, url, etc. as required
-
-            //preset _authorizationID to a number "string" divisible by 2 to have 
             //the Add-in initially enabled
             CheckLicensing();
         }
