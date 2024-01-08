@@ -197,16 +197,16 @@ namespace SMGI_Plugin_EmergencyMap
 
                 }
 
-                var FID2Point = Functions.GetFid2PointFromFeatureClass("CCC_TinNode");
-                var cccFeatureClass = Functions.CreateFeatureClassFromPoints(FID2Point, "CCC_FeatureClass"); 
+                var FID2Point = Functions.GetFid2PointFromFeatureClass("AAA_TinNode");
+                var cccFeatureClass = Functions.CreateFeatureClassFromPoints(FID2Point, "AAA_FeatureClass"); 
 
-                Functions.CreateTin("CCC_FeatureClass", "CCC");
+                Functions.CreateTin("AAA_FeatureClass", "AAA");
 
-                Functions.TinNode("CCC", "CCC_TinNode");
+                Functions.TinNode("AAA", "AAA_TinNode");
 
-                Functions.TinEdge("CCC", "CCC_TinEdge");
+                Functions.TinEdge("AAA", "AAA_TinEdge");
 
-                Functions.TinTriangle("CCC", "CCC_TinTriangle");
+                Functions.TinTriangle("AAA", "AAA_TinTriangle");
 
 
                 #endregion
