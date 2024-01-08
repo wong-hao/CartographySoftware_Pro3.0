@@ -204,6 +204,11 @@ namespace SMGI_Plugin_EmergencyMap
 
                 Functions.TinNode("CCC", "CCC_TinNode");
 
+                Functions.TinEdge("CCC", "CCC_TinEdge");
+
+                Functions.TinTriangle("CCC", "CCC_TinTriangle");
+
+
                 #endregion
             });
             MessageBox.Show("水系结构线消隐完成！");

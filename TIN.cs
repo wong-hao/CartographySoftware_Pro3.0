@@ -884,7 +884,7 @@ public class Functions
             if (tGeoResult.ErrorCode != 0)
                 // 错误处理逻辑
                 MessageBox.Show("Create TIN failed. " + tGeoResult.ErrorMessages);
-            //Geoprocessing.ShowMessageBox(results.Result.Messages, "GP Messages", results.Result.IsFailed ? GPMessageBoxStyle.Error : GPMessageBoxStyle.Default);
+                //Geoprocessing.ShowMessageBox(results.Result.Messages, "GP Messages", results.Result.IsFailed ? GPMessageBoxStyle.Error : GPMessageBoxStyle.Default);
             else
                 MessageBox.Show("Create TIN Success! " + tGeoResult.ErrorMessages);
         }
@@ -897,7 +897,6 @@ public class Functions
         inputTIN = Path.Combine(GApplication.Application.AppDataPath, inputTIN);
         outputFeatureClass = Path.Combine(Path.Combine(GApplication.Application.AppDataPath, "MyWorkspace.gdb"),
             outputFeatureClass);
-        MessageBox.Show("inputTIN: " + inputTIN + " outputFeatureClass: " + outputFeatureClass);
 
         IGPResult tGeoResult = null;
 
@@ -911,16 +910,80 @@ public class Functions
         var executeFlags = GPExecuteToolFlags.RefreshProjectItems | GPExecuteToolFlags.GPThread |
                            GPExecuteToolFlags.AddToHistory;
 
-        tGeoResult = await Geoprocessing.ExecuteToolAsync("TINode_3d", valueArray, null, cts.Token,
+        tGeoResult = await Geoprocessing.ExecuteToolAsync("TinNode_3d", valueArray, null, cts.Token,
             (eventName, o) => { Debug.WriteLine($@"GP event: {eventName}"); }, executeFlags);
 
         // 检查结果状态以确定操作是否成功
         if (tGeoResult.ErrorCode != 0)
             // 错误处理逻辑
             MessageBox.Show("TinNode failed. " + tGeoResult.ErrorMessages);
-        //Geoprocessing.ShowMessageBox(results.Result.Messages, "GP Messages", results.Result.IsFailed ? GPMessageBoxStyle.Error : GPMessageBoxStyle.Default);
+            //Geoprocessing.ShowMessageBox(results.Result.Messages, "GP Messages", results.Result.IsFailed ? GPMessageBoxStyle.Error : GPMessageBoxStyle.Default);
         else
             MessageBox.Show("TinNode Success! " + tGeoResult.ErrorMessages);
+
+        return tGeoResult;
+    }
+
+    public static async Task<IGPResult> TinEdge(string inputTIN, string outputFeatureClass)
+    {
+        inputTIN = Path.Combine(GApplication.Application.AppDataPath, inputTIN);
+        outputFeatureClass = Path.Combine(Path.Combine(GApplication.Application.AppDataPath, "MyWorkspace.gdb"),
+            outputFeatureClass);
+
+        IGPResult tGeoResult = null;
+
+        // TinEdge
+        var valueArray =
+            Geoprocessing.MakeValueArray(inputTIN, outputFeatureClass);
+
+        // 执行【TinEdge】操作
+        var cts = new CancellationTokenSource();
+
+        var executeFlags = GPExecuteToolFlags.RefreshProjectItems | GPExecuteToolFlags.GPThread |
+                           GPExecuteToolFlags.AddToHistory;
+
+        tGeoResult = await Geoprocessing.ExecuteToolAsync("TinEdge_3d", valueArray, null, cts.Token,
+            (eventName, o) => { Debug.WriteLine($@"GP event: {eventName}"); }, executeFlags);
+
+        // 检查结果状态以确定操作是否成功
+        if (tGeoResult.ErrorCode != 0)
+            // 错误处理逻辑
+            MessageBox.Show("TinEdge failed. " + tGeoResult.ErrorMessages);
+        //Geoprocessing.ShowMessageBox(results.Result.Messages, "GP Messages", results.Result.IsFailed ? GPMessageBoxStyle.Error : GPMessageBoxStyle.Default);
+        else
+            MessageBox.Show("TinEdge Success! " + tGeoResult.ErrorMessages);
+
+        return tGeoResult;
+    }
+
+    public static async Task<IGPResult> TinTriangle(string inputTIN, string outputFeatureClass)
+    {
+        inputTIN = Path.Combine(GApplication.Application.AppDataPath, inputTIN);
+        outputFeatureClass = Path.Combine(Path.Combine(GApplication.Application.AppDataPath, "MyWorkspace.gdb"),
+            outputFeatureClass);
+
+        IGPResult tGeoResult = null;
+
+        // TinTriangle
+        var valueArray =
+            Geoprocessing.MakeValueArray(inputTIN, outputFeatureClass);
+
+        // 执行【TinTriangle】操作
+        var cts = new CancellationTokenSource();
+
+        var executeFlags = GPExecuteToolFlags.RefreshProjectItems | GPExecuteToolFlags.GPThread |
+                           GPExecuteToolFlags.AddToHistory;
+
+        tGeoResult = await Geoprocessing.ExecuteToolAsync("TinTriangle_3d", valueArray, null, cts.Token,
+            (eventName, o) => { Debug.WriteLine($@"GP event: {eventName}"); }, executeFlags);
+
+        // 检查结果状态以确定操作是否成功
+        if (tGeoResult.ErrorCode != 0)
+            // 错误处理逻辑
+            MessageBox.Show("TinTriangle failed. " + tGeoResult.ErrorMessages);
+        //Geoprocessing.ShowMessageBox(results.Result.Messages, "GP Messages", results.Result.IsFailed ? GPMessageBoxStyle.Error : GPMessageBoxStyle.Default);
+        else
+            MessageBox.Show("TinTriangle Success! " + tGeoResult.ErrorMessages);
 
         return tGeoResult;
     }
