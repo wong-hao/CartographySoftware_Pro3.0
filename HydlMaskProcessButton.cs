@@ -1,21 +1,20 @@
 ﻿using ArcGIS.Core.CIM;
 using ArcGIS.Core.Data;
+using ArcGIS.Core.Geometry;
+using ArcGIS.Core.Internal.CIM;
 using ArcGIS.Desktop.Framework.Contracts;
 using ArcGIS.Desktop.Framework.Dialogs;
 using ArcGIS.Desktop.Framework.Threading.Tasks;
+using ArcGIS.Desktop.Internal.Mapping;
 using ArcGIS.Desktop.Mapping;
-using System;
-using System.Data;
-using System.Linq;
 using SMGI_Common;
+using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Diagnostics;
 using System.IO;
-using System.Windows.Forms.VisualStyles;
-using ArcGIS.Core.Internal.CIM;
-using ArcGIS.Core.Geometry;
-using ArcGIS.Core.Internal.Geometry;
-using Newtonsoft.Json;
+using System.Linq;
+using System.Xml.Linq;
 
 namespace SMGI_Plugin_EmergencyMap
 {
@@ -23,6 +22,18 @@ namespace SMGI_Plugin_EmergencyMap
     {
         protected override async void OnClick()
         {
+            HYDLMaskingSetForm frmMask = new HYDLMaskingSetForm();
+            frmMask.ShowDialog();
+
+            bool usingMask = frmMask.UsingMask;
+            string maskingLyr = frmMask.MaskingLyr;
+            string maskedLyr = frmMask.MaskedLyr;
+            CommonMethods.UsingMask = usingMask;
+            CommonMethods.MaskLayer = frmMask.MaskedLyr;
+            CommonMethods.MaskedLayer = frmMask.MaskingLyr;
+            FeatureClass HYDAfcl = null;
+            FeatureClass HYDLfcl = null;
+            GroupLayer groupLyr = null;
 
             #region
             //目前还未找到方法判断不是临时数据
@@ -50,7 +61,7 @@ namespace SMGI_Plugin_EmergencyMap
                 {
                     foreach (var item in dataRow.ItemArray)
                     {
-                        GApplication.writeLog(item + "\t", GApplication.INFO, true);
+                        GApplication.WriteLog(item + "\t", GApplication.Info, true);
                     }
                 }
 
@@ -82,7 +93,7 @@ namespace SMGI_Plugin_EmergencyMap
                     });
 
                     // 建立关系并保存为 JSON
-                    tinDataset.GetTinDatasetDefinition("CCC_TinTriangle", "CCC_TinEdge", "CCC_TinNode", progress);
+                    tinDataset.GetTinDatasetDefinition("CCC_TinTriangle", "CCC_TinEdge", "CCC_TinNode");
 
                     tinDataset.SerializeToJSONFile(jsonFilePath);
                     tinDataset.SerializeToXMLFile(xmlFilePath);
@@ -91,11 +102,11 @@ namespace SMGI_Plugin_EmergencyMap
                 tinDataset.PrintTinDatasetDefinition();
 
                 int nodeCount = tinDataset.GetNodeCount();
-                GApplication.writeLog("一共有" + nodeCount + "个节点", GApplication.INFO, false);
+                GApplication.WriteLog("一共有" + nodeCount + "个节点", GApplication.Info, false);
 
                 // 假设 node 是你要找相邻节点的特定节点对象
                 TinNode node = tinDataset.GetNodeByIndex(145);
-                GApplication.writeLog("节点" + 145 + "一共有如下ID的相邻节点:", GApplication.INFO, false);
+                GApplication.WriteLog("节点" + 145 + "一共有如下ID的相邻节点:", GApplication.Info, false);
 
                 if (node != null)
                 {
@@ -103,7 +114,7 @@ namespace SMGI_Plugin_EmergencyMap
                     // adjacentNodes 中包含了与特定节点相邻的其他节点
                     foreach (var adjacentNode in adjacentNodes)
                     {
-                        GApplication.writeLog(adjacentNode.Index.ToString(), GApplication.INFO, false);
+                        GApplication.WriteLog(adjacentNode.Index.ToString(), GApplication.Info, false);
                     }
 
                     List<TinEdge> incidentEdges = node.GetIncidentEdges(tinDataset.Edges);
@@ -111,7 +122,7 @@ namespace SMGI_Plugin_EmergencyMap
                     // 打印出连接到节点 的边的 Index
                     foreach (var edge1 in incidentEdges)
                     {
-                        GApplication.writeLog($"Edge Index connected to Node: {edge1.Index}", GApplication.INFO, false);
+                        GApplication.WriteLog($"Edge Index connected to Node: {edge1.Index}", GApplication.Info, false);
                     }
 
                     List<TinTriangle> incidentTriangles = node.GetIncidentTriangles(tinDataset.Triangles);
@@ -119,10 +130,10 @@ namespace SMGI_Plugin_EmergencyMap
                     // 打印出与节点 相关的三角形的 Index
                     foreach (var triangle1 in incidentTriangles)
                     {
-                        GApplication.writeLog($"Triangle Index connected to Node: {triangle1.Index}", GApplication.INFO, false);
+                        GApplication.WriteLog($"Triangle Index connected to Node: {triangle1.Index}", GApplication.Info, false);
                     }
 
-                    GApplication.writeLog($"Node的横纵坐标为: {node.ToMapPoint(tinDataset).X}, {node.ToMapPoint(tinDataset).Y}", GApplication.INFO, false);
+                    GApplication.WriteLog($"Node的横纵坐标为: {node.ToMapPoint(tinDataset).X}, {node.ToMapPoint(tinDataset).Y}", GApplication.Info, false);
                 }
 
                 TinEdge edge = tinDataset.GetEdgeByIndex(75);
@@ -131,12 +142,12 @@ namespace SMGI_Plugin_EmergencyMap
                     var triangle1 = edge.GetTriangleByEdge(tinDataset.Triangles);
 
                     TinEdge nextEdge = edge.GetNextEdgeInTriangle(triangle1, tinDataset.Edges);
-                    GApplication.writeLog($"nextEdgeID: {nextEdge.Index}", GApplication.INFO, false);
+                    GApplication.WriteLog($"nextEdgeID: {nextEdge.Index}", GApplication.Info, false);
 
                     TinEdge previousEdge = edge.GetPreviousEdgeInTriangle(triangle1, tinDataset.Edges);
-                    GApplication.writeLog($"previousEdgeID: {previousEdge.Index}", GApplication.INFO, false);
+                    GApplication.WriteLog($"previousEdgeID: {previousEdge.Index}", GApplication.Info, false);
 
-                    GApplication.writeLog($"Edge的横纵坐标为: {edge.ToPolyline(tinDataset).Points.First().X}, {edge.ToPolyline(tinDataset).Points.First().Y}, {edge.ToPolyline(tinDataset).Points.Last().X}, {edge.ToPolyline(tinDataset).Points.Last().Y}", GApplication.INFO, false);
+                    GApplication.WriteLog($"Edge的横纵坐标为: {edge.ToPolyline(tinDataset).Points.First().X}, {edge.ToPolyline(tinDataset).Points.First().Y}, {edge.ToPolyline(tinDataset).Points.Last().X}, {edge.ToPolyline(tinDataset).Points.Last().Y}", GApplication.Info, false);
 
                     ;
                 }
@@ -149,11 +160,49 @@ namespace SMGI_Plugin_EmergencyMap
                     // 打印与 triangle 相邻的其他三角形的 Index
                     foreach (var triangle2 in adjacentTriangles)
                     {
-                        GApplication.writeLog($"Adjacent Triangle Index to Triangle 33: {triangle2.Index}", GApplication.INFO, false);
+                        GApplication.WriteLog($"Adjacent Triangle Index to Triangle 33: {triangle2.Index}", GApplication.Info, false);
                     }
                 }
 
-                var polygon = triangle.ToPolygon(tinDataset);
+                var tinDataArea = tinDataset.GetDataArea();
+                double area = GeometryEngine.Instance.Area(tinDataArea);
+                GApplication.WriteLog($"TinDataset Area: {area}", GApplication.Info, true);
+
+                EnvironmentSettings.UpdateEnvironmentToConfig();
+                var envConfig = EnvironmentSettings.GetConfigValProject();
+                foreach (var kv in envConfig)
+                {
+                    GApplication.WriteLog($"Key: {kv.Key}, Value: {kv.Value}", GApplication.Debug, true);
+                }
+
+                GApplication.WriteLog("\n", GApplication.Debug, true);
+
+                //是否存在附区
+                //Dictionary<string, string> envString = app.Workspace.MapConfig["EMEnvironment"] as Dictionary<string, string>;
+                Dictionary<string, string> envString = new Dictionary<string, string>();
+                if (envString == null || !envString.ContainsKey("AttachMap"))
+                {
+                    envString = EnvironmentSettings.GetConfigVal();
+                }
+
+                foreach (var kv in envString)
+                {
+                    GApplication.WriteLog($"Key: {kv.Key}, Value: {kv.Value}", GApplication.Info, true);
+                }
+
+                bool attachMap = false;
+                if (envString.ContainsKey("AttachMap"))
+                {
+                    attachMap = bool.Parse(envString["AttachMap"]);
+
+                }
+
+                var FID2Point = Functions.GetFid2PointFromFeatureClass("CCC_TinNode");
+                var cccFeatureClass = Functions.CreateFeatureClassFromPoints(FID2Point, "CCC_FeatureClass"); 
+
+                Functions.CreateTin("CCC_FeatureClass", "CCC");
+
+                Functions.TinNode("CCC", "CCC_TinNode");
 
                 #endregion
             });
