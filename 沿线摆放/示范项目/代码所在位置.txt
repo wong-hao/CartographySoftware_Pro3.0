@@ -1,0 +1,1 @@
+MapEditPublishPlatform\trunk\code\SMGI.Plugin.AnnotationEngine
