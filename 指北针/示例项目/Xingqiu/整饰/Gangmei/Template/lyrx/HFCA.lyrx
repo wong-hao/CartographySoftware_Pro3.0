@@ -1,0 +1,2724 @@
+{
+  "type" : "CIMLayerDocument",
+  "version" : "2.8.0",
+  "build" : 29751,
+  "layers" : [
+    "CIMPATH=__1/hfca.xml"
+  ],
+  "layerDefinitions" : [
+    {
+      "type" : "CIMFeatureLayer",
+      "name" : "HFCA",
+      "uRI" : "CIMPATH=__1/hfca.xml",
+      "sourceModifiedTime" : {
+        "type" : "TimeInstant"
+      },
+      "useSourceMetadata" : true,
+      "description" : "HFCA",
+      "layerElevation" : {
+        "type" : "CIMLayerElevationSurface",
+        "mapElevationID" : "{3E8D8AC0-8F36-4802-9C10-37845B1FCC33}"
+      },
+      "layerType" : "Operational",
+      "showLegends" : true,
+      "visibility" : true,
+      "displayCacheType" : "Permanent",
+      "maxDisplayCacheAge" : 5,
+      "showPopups" : true,
+      "serviceLayerID" : -1,
+      "refreshRate" : -1,
+      "refreshRateUnit" : "esriTimeUnitsSeconds",
+      "blendingMode" : "Alpha",
+      "allowDrapingOnIntegratedMesh" : true,
+      "autoGenerateFeatureTemplates" : true,
+      "featureElevationExpression" : "0",
+      "featureTable" : {
+        "type" : "CIMFeatureTable",
+        "displayField" : "NAME",
+        "editable" : true,
+        "dataConnection" : {
+          "type" : "CIMFeatureDatasetDataConnection",
+          "featureDataset" : "MainDataFrame",
+          "workspaceConnectionString" : "DATABASE=..\\10万\\10万.gdb",
+          "workspaceFactory" : "FileGDB",
+          "dataset" : "HFCA",
+          "datasetType" : "esriDTFeatureClass"
+        },
+        "studyAreaSpatialRel" : "esriSpatialRelUndefined",
+        "searchOrder" : "esriSearchOrderSpatial"
+      },
+      "featureTemplates" : [
+        {
+          "type" : "CIMFeatureTemplate",
+          "name" : "不显示要素",
+          "tags" : "面",
+          "toolProgID" : "8f79967b-66a0-4a1c-b884-f44bc7e26921",
+          "toolFilter" : [
+            "6c6970a7-5ca9-448c-9c7d-0d716cd2ac64",
+            "a281e635-0f22-47d4-a438-e4d29b920e22",
+            "d304243a-5c3a-4ccc-b98b-93684b15fd83"
+          ],
+          "defaultValues" : {
+            "type" : "PropertySet",
+            "propertySetItems" : [
+              "ruleid",
+              1
+            ]
+          }
+        },
+        {
+          "type" : "CIMFeatureTemplate",
+          "name" : "沙洲",
+          "tags" : "面",
+          "toolProgID" : "8f79967b-66a0-4a1c-b884-f44bc7e26921",
+          "toolFilter" : [
+            "6c6970a7-5ca9-448c-9c7d-0d716cd2ac64",
+            "a281e635-0f22-47d4-a438-e4d29b920e22",
+            "d304243a-5c3a-4ccc-b98b-93684b15fd83"
+          ],
+          "defaultValues" : {
+            "type" : "PropertySet",
+            "propertySetItems" : [
+              "ruleid",
+              2
+            ]
+          }
+        },
+        {
+          "type" : "CIMFeatureTemplate",
+          "name" : "沼泽、湿地",
+          "tags" : "面",
+          "toolProgID" : "8f79967b-66a0-4a1c-b884-f44bc7e26921",
+          "toolFilter" : [
+            "6c6970a7-5ca9-448c-9c7d-0d716cd2ac64",
+            "a281e635-0f22-47d4-a438-e4d29b920e22",
+            "d304243a-5c3a-4ccc-b98b-93684b15fd83"
+          ],
+          "defaultValues" : {
+            "type" : "PropertySet",
+            "propertySetItems" : [
+              "ruleid",
+              5
+            ]
+          }
+        },
+        {
+          "type" : "CIMFeatureTemplate",
+          "name" : "河岛、湖岛",
+          "tags" : "面",
+          "toolProgID" : "8f79967b-66a0-4a1c-b884-f44bc7e26921",
+          "toolFilter" : [
+            "6c6970a7-5ca9-448c-9c7d-0d716cd2ac64",
+            "a281e635-0f22-47d4-a438-e4d29b920e22",
+            "d304243a-5c3a-4ccc-b98b-93684b15fd83"
+          ],
+          "defaultValues" : {
+            "type" : "PropertySet",
+            "propertySetItems" : [
+              "ruleid",
+              6
+            ]
+          }
+        },
+        {
+          "type" : "CIMFeatureTemplate",
+          "name" : "海岛",
+          "tags" : "面",
+          "toolProgID" : "8f79967b-66a0-4a1c-b884-f44bc7e26921",
+          "toolFilter" : [
+            "6c6970a7-5ca9-448c-9c7d-0d716cd2ac64",
+            "a281e635-0f22-47d4-a438-e4d29b920e22",
+            "d304243a-5c3a-4ccc-b98b-93684b15fd83"
+          ],
+          "defaultValues" : {
+            "type" : "PropertySet",
+            "propertySetItems" : [
+              "ruleid",
+              7
+            ]
+          }
+        },
+        {
+          "type" : "CIMFeatureTemplate",
+          "name" : "盐田",
+          "tags" : "面",
+          "toolProgID" : "8f79967b-66a0-4a1c-b884-f44bc7e26921",
+          "toolFilter" : [
+            "6c6970a7-5ca9-448c-9c7d-0d716cd2ac64",
+            "a281e635-0f22-47d4-a438-e4d29b920e22",
+            "d304243a-5c3a-4ccc-b98b-93684b15fd83"
+          ],
+          "defaultValues" : {
+            "type" : "PropertySet",
+            "propertySetItems" : [
+              "ruleid",
+              8
+            ]
+          }
+        },
+        {
+          "type" : "CIMFeatureTemplate",
+          "name" : "洼淀（蓄洪区）",
+          "tags" : "面",
+          "toolProgID" : "8f79967b-66a0-4a1c-b884-f44bc7e26921",
+          "toolFilter" : [
+            "6c6970a7-5ca9-448c-9c7d-0d716cd2ac64",
+            "a281e635-0f22-47d4-a438-e4d29b920e22",
+            "d304243a-5c3a-4ccc-b98b-93684b15fd83"
+          ],
+          "defaultValues" : {
+            "type" : "PropertySet",
+            "propertySetItems" : [
+              "ruleid",
+              9
+            ]
+          }
+        }
+      ],
+      "htmlPopupEnabled" : true,
+      "selectable" : true,
+      "featureCacheType" : "Session",
+      "displayFiltersType" : "ByScale",
+      "featureBlendingMode" : "Alpha",
+      "labelClasses" : [
+        {
+          "type" : "CIMLabelClass",
+          "expression" : "$feature.NAME",
+          "expressionEngine" : "Arcade",
+          "featuresToLabel" : "AllVisibleFeatures",
+          "maplexLabelPlacementProperties" : {
+            "type" : "CIMMaplexLabelPlacementProperties",
+            "featureType" : "Polygon",
+            "avoidPolygonHoles" : true,
+            "canOverrunFeature" : true,
+            "canPlaceLabelOutsidePolygon" : true,
+            "canRemoveOverlappingLabel" : true,
+            "canStackLabel" : true,
+            "connectionType" : "Unambiguous",
+            "constrainOffset" : "NoConstraint",
+            "contourAlignmentType" : "Page",
+            "contourLadderType" : "Straight",
+            "contourMaximumAngle" : 90,
+            "enableConnection" : true,
+            "featureWeight" : 0,
+            "fontHeightReductionLimit" : 4,
+            "fontHeightReductionStep" : 0.5,
+            "fontWidthReductionLimit" : 90,
+            "fontWidthReductionStep" : 5,
+            "graticuleAlignmentType" : "Straight",
+            "keyNumberGroupName" : "默认",
+            "labelBuffer" : 15,
+            "labelLargestPolygon" : true,
+            "labelPriority" : -1,
+            "labelStackingProperties" : {
+              "type" : "CIMMaplexLabelStackingProperties",
+              "stackAlignment" : "ChooseBest",
+              "maximumNumberOfLines" : 3,
+              "minimumNumberOfCharsPerLine" : 3,
+              "maximumNumberOfCharsPerLine" : 24,
+              "separators" : [
+                {
+                  "type" : "CIMMaplexStackingSeparator",
+                  "separator" : " ",
+                  "splitAfter" : true
+                },
+                {
+                  "type" : "CIMMaplexStackingSeparator",
+                  "separator" : ",",
+                  "visible" : true,
+                  "splitAfter" : true
+                }
+              ],
+              "trimStackingSeparators" : true
+            },
+            "lineFeatureType" : "General",
+            "linePlacementMethod" : "OffsetCurvedFromLine",
+            "maximumLabelOverrun" : 80,
+            "maximumLabelOverrunUnit" : "Point",
+            "minimumFeatureSizeUnit" : "Map",
+            "multiPartOption" : "OneLabelPerPart",
+            "offsetAlongLineProperties" : {
+              "type" : "CIMMaplexOffsetAlongLineProperties",
+              "placementMethod" : "BestPositionAlongLine",
+              "labelAnchorPoint" : "CenterOfLabel",
+              "distanceUnit" : "Percentage",
+              "useLineDirection" : true
+            },
+            "pointExternalZonePriorities" : {
+              "type" : "CIMMaplexExternalZonePriorities",
+              "aboveLeft" : 4,
+              "aboveCenter" : 2,
+              "aboveRight" : 1,
+              "centerRight" : 3,
+              "belowRight" : 5,
+              "belowCenter" : 7,
+              "belowLeft" : 8,
+              "centerLeft" : 6
+            },
+            "pointPlacementMethod" : "AroundPoint",
+            "polygonAnchorPointType" : "GeometricCenter",
+            "polygonBoundaryWeight" : 0,
+            "polygonExternalZones" : {
+              "type" : "CIMMaplexExternalZonePriorities",
+              "aboveLeft" : 4,
+              "aboveCenter" : 2,
+              "aboveRight" : 1,
+              "centerRight" : 3,
+              "belowRight" : 5,
+              "belowCenter" : 7,
+              "belowLeft" : 8,
+              "centerLeft" : 6
+            },
+            "polygonFeatureType" : "General",
+            "polygonInternalZones" : {
+              "type" : "CIMMaplexInternalZonePriorities",
+              "center" : 1
+            },
+            "polygonPlacementMethod" : "HorizontalInPolygon",
+            "primaryOffset" : 1,
+            "primaryOffsetUnit" : "Point",
+            "removeExtraWhiteSpace" : true,
+            "repetitionIntervalUnit" : "Map",
+            "rotationProperties" : {
+              "type" : "CIMMaplexRotationProperties",
+              "rotationType" : "Arithmetic",
+              "alignmentType" : "Straight"
+            },
+            "secondaryOffset" : 100,
+            "strategyPriorities" : {
+              "type" : "CIMMaplexStrategyPriorities",
+              "stacking" : 1,
+              "overrun" : 2,
+              "fontCompression" : 3,
+              "fontReduction" : 4,
+              "abbreviation" : 5
+            },
+            "thinningDistanceUnit" : "Point",
+            "truncationMarkerCharacter" : ".",
+            "truncationMinimumLength" : 1,
+            "truncationPreferredCharacters" : "aeiou",
+            "polygonAnchorPointPerimeterInsetUnit" : "Point"
+          },
+          "name" : "类 1",
+          "priority" : -1,
+          "standardLabelPlacementProperties" : {
+            "type" : "CIMStandardLabelPlacementProperties",
+            "featureType" : "Line",
+            "featureWeight" : "Low",
+            "labelWeight" : "High",
+            "numLabelsOption" : "OneLabelPerName",
+            "lineLabelPosition" : {
+              "type" : "CIMStandardLineLabelPosition",
+              "above" : true,
+              "inLine" : true,
+              "parallel" : true
+            },
+            "lineLabelPriorities" : {
+              "type" : "CIMStandardLineLabelPriorities",
+              "aboveStart" : 3,
+              "aboveAlong" : 3,
+              "aboveEnd" : 3,
+              "centerStart" : 3,
+              "centerAlong" : 3,
+              "centerEnd" : 3,
+              "belowStart" : 3,
+              "belowAlong" : 3,
+              "belowEnd" : 3
+            },
+            "pointPlacementMethod" : "AroundPoint",
+            "pointPlacementPriorities" : {
+              "type" : "CIMStandardPointPlacementPriorities",
+              "aboveLeft" : 2,
+              "aboveCenter" : 2,
+              "aboveRight" : 1,
+              "centerLeft" : 3,
+              "centerRight" : 2,
+              "belowLeft" : 3,
+              "belowCenter" : 3,
+              "belowRight" : 2
+            },
+            "rotationType" : "Arithmetic",
+            "polygonPlacementMethod" : "AlwaysHorizontal"
+          },
+          "textSymbol" : {
+            "type" : "CIMSymbolReference",
+            "symbol" : {
+              "type" : "CIMTextSymbol",
+              "blockProgression" : "TTB",
+              "depth3D" : 1,
+              "extrapolateBaselines" : true,
+              "fontEffects" : "Normal",
+              "fontEncoding" : "Unicode",
+              "fontFamilyName" : "MS Shell Dlg",
+              "fontStyleName" : "Regular",
+              "fontType" : "Unspecified",
+              "haloSize" : 1,
+              "height" : 10,
+              "hinting" : "Default",
+              "horizontalAlignment" : "Left",
+              "kerning" : true,
+              "letterWidth" : 100,
+              "ligatures" : true,
+              "lineGapType" : "ExtraLeading",
+              "symbol" : {
+                "type" : "CIMPolygonSymbol",
+                "symbolLayers" : [
+                  {
+                    "type" : "CIMSolidFill",
+                    "enable" : true,
+                    "color" : {
+                      "type" : "CIMRGBColor",
+                      "values" : [
+                        0,
+                        0,
+                        0,
+                        100
+                      ]
+                    }
+                  }
+                ]
+              },
+              "textCase" : "Normal",
+              "textDirection" : "LTR",
+              "verticalAlignment" : "Bottom",
+              "verticalGlyphOrientation" : "Right",
+              "wordSpacing" : 100,
+              "billboardMode3D" : "FaceNearPlane"
+            }
+          },
+          "useCodedValue" : true,
+          "visibility" : true,
+          "iD" : -1
+        }
+      ],
+      "renderer" : {
+        "type" : "CIMUniqueValueRenderer",
+        "defaultLabel" : "<其他所有值>",
+        "defaultSymbol" : {
+          "type" : "CIMSymbolReference",
+          "symbol" : {
+            "type" : "CIMPolygonSymbol",
+            "symbolLayers" : [
+              {
+                "type" : "CIMSolidStroke",
+                "enable" : true,
+                "capStyle" : "Round",
+                "joinStyle" : "Round",
+                "lineStyle3D" : "Strip",
+                "miterLimit" : 10,
+                "width" : 0.69999999999999996,
+                "color" : {
+                  "type" : "CIMRGBColor",
+                  "values" : [
+                    110,
+                    110,
+                    110,
+                    100
+                  ]
+                }
+              },
+              {
+                "type" : "CIMSolidFill",
+                "enable" : true
+              }
+            ]
+          }
+        },
+        "defaultSymbolPatch" : "Default",
+        "fields" : [
+          "RuleID"
+        ],
+        "groups" : [
+          {
+            "type" : "CIMUniqueValueGroup",
+            "classes" : [
+              {
+                "type" : "CIMUniqueValueClass",
+                "label" : "不显示要素",
+                "patch" : "Default",
+                "symbol" : {
+                  "type" : "CIMSymbolReference",
+                  "symbol" : {
+                    "type" : "CIMPolygonSymbol",
+                    "symbolLayers" : [
+                      {
+                        "type" : "CIMSolidFill",
+                        "enable" : true,
+                        "colorLocked" : true,
+                        "primitiveName" : "1.0",
+                        "color" : {
+                          "type" : "CIMRGBColor",
+                          "values" : [
+                            240,
+                            240,
+                            240,
+                            0
+                          ]
+                        }
+                      }
+                    ]
+                  }
+                },
+                "values" : [
+                  {
+                    "type" : "CIMUniqueValue",
+                    "fieldValues" : [
+                      "1"
+                    ]
+                  }
+                ],
+                "visible" : true
+              },
+              {
+                "type" : "CIMUniqueValueClass",
+                "label" : "沙洲",
+                "patch" : "Default",
+                "symbol" : {
+                  "type" : "CIMSymbolReference",
+                  "symbol" : {
+                    "type" : "CIMPolygonSymbol",
+                    "symbolLayers" : [
+                      {
+                        "type" : "CIMVectorMarker",
+                        "enable" : true,
+                        "colorLocked" : true,
+                        "primitiveName" : "6.0",
+                        "anchorPoint" : {
+                          "x" : 0.0036394424905563708,
+                          "y" : -0.0036394424905563708
+                        },
+                        "anchorPointUnits" : "Relative",
+                        "dominantSizeAxis3D" : "Z",
+                        "size" : 0.70866141732283472,
+                        "billboardMode3D" : "FaceNearPlane",
+                        "markerPlacement" : {
+                          "type" : "CIMMarkerPlacementInsidePolygon",
+                          "primitiveName" : "8.1",
+                          "gridType" : "Fixed",
+                          "offsetX" : 2.1259842519685042,
+                          "randomness" : 100,
+                          "stepX" : 4.2519685039370083,
+                          "stepY" : 4.2519685039370083,
+                          "offsetY" : 2.1259842519685042,
+                          "clipping" : "DoNotTouchBoundary"
+                        },
+                        "frame" : {
+                          "xmin" : -0.35690984113503998,
+                          "ymin" : -0.35175157618779473,
+                          "xmax" : 0.35175157618779473,
+                          "ymax" : 0.35690984113503998
+                        },
+                        "markerGraphics" : [
+                          {
+                            "type" : "CIMMarkerGraphic",
+                            "geometry" : {
+                              "curveRings" : [
+                                [
+                                  [
+                                    -0.0025791324736225895,
+                                    0.35690984113503998
+                                  ],
+                                  {
+                                    "b" : [
+                                      [
+                                        0.35175157618779473,
+                                        0.0025791324736225895
+                                      ],
+                                      [
+                                        0.19311231431681605,
+                                        0.35690984113503998
+                                      ],
+                                      [
+                                        0.35175157618779473,
+                                        0.19827057926406125
+                                      ]
+                                    ]
+                                  },
+                                  {
+                                    "b" : [
+                                      [
+                                        -0.0025791324736225895,
+                                        -0.35175157618779473
+                                      ],
+                                      [
+                                        0.35175157618779473,
+                                        -0.19311231431681605
+                                      ],
+                                      [
+                                        0.19311231431681605,
+                                        -0.35175157618779473
+                                      ]
+                                    ]
+                                  },
+                                  {
+                                    "b" : [
+                                      [
+                                        -0.35690984113503998,
+                                        0.0025791324736225895
+                                      ],
+                                      [
+                                        -0.19827057926406125,
+                                        -0.35175157618779473
+                                      ],
+                                      [
+                                        -0.35690984113503998,
+                                        -0.19311231431681605
+                                      ]
+                                    ]
+                                  },
+                                  {
+                                    "b" : [
+                                      [
+                                        -0.0025791324736225895,
+                                        0.35690984113503998
+                                      ],
+                                      [
+                                        -0.35690984113503998,
+                                        0.19827057926406125
+                                      ],
+                                      [
+                                        -0.19827057926406125,
+                                        0.35690984113503998
+                                      ]
+                                    ]
+                                  }
+                                ]
+                              ]
+                            },
+                            "symbol" : {
+                              "type" : "CIMPolygonSymbol",
+                              "symbolLayers" : [
+                                {
+                                  "type" : "CIMSolidFill",
+                                  "enable" : true,
+                                  "color" : {
+                                    "type" : "CIMCMYKColor",
+                                    "values" : [
+                                      0,
+                                      0,
+                                      0,
+                                      60,
+                                      100
+                                    ]
+                                  }
+                                }
+                              ]
+                            }
+                          }
+                        ],
+                        "scaleSymbolsProportionally" : true,
+                        "respectFrame" : true
+                      },
+                      {
+                        "type" : "CIMVectorMarker",
+                        "enable" : true,
+                        "colorLocked" : true,
+                        "primitiveName" : "3.0",
+                        "anchorPoint" : {
+                          "x" : 0,
+                          "y" : 0
+                        },
+                        "anchorPointUnits" : "Relative",
+                        "dominantSizeAxis3D" : "Z",
+                        "size" : 0.70866141732283472,
+                        "billboardMode3D" : "FaceNearPlane",
+                        "markerPlacement" : {
+                          "type" : "CIMMarkerPlacementInsidePolygon",
+                          "primitiveName" : "5.1",
+                          "gridType" : "Fixed",
+                          "randomness" : 100,
+                          "stepX" : 4.2519685039370083,
+                          "stepY" : 4.2519685039370083,
+                          "clipping" : "DoNotTouchBoundary"
+                        },
+                        "frame" : {
+                          "xmin" : -0.35433070866141736,
+                          "ymin" : -0.35433070866141736,
+                          "xmax" : 0.35433070866141736,
+                          "ymax" : 0.35433070866141736
+                        },
+                        "markerGraphics" : [
+                          {
+                            "type" : "CIMMarkerGraphic",
+                            "geometry" : {
+                              "curveRings" : [
+                                [
+                                  [
+                                    0,
+                                    0.35433070866141736
+                                  ],
+                                  {
+                                    "b" : [
+                                      [
+                                        0.35433070866141736,
+                                        0
+                                      ],
+                                      [
+                                        0.19569144679043865,
+                                        0.35433070866141736
+                                      ],
+                                      [
+                                        0.35433070866141736,
+                                        0.19569144679043865
+                                      ]
+                                    ]
+                                  },
+                                  {
+                                    "b" : [
+                                      [
+                                        0,
+                                        -0.35433070866141736
+                                      ],
+                                      [
+                                        0.35433070866141736,
+                                        -0.19569144679043865
+                                      ],
+                                      [
+                                        0.19569144679043865,
+                                        -0.35433070866141736
+                                      ]
+                                    ]
+                                  },
+                                  {
+                                    "b" : [
+                                      [
+                                        -0.35433070866141736,
+                                        0
+                                      ],
+                                      [
+                                        -0.19569144679043865,
+                                        -0.35433070866141736
+                                      ],
+                                      [
+                                        -0.35433070866141736,
+                                        -0.19569144679043865
+                                      ]
+                                    ]
+                                  },
+                                  {
+                                    "b" : [
+                                      [
+                                        0,
+                                        0.35433070866141736
+                                      ],
+                                      [
+                                        -0.35433070866141736,
+                                        0.19569144679043865
+                                      ],
+                                      [
+                                        -0.19569144679043865,
+                                        0.35433070866141736
+                                      ]
+                                    ]
+                                  }
+                                ]
+                              ]
+                            },
+                            "symbol" : {
+                              "type" : "CIMPolygonSymbol",
+                              "symbolLayers" : [
+                                {
+                                  "type" : "CIMSolidFill",
+                                  "enable" : true,
+                                  "color" : {
+                                    "type" : "CIMCMYKColor",
+                                    "values" : [
+                                      0,
+                                      0,
+                                      0,
+                                      60,
+                                      100
+                                    ]
+                                  }
+                                }
+                              ]
+                            }
+                          }
+                        ],
+                        "scaleSymbolsProportionally" : true,
+                        "respectFrame" : true
+                      },
+                      {
+                        "type" : "CIMSolidStroke",
+                        "enable" : true,
+                        "colorLocked" : true,
+                        "primitiveName" : "2.0",
+                        "capStyle" : "Butt",
+                        "joinStyle" : "Round",
+                        "lineStyle3D" : "Strip",
+                        "miterLimit" : 10,
+                        "width" : 0.28346456692913391,
+                        "color" : {
+                          "type" : "CIMCMYKColor",
+                          "values" : [
+                            70,
+                            0,
+                            0,
+                            0,
+                            100
+                          ]
+                        }
+                      }
+                    ]
+                  }
+                },
+                "values" : [
+                  {
+                    "type" : "CIMUniqueValue",
+                    "fieldValues" : [
+                      "2"
+                    ]
+                  }
+                ],
+                "visible" : true
+              },
+              {
+                "type" : "CIMUniqueValueClass",
+                "label" : "沼泽、湿地",
+                "patch" : "Default",
+                "symbol" : {
+                  "type" : "CIMSymbolReference",
+                  "symbol" : {
+                    "type" : "CIMPolygonSymbol",
+                    "symbolLayers" : [
+                      {
+                        "type" : "CIMVectorMarker",
+                        "enable" : true,
+                        "colorLocked" : true,
+                        "primitiveName" : "9.0",
+                        "anchorPoint" : {
+                          "x" : 0,
+                          "y" : 0
+                        },
+                        "anchorPointUnits" : "Relative",
+                        "dominantSizeAxis3D" : "Z",
+                        "size" : 8.5039370078740166,
+                        "billboardMode3D" : "FaceNearPlane",
+                        "markerPlacement" : {
+                          "type" : "CIMMarkerPlacementInsidePolygon",
+                          "primitiveName" : "11.1",
+                          "gridType" : "Fixed",
+                          "randomness" : 100,
+                          "stepX" : 17.007874015748033,
+                          "stepY" : 8.5039370078740166,
+                          "clipping" : "DoNotTouchBoundary"
+                        },
+                        "frame" : {
+                          "xmin" : -3.4015748031496065,
+                          "ymin" : -3.4015748031496065,
+                          "xmax" : 3.4015748031496065,
+                          "ymax" : 3.4015748031496065
+                        },
+                        "markerGraphics" : [
+                          {
+                            "type" : "CIMMarkerGraphic",
+                            "geometry" : {
+                              "rings" : [
+                                [
+                                  [
+                                    -3.4015748031496065,
+                                    0.14173228346456695
+                                  ],
+                                  [
+                                    3.4015748031496065,
+                                    0.14173228346456695
+                                  ],
+                                  [
+                                    3.4015748031496065,
+                                    -0.14173228346456695
+                                  ],
+                                  [
+                                    -3.4015748031496065,
+                                    -0.14173228346456695
+                                  ],
+                                  [
+                                    -3.4015748031496065,
+                                    0.14173228346456695
+                                  ]
+                                ]
+                              ]
+                            },
+                            "symbol" : {
+                              "type" : "CIMPolygonSymbol",
+                              "symbolLayers" : [
+                                {
+                                  "type" : "CIMSolidFill",
+                                  "enable" : true,
+                                  "color" : {
+                                    "type" : "CIMCMYKColor",
+                                    "values" : [
+                                      100,
+                                      0,
+                                      0,
+                                      0,
+                                      100
+                                    ]
+                                  }
+                                }
+                              ]
+                            }
+                          }
+                        ],
+                        "scaleSymbolsProportionally" : true,
+                        "respectFrame" : true
+                      },
+                      {
+                        "type" : "CIMVectorMarker",
+                        "enable" : true,
+                        "colorLocked" : true,
+                        "primitiveName" : "6.0",
+                        "anchorPoint" : {
+                          "x" : 0,
+                          "y" : 0
+                        },
+                        "anchorPointUnits" : "Relative",
+                        "dominantSizeAxis3D" : "Z",
+                        "size" : 8.5039370078740166,
+                        "billboardMode3D" : "FaceNearPlane",
+                        "markerPlacement" : {
+                          "type" : "CIMMarkerPlacementInsidePolygon",
+                          "primitiveName" : "8.1",
+                          "gridType" : "Fixed",
+                          "offsetX" : 8.5039370078740166,
+                          "randomness" : 100,
+                          "stepX" : 17.007874015748033,
+                          "stepY" : 8.5039370078740166,
+                          "offsetY" : 4.2519685039370083,
+                          "clipping" : "DoNotTouchBoundary"
+                        },
+                        "frame" : {
+                          "xmin" : -3.4015748031496065,
+                          "ymin" : -3.4015748031496065,
+                          "xmax" : 3.4015748031496065,
+                          "ymax" : 3.4015748031496065
+                        },
+                        "markerGraphics" : [
+                          {
+                            "type" : "CIMMarkerGraphic",
+                            "geometry" : {
+                              "rings" : [
+                                [
+                                  [
+                                    -3.4015748031496065,
+                                    0.14173228346456695
+                                  ],
+                                  [
+                                    3.4015748031496065,
+                                    0.14173228346456695
+                                  ],
+                                  [
+                                    3.4015748031496065,
+                                    -0.14173228346456695
+                                  ],
+                                  [
+                                    -3.4015748031496065,
+                                    -0.14173228346456695
+                                  ],
+                                  [
+                                    -3.4015748031496065,
+                                    0.14173228346456695
+                                  ]
+                                ]
+                              ]
+                            },
+                            "symbol" : {
+                              "type" : "CIMPolygonSymbol",
+                              "symbolLayers" : [
+                                {
+                                  "type" : "CIMSolidFill",
+                                  "enable" : true,
+                                  "color" : {
+                                    "type" : "CIMCMYKColor",
+                                    "values" : [
+                                      100,
+                                      0,
+                                      0,
+                                      0,
+                                      100
+                                    ]
+                                  }
+                                }
+                              ]
+                            }
+                          }
+                        ],
+                        "scaleSymbolsProportionally" : true,
+                        "respectFrame" : true
+                      },
+                      {
+                        "type" : "CIMSolidFill",
+                        "enable" : true,
+                        "colorLocked" : true,
+                        "primitiveName" : "5.0",
+                        "color" : {
+                          "type" : "CIMRGBColor",
+                          "values" : [
+                            255,
+                            255,
+                            255,
+                            100
+                          ]
+                        }
+                      }
+                    ]
+                  }
+                },
+                "values" : [
+                  {
+                    "type" : "CIMUniqueValue",
+                    "fieldValues" : [
+                      "5"
+                    ]
+                  }
+                ],
+                "visible" : true
+              },
+              {
+                "type" : "CIMUniqueValueClass",
+                "label" : "河岛、湖岛",
+                "patch" : "Default",
+                "symbol" : {
+                  "type" : "CIMSymbolReference",
+                  "symbol" : {
+                    "type" : "CIMPolygonSymbol",
+                    "symbolLayers" : [
+                      {
+                        "type" : "CIMSolidStroke",
+                        "enable" : true,
+                        "colorLocked" : true,
+                        "primitiveName" : "4.0",
+                        "capStyle" : "Round",
+                        "joinStyle" : "Round",
+                        "lineStyle3D" : "Strip",
+                        "miterLimit" : 10,
+                        "width" : 0.34015748031496063,
+                        "color" : {
+                          "type" : "CIMCMYKColor",
+                          "values" : [
+                            100,
+                            0,
+                            0,
+                            0,
+                            100
+                          ]
+                        }
+                      },
+                      {
+                        "type" : "CIMSolidFill",
+                        "enable" : true,
+                        "colorLocked" : true,
+                        "primitiveName" : "3.0",
+                        "color" : {
+                          "type" : "CIMCMYKColor",
+                          "values" : [
+                            0,
+                            0,
+                            0,
+                            6,
+                            0
+                          ]
+                        }
+                      }
+                    ]
+                  }
+                },
+                "values" : [
+                  {
+                    "type" : "CIMUniqueValue",
+                    "fieldValues" : [
+                      "6"
+                    ]
+                  }
+                ],
+                "visible" : true
+              },
+              {
+                "type" : "CIMUniqueValueClass",
+                "label" : "海岛",
+                "patch" : "Default",
+                "symbol" : {
+                  "type" : "CIMSymbolReference",
+                  "symbol" : {
+                    "type" : "CIMPolygonSymbol",
+                    "symbolLayers" : [
+                      {
+                        "type" : "CIMSolidStroke",
+                        "enable" : true,
+                        "colorLocked" : true,
+                        "primitiveName" : "4.0",
+                        "capStyle" : "Round",
+                        "joinStyle" : "Round",
+                        "lineStyle3D" : "Strip",
+                        "miterLimit" : 10,
+                        "width" : 0.34015748031496063,
+                        "color" : {
+                          "type" : "CIMCMYKColor",
+                          "values" : [
+                            100,
+                            0,
+                            0,
+                            0,
+                            100
+                          ]
+                        }
+                      },
+                      {
+                        "type" : "CIMSolidFill",
+                        "enable" : true,
+                        "colorLocked" : true,
+                        "primitiveName" : "3.0",
+                        "color" : {
+                          "type" : "CIMCMYKColor",
+                          "values" : [
+                            0,
+                            0,
+                            0,
+                            6,
+                            0
+                          ]
+                        }
+                      }
+                    ]
+                  }
+                },
+                "values" : [
+                  {
+                    "type" : "CIMUniqueValue",
+                    "fieldValues" : [
+                      "7"
+                    ]
+                  }
+                ],
+                "visible" : true
+              },
+              {
+                "type" : "CIMUniqueValueClass",
+                "label" : "盐田",
+                "patch" : "Default",
+                "symbol" : {
+                  "type" : "CIMSymbolReference",
+                  "symbol" : {
+                    "type" : "CIMPolygonSymbol",
+                    "symbolLayers" : [
+                      {
+                        "type" : "CIMSolidStroke",
+                        "enable" : true,
+                        "colorLocked" : true,
+                        "primitiveName" : "6.0",
+                        "capStyle" : "Round",
+                        "joinStyle" : "Round",
+                        "lineStyle3D" : "Strip",
+                        "miterLimit" : 10,
+                        "width" : 0.56692913385826782,
+                        "color" : {
+                          "type" : "CIMCMYKColor",
+                          "values" : [
+                            100,
+                            0,
+                            0,
+                            0,
+                            100
+                          ]
+                        }
+                      },
+                      {
+                        "type" : "CIMHatchFill",
+                        "enable" : true,
+                        "colorLocked" : true,
+                        "primitiveName" : "4.0",
+                        "lineSymbol" : {
+                          "type" : "CIMLineSymbol",
+                          "symbolLayers" : [
+                            {
+                              "type" : "CIMSolidStroke",
+                              "enable" : true,
+                              "colorLocked" : true,
+                              "primitiveName" : "4.1",
+                              "capStyle" : "Butt",
+                              "joinStyle" : "Round",
+                              "lineStyle3D" : "Strip",
+                              "miterLimit" : 10,
+                              "width" : 0.28346456692913391,
+                              "color" : {
+                                "type" : "CIMCMYKColor",
+                                "values" : [
+                                  100,
+                                  0,
+                                  0,
+                                  0,
+                                  100
+                                ]
+                              }
+                            }
+                          ]
+                        },
+                        "rotation" : 90,
+                        "separation" : 4.2519685039370083
+                      },
+                      {
+                        "type" : "CIMHatchFill",
+                        "enable" : true,
+                        "colorLocked" : true,
+                        "primitiveName" : "3.0",
+                        "lineSymbol" : {
+                          "type" : "CIMLineSymbol",
+                          "symbolLayers" : [
+                            {
+                              "type" : "CIMSolidStroke",
+                              "enable" : true,
+                              "colorLocked" : true,
+                              "primitiveName" : "3.1",
+                              "capStyle" : "Butt",
+                              "joinStyle" : "Round",
+                              "lineStyle3D" : "Strip",
+                              "miterLimit" : 10,
+                              "width" : 0.28346456692913391,
+                              "color" : {
+                                "type" : "CIMCMYKColor",
+                                "values" : [
+                                  100,
+                                  0,
+                                  0,
+                                  0,
+                                  100
+                                ]
+                              }
+                            }
+                          ]
+                        },
+                        "separation" : 4.2519685039370083
+                      },
+                      {
+                        "type" : "CIMSolidStroke",
+                        "enable" : true,
+                        "colorLocked" : true,
+                        "primitiveName" : "2.0",
+                        "capStyle" : "Round",
+                        "joinStyle" : "Round",
+                        "lineStyle3D" : "Strip",
+                        "miterLimit" : 10,
+                        "width" : 0.28346456692913391,
+                        "color" : {
+                          "type" : "CIMRGBColor",
+                          "values" : [
+                            255,
+                            255,
+                            255,
+                            100
+                          ]
+                        }
+                      },
+                      {
+                        "type" : "CIMSolidFill",
+                        "enable" : true,
+                        "colorLocked" : true,
+                        "primitiveName" : "1.0",
+                        "color" : {
+                          "type" : "CIMRGBColor",
+                          "values" : [
+                            255,
+                            255,
+                            255,
+                            100
+                          ]
+                        }
+                      }
+                    ]
+                  }
+                },
+                "values" : [
+                  {
+                    "type" : "CIMUniqueValue",
+                    "fieldValues" : [
+                      "8"
+                    ]
+                  }
+                ],
+                "visible" : true
+              },
+              {
+                "type" : "CIMUniqueValueClass",
+                "label" : "洼淀（蓄洪区）",
+                "patch" : "Default",
+                "symbol" : {
+                  "type" : "CIMSymbolReference",
+                  "symbol" : {
+                    "type" : "CIMPolygonSymbol",
+                    "symbolLayers" : [
+                      {
+                        "type" : "CIMSolidStroke",
+                        "enable" : true,
+                        "colorLocked" : true,
+                        "primitiveName" : "13.0",
+                        "capStyle" : "Butt",
+                        "joinStyle" : "Bevel",
+                        "lineStyle3D" : "Strip",
+                        "miterLimit" : 10,
+                        "width" : 0.42519685039370081,
+                        "color" : {
+                          "type" : "CIMRGBColor",
+                          "values" : [
+                            240,
+                            240,
+                            240,
+                            0
+                          ]
+                        }
+                      },
+                      {
+                        "type" : "CIMVectorMarker",
+                        "enable" : true,
+                        "colorLocked" : true,
+                        "primitiveName" : "10.0",
+                        "anchorPoint" : {
+                          "x" : -0.013700516282742442,
+                          "y" : 0.0019098452704719823
+                        },
+                        "anchorPointUnits" : "Relative",
+                        "dominantSizeAxis3D" : "Z",
+                        "size" : 7.0866141732283472,
+                        "billboardMode3D" : "FaceNearPlane",
+                        "markerPlacement" : {
+                          "type" : "CIMMarkerPlacementInsidePolygon",
+                          "primitiveName" : "12.1",
+                          "gridType" : "Fixed",
+                          "randomness" : 100,
+                          "stepX" : 17.007874015748033,
+                          "stepY" : 17.858267716535433,
+                          "clipping" : "DoNotTouchBoundary"
+                        },
+                        "frame" : {
+                          "xmin" : -1.3253233267716544,
+                          "ymin" : -1.3678666092519691,
+                          "xmax" : 1.4000000000000001,
+                          "ymax" : 1.3574567175196854
+                        },
+                        "markerGraphics" : [
+                          {
+                            "type" : "CIMMarkerGraphic",
+                            "geometry" : {
+                              "curveRings" : [
+                                [
+                                  [
+                                    -0.96156096966618643,
+                                    0.37051279527559039
+                                  ],
+                                  {
+                                    "b" : [
+                                      [
+                                        -0.81986883339989214,
+                                        0.34174910966008731
+                                      ],
+                                      [
+                                        -0.91158228887407522,
+                                        0.37051279527559039
+                                      ],
+                                      [
+                                        -0.86417982874135146,
+                                        0.36057624933568933
+                                      ]
+                                    ]
+                                  },
+                                  {
+                                    "b" : [
+                                      [
+                                        -0.70342365959559205,
+                                        0.26225674214087913
+                                      ],
+                                      [
+                                        -0.77555783805843281,
+                                        0.3223989938823853
+                                      ],
+                                      [
+                                        -0.73691452816762537,
+                                        0.2957272126752824
+                                      ]
+                                    ]
+                                  },
+                                  {
+                                    "b" : [
+                                      [
+                                        -0.62510655155022221,
+                                        0.14406414306626658
+                                      ],
+                                      [
+                                        -0.66993279102355885,
+                                        0.22826329550437557
+                                      ],
+                                      [
+                                        -0.64417058442968722,
+                                        0.18904008784687137
+                                      ]
+                                    ]
+                                  },
+                                  {
+                                    "b" : [
+                                      [
+                                        -0.59676812429696346,
+                                        0.00024571498875133099
+                                      ],
+                                      [
+                                        -0.60604251867075709,
+                                        0.099088198285661844
+                                      ],
+                                      [
+                                        -0.59676812429696346,
+                                        0.050974396892456704
+                                      ]
+                                    ]
+                                  },
+                                  {
+                                    "b" : [
+                                      [
+                                        -0.62510655155022221,
+                                        -0.14409568919086391
+                                      ],
+                                      [
+                                        -0.59676812429696346,
+                                        -0.051528919119154089
+                                      ],
+                                      [
+                                        -0.60604251867075709,
+                                        -0.099642720512359145
+                                      ]
+                                    ]
+                                  },
+                                  {
+                                    "b" : [
+                                      [
+                                        -0.70342365959559205,
+                                        -0.26176531216337656
+                                      ],
+                                      [
+                                        -0.64417058442968722,
+                                        -0.18854865786936861
+                                      ],
+                                      [
+                                        -0.66993279102355885,
+                                        -0.22777186552687281
+                                      ]
+                                    ]
+                                  },
+                                  {
+                                    "b" : [
+                                      [
+                                        -0.81986883339989214,
+                                        -0.34125767968258497
+                                      ],
+                                      [
+                                        -0.73691452816762537,
+                                        -0.29575875879988017
+                                      ],
+                                      [
+                                        -0.77555783805843281,
+                                        -0.32190756390488295
+                                      ]
+                                    ]
+                                  },
+                                  {
+                                    "b" : [
+                                      [
+                                        -0.96156096966618643,
+                                        -0.37002136529808799
+                                      ],
+                                      [
+                                        -0.86417982874135146,
+                                        -0.36060779546028704
+                                      ],
+                                      [
+                                        -0.91158228887407522,
+                                        -0.37002136529808799
+                                      ]
+                                    ]
+                                  },
+                                  {
+                                    "b" : [
+                                      [
+                                        -1.1037683500643578,
+                                        -0.34125767968258497
+                                      ],
+                                      [
+                                        -1.012570138722052,
+                                        -0.37002136529808799
+                                      ],
+                                      [
+                                        -1.0599725988547761,
+                                        -0.36060779546028704
+                                      ]
+                                    ]
+                                  },
+                                  {
+                                    "b" : [
+                                      [
+                                        -1.2191830356049029,
+                                        -0.26176531216337656
+                                      ],
+                                      [
+                                        -1.1475641012739399,
+                                        -0.32190756390488295
+                                      ],
+                                      [
+                                        -1.1862074111647474,
+                                        -0.29575875879988017
+                                      ]
+                                    ]
+                                  },
+                                  {
+                                    "b" : [
+                                      [
+                                        -1.2969848995183957,
+                                        -0.14409568919086391
+                                      ],
+                                      [
+                                        -1.2521586600450589,
+                                        -0.22777186552687281
+                                      ],
+                                      [
+                                        -1.2779208666389306,
+                                        -0.18854865786936861
+                                      ]
+                                    ]
+                                  },
+                                  {
+                                    "b" : [
+                                      [
+                                        -1.3253233267716544,
+                                        0.00024571498875133099
+                                      ],
+                                      [
+                                        -1.3160489323978604,
+                                        -0.099642720512359145
+                                      ],
+                                      [
+                                        -1.3253233267716544,
+                                        -0.051528919119154089
+                                      ]
+                                    ]
+                                  },
+                                  {
+                                    "b" : [
+                                      [
+                                        -1.2969848995183957,
+                                        0.14406414306626658
+                                      ],
+                                      [
+                                        -1.3253233267716544,
+                                        0.050974396892456704
+                                      ],
+                                      [
+                                        -1.3160489323978604,
+                                        0.099088198285661844
+                                      ]
+                                    ]
+                                  },
+                                  {
+                                    "b" : [
+                                      [
+                                        -1.2191830356049029,
+                                        0.26225674214087913
+                                      ],
+                                      [
+                                        -1.2779208666389306,
+                                        0.18904008784687137
+                                      ],
+                                      [
+                                        -1.2521586600450589,
+                                        0.22826329550437557
+                                      ]
+                                    ]
+                                  },
+                                  {
+                                    "b" : [
+                                      [
+                                        -1.1037683500643578,
+                                        0.34174910966008731
+                                      ],
+                                      [
+                                        -1.1862074111647474,
+                                        0.2957272126752824
+                                      ],
+                                      [
+                                        -1.1475641012739399,
+                                        0.3223989938823853
+                                      ]
+                                    ]
+                                  },
+                                  {
+                                    "b" : [
+                                      [
+                                        -0.96156096966618643,
+                                        0.37051279527559039
+                                      ],
+                                      [
+                                        -1.0599725988547761,
+                                        0.36057624933568933
+                                      ],
+                                      [
+                                        -1.012570138722052,
+                                        0.37051279527559039
+                                      ]
+                                    ]
+                                  }
+                                ]
+                              ]
+                            },
+                            "symbol" : {
+                              "type" : "CIMPolygonSymbol",
+                              "symbolLayers" : [
+                                {
+                                  "type" : "CIMSolidFill",
+                                  "enable" : true,
+                                  "color" : {
+                                    "type" : "CIMCMYKColor",
+                                    "values" : [
+                                      100,
+                                      0,
+                                      0,
+                                      0,
+                                      100
+                                    ]
+                                  }
+                                }
+                              ]
+                            }
+                          },
+                          {
+                            "type" : "CIMMarkerGraphic",
+                            "geometry" : {
+                              "curveRings" : [
+                                [
+                                  [
+                                    0.038635297206706803,
+                                    0.36506213442069746
+                                  ],
+                                  {
+                                    "b" : [
+                                      [
+                                        0.18032743347300115,
+                                        0.33629844880519438
+                                      ],
+                                      [
+                                        0.088613977998818066,
+                                        0.36506213442069746
+                                      ],
+                                      [
+                                        0.13601643813154182,
+                                        0.35512558848079639
+                                      ]
+                                    ]
+                                  },
+                                  {
+                                    "b" : [
+                                      [
+                                        0.29677260727730104,
+                                        0.2568060812859862
+                                      ],
+                                      [
+                                        0.22463842881446047,
+                                        0.31694833302749237
+                                      ],
+                                      [
+                                        0.26328173870526778,
+                                        0.29027655182038947
+                                      ]
+                                    ]
+                                  },
+                                  {
+                                    "b" : [
+                                      [
+                                        0.3750897153226701,
+                                        0.13861348221137371
+                                      ],
+                                      [
+                                        0.33026347584933424,
+                                        0.2228126346494827
+                                      ],
+                                      [
+                                        0.35602568244320554,
+                                        0.1835894269919785
+                                      ]
+                                    ]
+                                  },
+                                  {
+                                    "b" : [
+                                      [
+                                        0.40342814257592829,
+                                        -0.0052049458661415767
+                                      ],
+                                      [
+                                        0.39415374820213489,
+                                        0.093637537430768955
+                                      ],
+                                      [
+                                        0.40342814257592829,
+                                        0.045523736037563794
+                                      ]
+                                    ]
+                                  },
+                                  {
+                                    "b" : [
+                                      [
+                                        0.3750897153226701,
+                                        -0.14954635004575678
+                                      ],
+                                      [
+                                        0.40342814257592829,
+                                        -0.056979579974046998
+                                      ],
+                                      [
+                                        0.39415374820213489,
+                                        -0.10509338136725203
+                                      ]
+                                    ]
+                                  },
+                                  {
+                                    "b" : [
+                                      [
+                                        0.29677260727730104,
+                                        -0.26721597301826949
+                                      ],
+                                      [
+                                        0.35602568244320554,
+                                        -0.19399931872426152
+                                      ],
+                                      [
+                                        0.33026347584933424,
+                                        -0.23322252638176572
+                                      ]
+                                    ]
+                                  },
+                                  {
+                                    "b" : [
+                                      [
+                                        0.18032743347300115,
+                                        -0.3467083405374779
+                                      ],
+                                      [
+                                        0.26328173870526778,
+                                        -0.3012094196547731
+                                      ],
+                                      [
+                                        0.22463842881446047,
+                                        -0.32735822475977588
+                                      ]
+                                    ]
+                                  },
+                                  {
+                                    "b" : [
+                                      [
+                                        0.038635297206706803,
+                                        -0.37547202615298092
+                                      ],
+                                      [
+                                        0.13601643813154182,
+                                        -0.36605845631517997
+                                      ],
+                                      [
+                                        0.088613977998818066,
+                                        -0.37547202615298092
+                                      ]
+                                    ]
+                                  },
+                                  {
+                                    "b" : [
+                                      [
+                                        -0.10357208319146452,
+                                        -0.3467083405374779
+                                      ],
+                                      [
+                                        -0.012373871849158814,
+                                        -0.37547202615298092
+                                      ],
+                                      [
+                                        -0.059776331981882848,
+                                        -0.36605845631517997
+                                      ]
+                                    ]
+                                  },
+                                  {
+                                    "b" : [
+                                      [
+                                        -0.21898676873200962,
+                                        -0.26721597301826949
+                                      ],
+                                      [
+                                        -0.14736783440104664,
+                                        -0.32735822475977588
+                                      ],
+                                      [
+                                        -0.18601114429185406,
+                                        -0.3012094196547731
+                                      ]
+                                    ]
+                                  },
+                                  {
+                                    "b" : [
+                                      [
+                                        -0.29678863264550259,
+                                        -0.14954635004575678
+                                      ],
+                                      [
+                                        -0.25196239317216584,
+                                        -0.23322252638176572
+                                      ],
+                                      [
+                                        -0.27772459976603747,
+                                        -0.19399931872426152
+                                      ]
+                                    ]
+                                  },
+                                  {
+                                    "b" : [
+                                      [
+                                        -0.32512705989876134,
+                                        -0.0052049458661415767
+                                      ],
+                                      [
+                                        -0.31585266552496727,
+                                        -0.10509338136725203
+                                      ],
+                                      [
+                                        -0.32512705989876134,
+                                        -0.056979579974046998
+                                      ]
+                                    ]
+                                  },
+                                  {
+                                    "b" : [
+                                      [
+                                        -0.29678863264550259,
+                                        0.13861348221137371
+                                      ],
+                                      [
+                                        -0.32512705989876134,
+                                        0.045523736037563794
+                                      ],
+                                      [
+                                        -0.31585266552496727,
+                                        0.093637537430768955
+                                      ]
+                                    ]
+                                  },
+                                  {
+                                    "b" : [
+                                      [
+                                        -0.21898676873200962,
+                                        0.2568060812859862
+                                      ],
+                                      [
+                                        -0.27772459976603747,
+                                        0.1835894269919785
+                                      ],
+                                      [
+                                        -0.25196239317216584,
+                                        0.2228126346494827
+                                      ]
+                                    ]
+                                  },
+                                  {
+                                    "b" : [
+                                      [
+                                        -0.10357208319146452,
+                                        0.33629844880519438
+                                      ],
+                                      [
+                                        -0.18601114429185406,
+                                        0.29027655182038947
+                                      ],
+                                      [
+                                        -0.14736783440104664,
+                                        0.31694833302749237
+                                      ]
+                                    ]
+                                  },
+                                  {
+                                    "b" : [
+                                      [
+                                        0.038635297206706803,
+                                        0.36506213442069746
+                                      ],
+                                      [
+                                        -0.059776331981882848,
+                                        0.35512558848079639
+                                      ],
+                                      [
+                                        -0.012373871849158814,
+                                        0.36506213442069746
+                                      ]
+                                    ]
+                                  }
+                                ]
+                              ]
+                            },
+                            "symbol" : {
+                              "type" : "CIMPolygonSymbol",
+                              "symbolLayers" : [
+                                {
+                                  "type" : "CIMSolidFill",
+                                  "enable" : true,
+                                  "color" : {
+                                    "type" : "CIMCMYKColor",
+                                    "values" : [
+                                      100,
+                                      0,
+                                      0,
+                                      0,
+                                      100
+                                    ]
+                                  }
+                                }
+                              ]
+                            }
+                          },
+                          {
+                            "type" : "CIMMarkerGraphic",
+                            "geometry" : {
+                              "curveRings" : [
+                                [
+                                  [
+                                    1.0352071546307786,
+                                    0.35961147356580436
+                                  ],
+                                  {
+                                    "b" : [
+                                      [
+                                        1.176899290897073,
+                                        0.33084778795030129
+                                      ],
+                                      [
+                                        1.0851858354228898,
+                                        0.35961147356580436
+                                      ],
+                                      [
+                                        1.1325882955556137,
+                                        0.3496749276259033
+                                      ]
+                                    ]
+                                  },
+                                  {
+                                    "b" : [
+                                      [
+                                        1.2933444647013728,
+                                        0.2513554204310931
+                                      ],
+                                      [
+                                        1.2212102862385323,
+                                        0.31149767217259927
+                                      ],
+                                      [
+                                        1.2598535961293396,
+                                        0.28482589096549638
+                                      ]
+                                    ]
+                                  },
+                                  {
+                                    "b" : [
+                                      [
+                                        1.3716615727467421,
+                                        0.13316282135648055
+                                      ],
+                                      [
+                                        1.3268353332734062,
+                                        0.21736197379458955
+                                      ],
+                                      [
+                                        1.3525975398672774,
+                                        0.17813876613708535
+                                      ]
+                                    ]
+                                  },
+                                  {
+                                    "b" : [
+                                      [
+                                        1.4000000000000001,
+                                        -0.010655606721034716
+                                      ],
+                                      [
+                                        1.3907256056262067,
+                                        0.088186876575875803
+                                      ],
+                                      [
+                                        1.4000000000000001,
+                                        0.040073075182670656
+                                      ]
+                                    ]
+                                  },
+                                  {
+                                    "b" : [
+                                      [
+                                        1.3716615727467421,
+                                        -0.15499701090064993
+                                      ],
+                                      [
+                                        1.4000000000000001,
+                                        -0.062430240828940137
+                                      ],
+                                      [
+                                        1.3907256056262067,
+                                        -0.11054404222214519
+                                      ]
+                                    ]
+                                  },
+                                  {
+                                    "b" : [
+                                      [
+                                        1.2933444647013728,
+                                        -0.27266663387316259
+                                      ],
+                                      [
+                                        1.3525975398672774,
+                                        -0.19944997957915467
+                                      ],
+                                      [
+                                        1.3268353332734062,
+                                        -0.23867318723665887
+                                      ]
+                                    ]
+                                  },
+                                  {
+                                    "b" : [
+                                      [
+                                        1.176899290897073,
+                                        -0.352159001392371
+                                      ],
+                                      [
+                                        1.2598535961293396,
+                                        -0.3066600805096662
+                                      ],
+                                      [
+                                        1.2212102862385323,
+                                        -0.33280888561466898
+                                      ]
+                                    ]
+                                  },
+                                  {
+                                    "b" : [
+                                      [
+                                        1.0352071546307786,
+                                        -0.38092268700787402
+                                      ],
+                                      [
+                                        1.1325882955556137,
+                                        -0.37150911717007307
+                                      ],
+                                      [
+                                        1.0851858354228898,
+                                        -0.38092268700787402
+                                      ]
+                                    ]
+                                  },
+                                  {
+                                    "b" : [
+                                      [
+                                        0.89299977423260735,
+                                        -0.352159001392371
+                                      ],
+                                      [
+                                        0.984197985574913,
+                                        -0.38092268700787402
+                                      ],
+                                      [
+                                        0.93679552544218903,
+                                        -0.37150911717007307
+                                      ]
+                                    ]
+                                  },
+                                  {
+                                    "b" : [
+                                      [
+                                        0.77758508869206222,
+                                        -0.27266663387316259
+                                      ],
+                                      [
+                                        0.84920402302302522,
+                                        -0.33280888561466898
+                                      ],
+                                      [
+                                        0.81056071313221778,
+                                        -0.3066600805096662
+                                      ]
+                                    ]
+                                  },
+                                  {
+                                    "b" : [
+                                      [
+                                        0.69978322477856925,
+                                        -0.15499701090064993
+                                      ],
+                                      [
+                                        0.74460946425190599,
+                                        -0.23867318723665887
+                                      ],
+                                      [
+                                        0.71884725765803437,
+                                        -0.19944997957915467
+                                      ]
+                                    ]
+                                  },
+                                  {
+                                    "b" : [
+                                      [
+                                        0.6714447975253105,
+                                        -0.010655606721034716
+                                      ],
+                                      [
+                                        0.68071919189910457,
+                                        -0.11054404222214519
+                                      ],
+                                      [
+                                        0.6714447975253105,
+                                        -0.062430240828940137
+                                      ]
+                                    ]
+                                  },
+                                  {
+                                    "b" : [
+                                      [
+                                        0.69978322477856925,
+                                        0.13316282135648055
+                                      ],
+                                      [
+                                        0.6714447975253105,
+                                        0.040073075182670656
+                                      ],
+                                      [
+                                        0.68071919189910457,
+                                        0.088186876575875803
+                                      ]
+                                    ]
+                                  },
+                                  {
+                                    "b" : [
+                                      [
+                                        0.77758508869206222,
+                                        0.2513554204310931
+                                      ],
+                                      [
+                                        0.71884725765803437,
+                                        0.17813876613708535
+                                      ],
+                                      [
+                                        0.74460946425190599,
+                                        0.21736197379458955
+                                      ]
+                                    ]
+                                  },
+                                  {
+                                    "b" : [
+                                      [
+                                        0.89299977423260735,
+                                        0.33084778795030129
+                                      ],
+                                      [
+                                        0.81056071313221778,
+                                        0.28482589096549638
+                                      ],
+                                      [
+                                        0.84920402302302522,
+                                        0.31149767217259927
+                                      ]
+                                    ]
+                                  },
+                                  {
+                                    "b" : [
+                                      [
+                                        1.0352071546307786,
+                                        0.35961147356580436
+                                      ],
+                                      [
+                                        0.93679552544218903,
+                                        0.3496749276259033
+                                      ],
+                                      [
+                                        0.984197985574913,
+                                        0.35961147356580436
+                                      ]
+                                    ]
+                                  }
+                                ]
+                              ]
+                            },
+                            "symbol" : {
+                              "type" : "CIMPolygonSymbol",
+                              "symbolLayers" : [
+                                {
+                                  "type" : "CIMSolidFill",
+                                  "enable" : true,
+                                  "color" : {
+                                    "type" : "CIMCMYKColor",
+                                    "values" : [
+                                      100,
+                                      0,
+                                      0,
+                                      0,
+                                      100
+                                    ]
+                                  }
+                                }
+                              ]
+                            }
+                          }
+                        ],
+                        "scaleSymbolsProportionally" : true,
+                        "respectFrame" : true
+                      },
+                      {
+                        "type" : "CIMVectorMarker",
+                        "enable" : true,
+                        "colorLocked" : true,
+                        "primitiveName" : "14.0",
+                        "anchorPoint" : {
+                          "x" : 0,
+                          "y" : -0.0024421353118284556
+                        },
+                        "anchorPointUnits" : "Relative",
+                        "dominantSizeAxis3D" : "Z",
+                        "size" : 7.0866141732283472,
+                        "billboardMode3D" : "FaceNearPlane",
+                        "markerPlacement" : {
+                          "type" : "CIMMarkerPlacementInsidePolygon",
+                          "primitiveName" : "16.1",
+                          "gridType" : "Fixed",
+                          "offsetX" : 8.5039370078740166,
+                          "randomness" : 100,
+                          "stepX" : 17.007874015748033,
+                          "stepY" : 17.858267716535433,
+                          "offsetY" : 8.9291338582677167,
+                          "clipping" : "ClipAtBoundary"
+                        },
+                        "frame" : {
+                          "xmin" : -4.4838582677165348,
+                          "ymin" : -4.4619578904988861,
+                          "xmax" : 4.4838582677165348,
+                          "ymax" : 4.5057586449341835
+                        },
+                        "markerGraphics" : [
+                          {
+                            "type" : "CIMMarkerGraphic",
+                            "geometry" : {
+                              "curveRings" : [
+                                [
+                                  [
+                                    -0.032283464566928932,
+                                    1.1338582677165356
+                                  ],
+                                  {
+                                    "b" : [
+                                      [
+                                        1.1015748031496062,
+                                        -4.8572257327350599e-16
+                                      ],
+                                      [
+                                        0.59392916516247474,
+                                        1.1338582677165356
+                                      ],
+                                      [
+                                        1.1015748031496062,
+                                        0.6262126297294035
+                                      ]
+                                    ]
+                                  },
+                                  {
+                                    "b" : [
+                                      [
+                                        -0.032283464566929487,
+                                        -1.1338582677165356
+                                      ],
+                                      [
+                                        1.1015748031496062,
+                                        -0.62621262972940439
+                                      ],
+                                      [
+                                        0.59392916516247429,
+                                        -1.1338582677165361
+                                      ]
+                                    ]
+                                  },
+                                  {
+                                    "b" : [
+                                      [
+                                        -1.1661417322834651,
+                                        -4.163336342344337e-17
+                                      ],
+                                      [
+                                        -0.6584960942963336,
+                                        -1.1338582677165356
+                                      ],
+                                      [
+                                        -1.1661417322834651,
+                                        -0.62621262972940395
+                                      ]
+                                    ]
+                                  },
+                                  {
+                                    "b" : [
+                                      [
+                                        -0.032283464566928932,
+                                        1.1338582677165356
+                                      ],
+                                      [
+                                        -1.1661417322834651,
+                                        0.62621262972940395
+                                      ],
+                                      [
+                                        -0.65849609429633316,
+                                        1.1338582677165356
+                                      ]
+                                    ]
+                                  }
+                                ]
+                              ]
+                            },
+                            "symbol" : {
+                              "type" : "CIMPolygonSymbol",
+                              "symbolLayers" : [
+                                {
+                                  "type" : "CIMSolidStroke",
+                                  "enable" : true,
+                                  "capStyle" : "Round",
+                                  "joinStyle" : "Round",
+                                  "lineStyle3D" : "Strip",
+                                  "miterLimit" : 10,
+                                  "width" : 0.5,
+                                  "color" : {
+                                    "type" : "CIMCMYKColor",
+                                    "values" : [
+                                      100,
+                                      0,
+                                      0,
+                                      0,
+                                      100
+                                    ]
+                                  }
+                                },
+                                {
+                                  "type" : "CIMSolidFill",
+                                  "enable" : true,
+                                  "color" : {
+                                    "type" : "CIMCMYKColor",
+                                    "values" : [
+                                      100,
+                                      0,
+                                      0,
+                                      0,
+                                      100
+                                    ]
+                                  }
+                                }
+                              ]
+                            }
+                          },
+                          {
+                            "type" : "CIMMarkerGraphic",
+                            "geometry" : {
+                              "curveRings" : [
+                                [
+                                  [
+                                    3.1000000000000001,
+                                    1.1338582677165356
+                                  ],
+                                  {
+                                    "b" : [
+                                      [
+                                        4.2338582677165348,
+                                        -4.4408920985006262e-16
+                                      ],
+                                      [
+                                        3.7262126297294036,
+                                        1.1338582677165356
+                                      ],
+                                      [
+                                        4.2338582677165348,
+                                        0.62621262972940361
+                                      ]
+                                    ]
+                                  },
+                                  {
+                                    "b" : [
+                                      [
+                                        3.0999999999999992,
+                                        -1.1338582677165356
+                                      ],
+                                      [
+                                        4.2338582677165348,
+                                        -0.62621262972940439
+                                      ],
+                                      [
+                                        3.7262126297294027,
+                                        -1.1338582677165361
+                                      ]
+                                    ]
+                                  },
+                                  {
+                                    "b" : [
+                                      [
+                                        1.9661417322834636,
+                                        0
+                                      ],
+                                      [
+                                        2.4737873702705957,
+                                        -1.1338582677165356
+                                      ],
+                                      [
+                                        1.9661417322834636,
+                                        -0.62621262972940395
+                                      ]
+                                    ]
+                                  },
+                                  {
+                                    "b" : [
+                                      [
+                                        3.1000000000000001,
+                                        1.1338582677165356
+                                      ],
+                                      [
+                                        1.9661417322834636,
+                                        0.62621262972940395
+                                      ],
+                                      [
+                                        2.4737873702705957,
+                                        1.1338582677165356
+                                      ]
+                                    ]
+                                  }
+                                ]
+                              ]
+                            },
+                            "symbol" : {
+                              "type" : "CIMPolygonSymbol",
+                              "symbolLayers" : [
+                                {
+                                  "type" : "CIMSolidStroke",
+                                  "enable" : true,
+                                  "capStyle" : "Round",
+                                  "joinStyle" : "Round",
+                                  "lineStyle3D" : "Strip",
+                                  "miterLimit" : 10,
+                                  "width" : 0.5,
+                                  "color" : {
+                                    "type" : "CIMCMYKColor",
+                                    "values" : [
+                                      100,
+                                      0,
+                                      0,
+                                      0,
+                                      100
+                                    ]
+                                  }
+                                },
+                                {
+                                  "type" : "CIMSolidFill",
+                                  "enable" : true,
+                                  "color" : {
+                                    "type" : "CIMCMYKColor",
+                                    "values" : [
+                                      100,
+                                      0,
+                                      0,
+                                      0,
+                                      100
+                                    ]
+                                  }
+                                }
+                              ]
+                            }
+                          },
+                          {
+                            "type" : "CIMMarkerGraphic",
+                            "geometry" : {
+                              "curveRings" : [
+                                [
+                                  [
+                                    -0.032283464566928932,
+                                    1.1338582677165356
+                                  ],
+                                  {
+                                    "b" : [
+                                      [
+                                        1.1015748031496062,
+                                        -4.8572257327350599e-16
+                                      ],
+                                      [
+                                        0.59392916516247474,
+                                        1.1338582677165356
+                                      ],
+                                      [
+                                        1.1015748031496062,
+                                        0.6262126297294035
+                                      ]
+                                    ]
+                                  },
+                                  {
+                                    "b" : [
+                                      [
+                                        -0.032283464566929487,
+                                        -1.1338582677165356
+                                      ],
+                                      [
+                                        1.1015748031496062,
+                                        -0.62621262972940439
+                                      ],
+                                      [
+                                        0.59392916516247429,
+                                        -1.1338582677165361
+                                      ]
+                                    ]
+                                  },
+                                  {
+                                    "b" : [
+                                      [
+                                        -1.1661417322834651,
+                                        -4.163336342344337e-17
+                                      ],
+                                      [
+                                        -0.6584960942963336,
+                                        -1.1338582677165356
+                                      ],
+                                      [
+                                        -1.1661417322834651,
+                                        -0.62621262972940395
+                                      ]
+                                    ]
+                                  },
+                                  {
+                                    "b" : [
+                                      [
+                                        -0.032283464566928932,
+                                        1.1338582677165356
+                                      ],
+                                      [
+                                        -1.1661417322834651,
+                                        0.62621262972940395
+                                      ],
+                                      [
+                                        -0.65849609429633316,
+                                        1.1338582677165356
+                                      ]
+                                    ]
+                                  }
+                                ]
+                              ]
+                            },
+                            "symbol" : {
+                              "type" : "CIMPolygonSymbol",
+                              "symbolLayers" : [
+                                {
+                                  "type" : "CIMSolidStroke",
+                                  "enable" : true,
+                                  "capStyle" : "Round",
+                                  "joinStyle" : "Round",
+                                  "lineStyle3D" : "Strip",
+                                  "miterLimit" : 10,
+                                  "width" : 0.5,
+                                  "color" : {
+                                    "type" : "CIMCMYKColor",
+                                    "values" : [
+                                      100,
+                                      0,
+                                      0,
+                                      0,
+                                      100
+                                    ]
+                                  }
+                                },
+                                {
+                                  "type" : "CIMSolidFill",
+                                  "enable" : true,
+                                  "color" : {
+                                    "type" : "CIMCMYKColor",
+                                    "values" : [
+                                      100,
+                                      0,
+                                      0,
+                                      0,
+                                      100
+                                    ]
+                                  }
+                                }
+                              ]
+                            }
+                          },
+                          {
+                            "type" : "CIMMarkerGraphic",
+                            "geometry" : {
+                              "curveRings" : [
+                                [
+                                  [
+                                    -3.1000000000000001,
+                                    1.1338582677165356
+                                  ],
+                                  {
+                                    "b" : [
+                                      [
+                                        -1.9661417322834649,
+                                        -6.106226635438361e-16
+                                      ],
+                                      [
+                                        -2.4737873702705961,
+                                        1.1338582677165356
+                                      ],
+                                      [
+                                        -1.9661417322834649,
+                                        0.6262126297294035
+                                      ]
+                                    ]
+                                  },
+                                  {
+                                    "b" : [
+                                      [
+                                        -3.1000000000000005,
+                                        -1.1338582677165356
+                                      ],
+                                      [
+                                        -1.9661417322834649,
+                                        -0.62621262972940439
+                                      ],
+                                      [
+                                        -2.473787370270597,
+                                        -1.1338582677165361
+                                      ]
+                                    ]
+                                  },
+                                  {
+                                    "b" : [
+                                      [
+                                        -4.2338582677165348,
+                                        -1.6653345369377348e-16
+                                      ],
+                                      [
+                                        -3.7262126297294049,
+                                        -1.1338582677165356
+                                      ],
+                                      [
+                                        -4.2338582677165348,
+                                        -0.62621262972940395
+                                      ]
+                                    ]
+                                  },
+                                  {
+                                    "b" : [
+                                      [
+                                        -3.1000000000000001,
+                                        1.1338582677165356
+                                      ],
+                                      [
+                                        -4.2338582677165348,
+                                        0.62621262972940395
+                                      ],
+                                      [
+                                        -3.726212629729404,
+                                        1.1338582677165356
+                                      ]
+                                    ]
+                                  }
+                                ]
+                              ]
+                            },
+                            "symbol" : {
+                              "type" : "CIMPolygonSymbol",
+                              "symbolLayers" : [
+                                {
+                                  "type" : "CIMSolidStroke",
+                                  "enable" : true,
+                                  "capStyle" : "Round",
+                                  "joinStyle" : "Round",
+                                  "lineStyle3D" : "Strip",
+                                  "miterLimit" : 10,
+                                  "width" : 0.5,
+                                  "color" : {
+                                    "type" : "CIMCMYKColor",
+                                    "values" : [
+                                      100,
+                                      0,
+                                      0,
+                                      0,
+                                      100
+                                    ]
+                                  }
+                                },
+                                {
+                                  "type" : "CIMSolidFill",
+                                  "enable" : true,
+                                  "color" : {
+                                    "type" : "CIMCMYKColor",
+                                    "values" : [
+                                      100,
+                                      0,
+                                      0,
+                                      0,
+                                      100
+                                    ]
+                                  }
+                                }
+                              ]
+                            }
+                          }
+                        ],
+                        "scaleSymbolsProportionally" : true,
+                        "respectFrame" : true
+                      },
+                      {
+                        "type" : "CIMSolidFill",
+                        "enable" : true,
+                        "colorLocked" : true,
+                        "primitiveName" : "1.0",
+                        "color" : {
+                          "type" : "CIMRGBColor",
+                          "values" : [
+                            240,
+                            240,
+                            240,
+                            0
+                          ]
+                        }
+                      }
+                    ]
+                  }
+                },
+                "values" : [
+                  {
+                    "type" : "CIMUniqueValue",
+                    "fieldValues" : [
+                      "9"
+                    ]
+                  }
+                ],
+                "visible" : true
+              }
+            ]
+          }
+        ],
+        "useDefaultSymbol" : true,
+        "polygonSymbolColorTarget" : "Fill"
+      },
+      "scaleSymbols" : true,
+      "snappable" : true,
+      "symbolLayerDrawing" : {
+        "type" : "CIMSymbolLayerDrawing"
+      }
+    }
+  ],
+  "elevationSurfaces" : [
+    {
+      "type" : "CIMMapElevationSurface",
+      "elevationMode" : "BaseGlobeSurface",
+      "name" : "地面",
+      "verticalExaggeration" : 1,
+      "mapElevationID" : "{3E8D8AC0-8F36-4802-9C10-37845B1FCC33}",
+      "color" : {
+        "type" : "CIMRGBColor",
+        "values" : [
+          255,
+          255,
+          255,
+          100
+        ]
+      },
+      "surfaceTINShadingMode" : "Smooth",
+      "visibility" : true,
+      "expanded" : true
+    }
+  ],
+  "rGBColorProfile" : "sRGB IEC61966-2-1 noBPC",
+  "cMYKColorProfile" : "U.S. Web Coated (SWOP) v2"
+}
