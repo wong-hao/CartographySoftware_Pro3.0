@@ -1,0 +1,109 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<DataTable>
+  <DataGroup ShareItemName="地面河流" ShareRuleID="5">
+    <DataRow>
+      <RuleID>2</RuleID>
+      <FclName>HYDL</FclName>
+      <LGNote>河流</LGNote>
+    </DataRow>
+    <DataRow>
+      <RuleID>2</RuleID>
+      <FclName>HYDA</FclName>
+      <LGNote>地面河流</LGNote>
+    </DataRow>
+  </DataGroup>
+  <DataGroup ShareItemName="时令河" ShareRuleID="6">
+    <DataRow>
+      <RuleID>5</RuleID>
+      <FclName>HYDL</FclName>
+      <LGNote>时令河</LGNote>
+    </DataRow>
+    <DataRow>
+      <RuleID>4</RuleID>
+      <FclName>HYDA</FclName>
+      <LGNote>时令河</LGNote>
+    </DataRow>
+  </DataGroup>
+  <DataGroup ShareItemName="渠" ShareRuleID="7">
+    <DataRow>
+      <RuleID>8,9</RuleID>
+      <FclName>HYDL</FclName>
+      <LGNote>渠</LGNote>
+    </DataRow>
+    <DataRow>
+      <RuleID>8</RuleID>
+      <FclName>HYDA</FclName>
+      <LGNote>渠</LGNote>
+    </DataRow>
+  </DataGroup>
+  <DataGroup ShareItemName="时令湖、在建水库" ShareRuleID="8">
+    <DataRow>
+      <RuleID>12,15</RuleID>
+      <FclName>HYDA</FclName>
+      <LGNote>时令湖</LGNote>
+    </DataRow>
+  </DataGroup>
+  <DataGroup ShareItemName="湖泊、池塘" ShareRuleID="9">
+    <DataRow>
+      <RuleID>10,11</RuleID>
+      <FclName>HYDA</FclName>
+      <LGNote>湖泊、池塘</LGNote>
+    </DataRow>
+  </DataGroup>
+  <DataGroup ShareItemName="运河" ShareRuleID="13">  
+    <DataRow>
+      <RuleID>7</RuleID>
+      <FclName>HYDA</FclName>
+      <LGNote>运河</LGNote>
+    </DataRow>
+  </DataGroup>
+  <DataGroup ShareItemName="蓄水池、水窖" ShareRuleID="14">
+    <DataRow>
+      <RuleID>18</RuleID>
+      <FclName>HYDA</FclName>
+      <LGNote>蓄水池、水窖</LGNote>
+    </DataRow>
+  </DataGroup>
+ <DataGroup ShareItemName="河湖、岛" ShareRuleID="12">
+    <DataRow>
+      <RuleID>29</RuleID>
+      <FclName>HYDA</FclName>
+      <LGNote>河、湖岛</LGNote>
+    </DataRow>
+  </DataGroup>
+  <DataGroup ShareItemName="水库" ShareRuleID="10">
+    <DataRow>
+      <RuleID>14</RuleID>
+      <FclName>HYDA</FclName>
+      <LGNote>水库</LGNote>
+    </DataRow>
+  </DataGroup>
+  <DataGroup ShareItemName="滩涂" ShareRuleID="17">
+    <DataRow>
+      <RuleID>33</RuleID>
+      <FclName>HYDA</FclName>
+      <LGNote>滩涂</LGNote>
+    </DataRow>
+  </DataGroup>
+  <DataGroup Type="通用" ShareItemName="桥梁" ShareRuleID="3">
+    <DataRow>
+      <RuleID>7,8,10,12,14,16,18,20,22,24,26,28,30,32</RuleID>
+      <FclName>LFCL</FclName>
+      <LGNote>桥梁</LGNote>
+    </DataRow>
+  </DataGroup>
+  <DataGroup Type="通用" ShareItemName="隧道" ShareRuleID="4">
+    <DataRow>
+      <RuleID>9,11,13,15,17,19,21,23,25,27,29,31,33</RuleID>
+      <FclName>LFCL</FclName>
+      <LGNote>隧道</LGNote>
+    </DataRow>
+  </DataGroup>
+    <DataGroup ShareItemName="体育场" ShareRuleID="15">
+    <DataRow>
+      <RuleID>5</RuleID>
+      <FclName>RESA</FclName>
+      <LGNote>体育场</LGNote>
+    </DataRow>
+  </DataGroup>
+</DataTable>

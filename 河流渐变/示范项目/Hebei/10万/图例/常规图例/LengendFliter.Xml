@@ -1,0 +1,8 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Lengend Note="不表示图例项">
+   <Item Name="水系面边线" FeatureClass="HYDATOLINE" >1,2,3,5,7</Item>
+   <Item Name="火车站" FeatureClass="LFCP" ></Item>
+   <Item Name="影像图例" FeatureClass="HYDA" >5</Item>
+   <Item Name="海岸线" FeatureClass="BOUL" >13</Item>
+   <Item Name="山脉" FeatureClass="AANL" >2</Item>
+</Lengend>
