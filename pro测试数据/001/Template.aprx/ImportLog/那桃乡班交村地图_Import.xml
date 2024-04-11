@@ -1,0 +1,13 @@
+<ImportMXDLog>	<Messages>
+		<FileName>C:\Users\smgi\Desktop\广西一村一图数据\出图\那桃乡班交村地图.mxd</FileName>
+		<Message>
+			<Name></Name>
+			<MessageType>警告</MessageType>
+			<Severity>中等</Severity>
+			<Description>由于 mxd 和工程之间的差异，某些动态文本标签可能已在导入过程中更改。</Description>
+			<Code>20044</Code>
+			<ComponentName>那桃乡班交村地图</ComponentName>
+			<ComponentType>布局</ComponentType>
+</Message>
+</Messages>
+</ImportMXDLog>
