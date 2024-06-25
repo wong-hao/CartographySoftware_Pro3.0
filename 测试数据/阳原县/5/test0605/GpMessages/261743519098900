@@ -1,0 +1,1 @@
+﻿<?xml version="1.0" encoding="utf-8"?><messages><msg code="0" type="2">开始时间: 2024年6月6日 9:51:38</msg><msg code="2148" type="100">ERROR 002148: 与要素关联的注记只能创建在基础要素的同一地理数据库中。</msg><msg code="-2147467259" type="100">执行(ConvertLabelsToAnnotation)失败。</msg><msg code="0" type="3">运行 失败，结束时间： 2024年6月6日 9:51:46 (历时: 7.92 秒)</msg></messages>
