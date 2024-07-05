@@ -1,0 +1,20 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Arg>
+  <MapScale>155000</MapScale>
+  <AttachMap>False</AttachMap>
+  <ThemDataBase></ThemDataBase>
+  <ThemExist>False</ThemExist>
+  <MapSizeWidth>1066</MapSizeWidth>
+  <MapSizeHeight>766</MapSizeHeight>
+  <InlineWidth>1000</InlineWidth>
+  <InlineHeight>700</InlineHeight>
+  <InOutLineWidth>18</InOutLineWidth>
+  <PageWidth>1092</PageWidth>
+  <PageHeight>787</PageHeight>
+  <BaseGDBName>广西桂平15万.gdb</BaseGDBName>
+  <ProjectState>Symbolize</ProjectState>
+  <HasAttach>false</HasAttach>
+  <BaseMap>一般</BaseMap>
+  <MapTemplate>10万</MapTemplate>
+  <MapName>10万</MapName>
+</Arg>
