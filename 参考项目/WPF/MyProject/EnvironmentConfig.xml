@@ -1,0 +1,22 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Arg>
+  <MapScale>17000</MapScale>
+  <AttachMap>False</AttachMap>
+  <ThemDataBase></ThemDataBase>
+  <ThemExist>False</ThemExist>
+  <MapSizeWidth>1550</MapSizeWidth>
+  <MapSizeHeight>1070</MapSizeHeight>
+  <InlineWidth>1434</InlineWidth>
+  <InlineHeight>905</InlineHeight>
+  <InOutLineWidth>18</InOutLineWidth>
+  <PageWidth>1574</PageWidth>
+  <PageHeight>1092</PageHeight>
+  <SpatialReference>Xian_1980_GK_CM_117E</SpatialReference>
+  <BaseGDBName>111.gdb</BaseGDBName>
+  <ProjectState>Symbolize</ProjectState>
+  <HasAttach>false</HasAttach>
+  <BaseMap>比例尺</BaseMap>
+  <MapTemplate>10万</MapTemplate>
+  <EcartoGDBName>222_Ecarto.gdb</EcartoGDBName>
+  <MapName>10万</MapName>
+</Arg>

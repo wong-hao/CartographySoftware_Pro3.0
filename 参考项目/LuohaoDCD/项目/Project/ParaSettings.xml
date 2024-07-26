@@ -1,0 +1,27 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Content>
+  <Project>
+    <Name>sp</Name>
+    <Location>C:\Users\22907\Desktop\多尺度地图数据库更新方案_工程文件\sp</Location>
+  </Project>
+  <DataSource>
+    <Data1>
+      <Name>LZjyq5w.gdb</Name>
+      <Location>C:\Users\22907\Desktop\多尺度地图数据库更新方案_工程文件\测试数据\LZjyq5w.gdb</Location>
+      <WinSize>500</WinSize>
+    </Data1>
+    <Data2>
+      <Name>LZjyq10w.gdb</Name>
+      <Location>C:\Users\22907\Desktop\多尺度地图数据库更新方案_工程文件\测试数据\LZjyq10w.gdb</Location>
+      <WinSize>500</WinSize>
+    </Data2>
+  </DataSource>
+  <Increment>
+    <Name>5w初增量.gdb</Name>
+    <Location>C:\Users\22907\Desktop\多尺度地图数据库更新方案_工程文件\测试数据\5w初增量.gdb</Location>
+  </Increment>
+  <RefrenceMap>
+    <Name></Name>
+    <Location></Location>
+  </RefrenceMap>  
+</Content>
